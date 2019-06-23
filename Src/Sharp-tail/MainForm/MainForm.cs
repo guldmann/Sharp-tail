@@ -56,5 +56,28 @@ namespace MainForm
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             SetFile(files[0]);
         }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            mainTextBox1.AllowDrop = true;
+            mainTextBox1.Drop += MainTextBox1_Drop;
+            mainTextBox1.DragEnter += MainTextBox1_DragEnter;
+        }
+
+        private void MainTextBox1_DragEnter(object sender, System.Windows.DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop)) e.Effects = System.Windows.DragDropEffects.Copy;
+        }
+
+        private void MainTextBox1_Drop(object sender, System.Windows.DragEventArgs e)
+        {
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            SetFile(files[0]);
+        }
+
+        private void mainTextBox1_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop)) e.Effect = DragDropEffects.Copy;
+        }
     }
 }

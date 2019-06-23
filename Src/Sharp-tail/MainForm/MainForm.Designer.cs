@@ -101,6 +101,7 @@
             // 
             // elementHost1
             // 
+            this.elementHost1.AllowDrop = true;
             this.elementHost1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.elementHost1.Location = new System.Drawing.Point(0, 40);
             this.elementHost1.Name = "elementHost1";
@@ -108,6 +109,7 @@
             this.elementHost1.TabIndex = 2;
             this.elementHost1.Text = "elementHost1";
             this.elementHost1.Child = this.mainTextBox1;
+            this.elementHost1.Child.AllowDrop = true;
             // 
             // openFileDialog1
             // 
@@ -125,6 +127,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "MainForm";
             this.Text = "Sharp-tail";
+            this.Load += new System.EventHandler(this.MainForm_Load);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.MainForm_DragDrop);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.MainForm_DragEnter);
             this.Resize += new System.EventHandler(this.MainForm_Resize);

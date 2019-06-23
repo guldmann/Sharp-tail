@@ -7,7 +7,7 @@
             d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <StackPanel>
-            <ListBox x:Name="listBox" HorizontalAlignment="Left" Height="300"
+            <ListBox x:Name="listBox" HorizontalAlignment="Left" Height="500"
             VerticalAlignment="Top" Width="800" Background="White"
             VirtualizingStackPanel.VirtualizationMode="Recycling">
                 <ListBox.ItemTemplate>
