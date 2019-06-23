@@ -13,7 +13,7 @@ namespace ListBoxControl.Controls
 {
     public partial class MainTextBox : UserControl
     {
-        ObservableCollection<RowItem> _rowItems = new ObservableCollection<RowItem>();
+        ObservableCollection<RowItem> _rowItems;
         private readonly MessageService _messageService = MessageService.Instance;
         private Task _task;
         private Tail _tail;
@@ -44,6 +44,7 @@ namespace ListBoxControl.Controls
 
         public void SetDataFile(string file)
         {
+            _rowItems = new ObservableCollection<RowItem>();
             //TODO: For now using static coloring.
             // TODO: Get colors from some where
             foreach (var row in File.ReadAllLines(file))
