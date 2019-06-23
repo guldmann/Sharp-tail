@@ -45,5 +45,16 @@ namespace MainForm
         {
             mainTextBox1.SetSize(mainTextBox1.ActualWidth, mainTextBox1.ActualHeight);
         }
+
+        private void MainForm_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop)) e.Effect = DragDropEffects.Copy;
+        }
+
+        private void MainForm_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            SetFile(files[0]);
+        }
     }
 }
