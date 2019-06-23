@@ -65,12 +65,50 @@ namespace MainForm
             mainTextBox1.Drop += MainTextBox1_Drop;
             mainTextBox1.DragEnter += MainTextBox1_DragEnter;
             mainTextBox1.PreviewKeyDown += MainTextBox1_PreviewKeyDown;
+            mainTextBox1.PreviewKeyUp += MainTextBox1_PreviewKeyUp;
+            mainTextBox1.MouseWheel += MainTextBox1_MouseWheel;
+        }
+
+        private void MainTextBox1_MouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
+        {
+            if(ctrl)
+            {
+                var direction = Math.Sign(e.Delta);
+                if(direction < 0)
+                {
+                    mainTextBox1.FontSize++;
+                }
+                if(direction > 0)
+                {
+                    if (mainTextBox1.FontSize > 2)
+                        mainTextBox1.FontSize--;
+                }
+            }
+        }
+
+        bool ctrl = false;
+
+        private void MainTextBox1_PreviewKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.LeftCtrl)
+                ctrl = false;
         }
 
         private void MainTextBox1_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
             if (e.Key == System.Windows.Input.Key.F11)
                 ToogleFullScreen();
+            if (e.Key == System.Windows.Input.Key.OemPlus)
+                mainTextBox1.FontSize++;
+
+            if(e.Key == System.Windows.Input.Key.OemMinus)
+            {
+                if (mainTextBox1.FontSize > 2)
+                    mainTextBox1.FontSize--;
+            }
+
+            if (e.Key == System.Windows.Input.Key.LeftCtrl)
+                ctrl = true;
         }
 
         private void ToogleFullScreen()
@@ -80,7 +118,7 @@ namespace MainForm
                 FullScreen = false;
                 menuStrip1.Visible = true;
                 statusStrip1.Visible = true;
-                TopMost = true;
+              //  TopMost = true;
                 FormBorderStyle = FormBorderStyle.Sizable;
                 WindowState = FormWindowState.Normal;
             }
@@ -89,7 +127,7 @@ namespace MainForm
                 FullScreen = true;
                 menuStrip1.Visible = false;
                 statusStrip1.Visible = false;
-                TopMost = true;
+                //TopMost = true;
                 FormBorderStyle = FormBorderStyle.None;
                 WindowState = FormWindowState.Maximized;
             }

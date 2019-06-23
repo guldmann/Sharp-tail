@@ -9,14 +9,14 @@
         <StackPanel>
             <ListBox x:Name="listBox" HorizontalAlignment="Left" Height="500"
             VerticalAlignment="Top" Width="800" Background="White"
-            VirtualizingStackPanel.VirtualizationMode="Recycling">
+            VirtualizingStackPanel.VirtualizationMode="Recycling" >
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid Margin="0,0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock Text="{Binding Text}">
+                            <TextBlock Text="{Binding Text}" >
                                 <TextBlock.Foreground>
                                     <SolidColorBrush Color="{Binding FrontColor}"/>
                                 </TextBlock.Foreground>

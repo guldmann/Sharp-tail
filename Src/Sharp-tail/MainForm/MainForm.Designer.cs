@@ -130,8 +130,6 @@
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.MainForm_DragDrop);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.MainForm_DragEnter);
-            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.MainForm_KeyPress);
-            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyUp);
             this.Resize += new System.EventHandler(this.MainForm_Resize);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
