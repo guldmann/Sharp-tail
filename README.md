@@ -1,2 +1,2 @@
 # Sharp-tail
-C# log tail application
+C# winforms log tail application. 
