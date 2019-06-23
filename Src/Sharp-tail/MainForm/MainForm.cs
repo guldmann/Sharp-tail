@@ -7,6 +7,8 @@ namespace MainForm
     public partial class MainForm : Form
     {
         private FileInfo fInfo;
+        private bool FullScreen = false;
+
         public MainForm()
         {
             InitializeComponent();
@@ -62,6 +64,35 @@ namespace MainForm
             mainTextBox1.AllowDrop = true;
             mainTextBox1.Drop += MainTextBox1_Drop;
             mainTextBox1.DragEnter += MainTextBox1_DragEnter;
+            mainTextBox1.PreviewKeyDown += MainTextBox1_PreviewKeyDown;
+        }
+
+        private void MainTextBox1_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.F11)
+                ToogleFullScreen();
+        }
+
+        private void ToogleFullScreen()
+        {
+            if(FullScreen)
+            {
+                FullScreen = false;
+                menuStrip1.Visible = true;
+                statusStrip1.Visible = true;
+                TopMost = true;
+                FormBorderStyle = FormBorderStyle.Sizable;
+                WindowState = FormWindowState.Normal;
+            }
+            else
+            {
+                FullScreen = true;
+                menuStrip1.Visible = false;
+                statusStrip1.Visible = false;
+                TopMost = true;
+                FormBorderStyle = FormBorderStyle.None;
+                WindowState = FormWindowState.Maximized;
+            }
         }
 
         private void MainTextBox1_DragEnter(object sender, System.Windows.DragEventArgs e)
