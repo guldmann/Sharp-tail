@@ -35,10 +35,10 @@ namespace MainForm
 
         private void SetFile(string file)
         {
-
             fInfo = new FileInfo(file);
             SetFileAtrubutesToGui();
             mainTextBox1.SetDataFile(file);
+            MainForm_Resize(this, null);
         }
 
         private void MainForm_Resize(object sender, EventArgs e)
