@@ -66,7 +66,7 @@ namespace MainForm
             mainTextBox1.DragEnter += MainTextBox1_DragEnter;
             mainTextBox1.PreviewKeyDown += MainTextBox1_PreviewKeyDown;
             mainTextBox1.PreviewKeyUp += MainTextBox1_PreviewKeyUp;
-            mainTextBox1.MouseWheel += MainTextBox1_MouseWheel;
+            mainTextBox1.PreviewMouseWheel += MainTextBox1_MouseWheel;
         }
 
         private void MainTextBox1_MouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
@@ -74,11 +74,11 @@ namespace MainForm
             if(ctrl)
             {
                 var direction = Math.Sign(e.Delta);
-                if(direction < 0)
+                if(direction > 0)
                 {
                     mainTextBox1.FontSize++;
                 }
-                if(direction > 0)
+                if(direction < 0)
                 {
                     if (mainTextBox1.FontSize > 2)
                         mainTextBox1.FontSize--;
