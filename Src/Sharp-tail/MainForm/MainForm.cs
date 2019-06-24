@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
+using Common;
+using Common.Models;
 
 namespace MainForm
 {
@@ -8,10 +11,14 @@ namespace MainForm
     {
         private FileInfo fInfo;
         private bool FullScreen = false;
+        private bool ctrlDown = false;
+        private List<ColorRule> ColorRules;
 
         public MainForm()
         {
             InitializeComponent();
+            ColorRules = ColorRuleSerializer.Load();
+
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
@@ -71,14 +78,14 @@ namespace MainForm
 
         private void MainTextBox1_MouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
         {
-            if(ctrl)
+            if (ctrlDown)
             {
                 var direction = Math.Sign(e.Delta);
-                if(direction > 0)
+                if (direction > 0)
                 {
                     mainTextBox1.FontSize++;
                 }
-                if(direction < 0)
+                if (direction < 0)
                 {
                     if (mainTextBox1.FontSize > 2)
                         mainTextBox1.FontSize--;
@@ -86,12 +93,10 @@ namespace MainForm
             }
         }
 
-        bool ctrl = false;
-
         private void MainTextBox1_PreviewKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
             if (e.Key == System.Windows.Input.Key.LeftCtrl)
-                ctrl = false;
+                ctrlDown = false;
         }
 
         private void MainTextBox1_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
@@ -101,24 +106,24 @@ namespace MainForm
             if (e.Key == System.Windows.Input.Key.OemPlus)
                 mainTextBox1.FontSize++;
 
-            if(e.Key == System.Windows.Input.Key.OemMinus)
+            if (e.Key == System.Windows.Input.Key.OemMinus)
             {
                 if (mainTextBox1.FontSize > 2)
                     mainTextBox1.FontSize--;
             }
 
             if (e.Key == System.Windows.Input.Key.LeftCtrl)
-                ctrl = true;
+                ctrlDown = true;
         }
 
         private void ToogleFullScreen()
         {
-            if(FullScreen)
+            if (FullScreen)
             {
                 FullScreen = false;
                 menuStrip1.Visible = true;
                 statusStrip1.Visible = true;
-              //  TopMost = true;
+                //  TopMost = true;
                 FormBorderStyle = FormBorderStyle.Sizable;
                 WindowState = FormWindowState.Normal;
             }
@@ -147,6 +152,12 @@ namespace MainForm
         private void mainTextBox1_DragEnter(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop)) e.Effect = DragDropEffects.Copy;
+        }
+
+        private void toolStripMenuItemColorRule_Click(object sender, EventArgs e)
+        {
+            ColorRulesForm cf = new ColorRulesForm();
+            cf.Show();
         }
     }
 }

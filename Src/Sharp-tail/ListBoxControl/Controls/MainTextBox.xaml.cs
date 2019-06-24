@@ -1,4 +1,5 @@
 ﻿using Common.Messages.Services;
+using Common.Models;
 using Common.Tail;
 using ListBoxControl.Models;
 using System;
@@ -15,13 +16,21 @@ namespace ListBoxControl.Controls
     {
         ObservableCollection<RowItem> _rowItems;
         private readonly MessageService _messageService = MessageService.Instance;
+
         private Task _task;
         private Tail _tail;
+        private List<ColorRule> ColorRules = new List<ColorRule>();
 
         public MainTextBox()
         {
             InitializeComponent();
             _messageService.Subscribe<List<string>>(TailUpdateEvent);
+            _messageService.Subscribe<List<ColorRule>>(ColorRuleEvent);
+        }
+
+        private void ColorRuleEvent(List<ColorRule> colorRules)
+        {
+            throw new NotImplementedException();
         }
 
         private void TailUpdateEvent(List<string> items)

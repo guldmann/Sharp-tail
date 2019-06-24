@@ -38,6 +38,7 @@
             this.elementHost1 = new System.Windows.Forms.Integration.ElementHost();
             this.mainTextBox1 = new ListBoxControl.Controls.MainTextBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.toolStripMenuItemColorRule = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -70,10 +71,11 @@
             // 
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(32, 32);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuItem1});
+            this.toolStripMenuItem1,
+            this.toolStripMenuItemColorRule});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1201, 40);
+            this.menuStrip1.Size = new System.Drawing.Size(1201, 42);
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -103,9 +105,9 @@
             // 
             this.elementHost1.AllowDrop = true;
             this.elementHost1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.elementHost1.Location = new System.Drawing.Point(0, 40);
+            this.elementHost1.Location = new System.Drawing.Point(0, 42);
             this.elementHost1.Name = "elementHost1";
-            this.elementHost1.Size = new System.Drawing.Size(1201, 804);
+            this.elementHost1.Size = new System.Drawing.Size(1201, 802);
             this.elementHost1.TabIndex = 2;
             this.elementHost1.Text = "elementHost1";
             this.elementHost1.Child = this.mainTextBox1;
@@ -113,6 +115,13 @@
             // openFileDialog1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
+            // 
+            // toolStripMenuItemColorRule
+            // 
+            this.toolStripMenuItemColorRule.Name = "toolStripMenuItemColorRule";
+            this.toolStripMenuItemColorRule.Size = new System.Drawing.Size(142, 38);
+            this.toolStripMenuItemColorRule.Text = "Color rules";
+            this.toolStripMenuItemColorRule.Click += new System.EventHandler(this.toolStripMenuItemColorRule_Click);
             // 
             // MainForm
             // 
@@ -152,6 +161,7 @@
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemColorRule;
     }
 }
 
