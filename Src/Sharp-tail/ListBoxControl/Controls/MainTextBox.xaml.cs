@@ -20,52 +20,64 @@ namespace ListBoxControl.Controls
         private Task _task;
         private Tail _tail;
         private List<ColorRule> ColorRules = new List<ColorRule>();
+        private string _File;
 
         public MainTextBox()
         {
             InitializeComponent();
             _messageService.Subscribe<List<string>>(TailUpdateEvent);
-            _messageService.Subscribe<List<ColorRule>>(ColorRuleEvent);
-        }
-
-        private void ColorRuleEvent(List<ColorRule> colorRules)
-        {
-            throw new NotImplementedException();
         }
 
         private void TailUpdateEvent(List<string> items)
         {
-            //TODO For now using static colors for testing;
-            //TODO: Get colors and word to highlight from some where
-
             foreach (var item in items)
             {
                 Dispatcher.BeginInvoke(
-                    new Action(() => _rowItems.Add(
-                        new RowItem
-                        {
-                            BackColor = Colors.Red,
-                            FrontColor = Colors.Black,
-                            Text = item
-                        })));
+                    new Action(() =>AddRow(item)));
             }
         }
 
-        public void SetDataFile(string file)
+        private void AddRow(string text)
         {
+            //Note first rule matching will apply
+            bool textWriten = false;
+            foreach (var rule in ColorRules)
+            {
+                if (text.Contains(rule.Text))
+                {
+                    _rowItems.Add(new RowItem
+                    {
+                        BackColor = Color.FromRgb(
+                            rule.Background.R,
+                            rule.Background.G,
+                            rule.Background.B),
+                        FrontColor = Color.FromRgb(
+                            rule.ForeGround.R,
+                            rule.ForeGround.G,
+                            rule.ForeGround.B),
+                        Text = text
+                    });
+                    textWriten = true;
+                    break;
+                }
+            }
+            if (!textWriten)
+            {
+                _rowItems.Add(new RowItem { BackColor = Colors.White, FrontColor = Colors.Black, Text = text });
+            }
+        }
+
+        public void SetDataFile(string file, List<ColorRule> colorRules)
+        {
+            if (file == null)
+                return;
+            _File = file;
+            ColorRules = colorRules ?? new List<ColorRule>();
             _rowItems = new ObservableCollection<RowItem>();
-            //TODO: For now using static coloring.
-            // TODO: Get colors from some where
+
             foreach (var row in File.ReadAllLines(file))
             {
-                if (row.Contains("Warning"))
-                {
-                    _rowItems.Add(new RowItem { BackColor = Colors.Red, FrontColor = Colors.Black, Text = row });
-                }
-                else
-                {
-                    _rowItems.Add(new RowItem { BackColor = Colors.White, FrontColor = Colors.Black, Text = row });
-                }
+                AddRow(row);
             }
             listBox.ItemsSource = _rowItems;
             TailFile(file);
@@ -79,6 +91,10 @@ namespace ListBoxControl.Controls
             listBox.Height = H;
         }
 
+        public void UpdateColorRules(List<ColorRule> colorRules)
+        {
+            SetDataFile(_File, colorRules);
+        }
         private void TailFile(string file)
         {
             _tail?.StopTailFile();

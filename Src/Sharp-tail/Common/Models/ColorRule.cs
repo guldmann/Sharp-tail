@@ -1,12 +1,20 @@
 ﻿
 
+using System;
+
 namespace Common.Models
 {
     public class ColorRule
     {
+        public ColorRule()
+        {
+            Id = Guid.NewGuid();
+        }
+
         public string Text { get; set; }
-        public RuleColor Backgrount { get; set; }
+        public RuleColor Background { get; set; }
         public RuleColor ForeGround { get; set; }
+        public Guid Id { get; }
 
     }
 

@@ -46,7 +46,7 @@ namespace MainForm
         {
             fInfo = new FileInfo(file);
             SetFileAtrubutesToGui();
-            mainTextBox1.SetDataFile(file);
+            mainTextBox1.SetDataFile(file, ColorRules);
             MainForm_Resize(this, null);
         }
 
@@ -156,8 +156,15 @@ namespace MainForm
 
         private void toolStripMenuItemColorRule_Click(object sender, EventArgs e)
         {
-            ColorRulesForm cf = new ColorRulesForm();
-            cf.Show();
+
+            ColorRulesForm cf = new ColorRulesForm(ColorRules);
+            cf.ShowDialog();
+            var result = cf.DialogResult;
+            if (result == DialogResult.OK)
+            {
+                ColorRules = cf.ColorRules;
+                mainTextBox1.UpdateColorRules(ColorRules);
+            }
         }
     }
 }
