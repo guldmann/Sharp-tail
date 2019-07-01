@@ -75,9 +75,12 @@ namespace ListBoxControl.Controls
             ColorRules = colorRules ?? new List<ColorRule>();
             _rowItems = new ObservableCollection<RowItem>();
 
-            foreach (var row in File.ReadAllLines(file))
+            using (var reader =
+                new StreamReader(new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
             {
-                AddRow(row);
+                string line;
+                while ((line = reader.ReadLine()) != null)
+                    AddRow(line);
             }
             listBox.ItemsSource = _rowItems;
             TailFile(file);

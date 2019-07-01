@@ -49,8 +49,8 @@ namespace Common.Messages.Services
                 foreach (var handler in handlers)
                 {
                     var actionType = handler.GetType();
-                    var invoke = actionType.GetMethod("Invoke", new Type[] { messageType });
-                    invoke.Invoke(handler, new Object[] { message });
+                    var invoke = actionType.GetMethod("Invoke", new[] { messageType });
+                    //if (invoke != null) invoke.Invoke(handler, new[] {message});
                 }
             }
         }

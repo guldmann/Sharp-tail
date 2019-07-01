@@ -9,13 +9,13 @@ namespace Common.Tail
         private readonly string _fileName;
         private MessageService _messageService = MessageService.Instance;
         private bool _tailingFile;
-        private List<string> FilesRows;
+        private List<string> _filesRows;
 
         public Tail(string file)
         {
             _fileName = file;
             _tailingFile = true;
-            FilesRows = new List<string>();
+            _filesRows = new List<string>();
         }
 
         public void StopTailFile()
@@ -44,12 +44,12 @@ namespace Common.Tail
 
                     //read out of the file until the EOF
                     string line;
-                    FilesRows = new List<string>();
+                    _filesRows = new List<string>();
                     while ((line = reader.ReadLine()) != null)
-                        FilesRows.Add(line);
+                        _filesRows.Add(line);
 
                     //publish new file rows.
-                    _messageService.Publish(FilesRows);
+                    _messageService.Publish(_filesRows);
 
                     //update the last max offset
                     lastMaxOffset = reader.BaseStream.Position;
