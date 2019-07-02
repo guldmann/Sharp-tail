@@ -71,19 +71,23 @@ namespace ListBoxControl.Controls
         {
             if (file == null)
                 return;
+
             _File = file;
             ColorRules = colorRules ?? new List<ColorRule>();
             _rowItems = new ObservableCollection<RowItem>();
 
-            using (var reader =
-                new StreamReader(new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
+            using (var reader = new StreamReader(new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
             {
                 string line;
                 while ((line = reader.ReadLine()) != null)
                     AddRow(line);
             }
+
             listBox.ItemsSource = _rowItems;
             TailFile(file);
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+
         }
 
         //  Cant get control sizing to really work,
