@@ -1,6 +1,7 @@
 ﻿using Common.Messages.Services;
 using System.Collections.Generic;
 using System.IO;
+using Common.Models;
 
 namespace Common.Tail
 {
@@ -9,13 +10,11 @@ namespace Common.Tail
         private readonly string _fileName;
         private MessageService _messageService = MessageService.Instance;
         private bool _tailingFile;
-        private List<string> _filesRows;
-
+       
         public Tail(string file)
         {
             _fileName = file;
             _tailingFile = true;
-            _filesRows = new List<string>();
         }
 
         public void StopTailFile()
@@ -38,18 +37,22 @@ namespace Common.Tail
                     //if the file size has not changed, idle
                     if (reader.BaseStream.Length == lastMaxOffset)
                         continue;
-
-                    //seek to the last max offset
+                    var tailFileInfo = new TaileFileInfo
+                    {
+                        Name = _fileName,
+                        Size = reader.BaseStream.Length
+                    };
+                   //seek to the last max offset
                     reader.BaseStream.Seek(lastMaxOffset, SeekOrigin.Begin);
 
                     //read out of the file until the EOF
                     string line;
-                    _filesRows = new List<string>();
+
                     while ((line = reader.ReadLine()) != null)
-                        _filesRows.Add(line);
+                        tailFileInfo.FilesRows.Add(line);
 
                     //publish new file rows.
-                    _messageService.Publish(_filesRows);
+                    _messageService.Publish(tailFileInfo);
 
                     //update the last max offset
                     lastMaxOffset = reader.BaseStream.Position;
