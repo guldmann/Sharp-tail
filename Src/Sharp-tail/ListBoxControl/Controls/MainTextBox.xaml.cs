@@ -24,7 +24,6 @@ namespace ListBoxControl.Controls
         private string _File;
         private bool GoToEnd = true;
         public bool Updated = false;
-        //temp find a better way
         private bool Evaluate = true;
 
         public MainTextBox()
@@ -115,19 +114,17 @@ namespace ListBoxControl.Controls
 
         public void ScrollToEnd(string text = "")
         {
-            //TODO THIS IS NOT WORKING
-            // take a look att this
             //https://stackoverflow.com/questions/2006729/how-can-i-have-a-listbox-auto-scroll-when-a-new-item-is-added
             if (listBox.Items.Count > 1)
             {
                 listBox.ScrollIntoView(_rowItems[_rowItems.Count-1]);
                 listBox.SelectedItem = _rowItems[_rowItems.Count-1];
             }
-
         }
 
-        //  Cant get control sizing to really work,
+        // Cant get control sizing to really attach to main form.
         // temp solution is to set it here and invoke it from main form.
+        // witch will force a redraw of text box and all is nice, cake , balloons and happy faces.
         public void SetSize(double w, double H)
         {
             listBox.Width = w;
@@ -138,8 +135,13 @@ namespace ListBoxControl.Controls
         {
             SetDataFile(_File, colorRules);
         }
+
         private void TailFile(string file)
         {
+            //TODO: Evaluate this !!
+            // This is from when only one instance of this was on main form.
+            // Now a new instance is created for every new file opened in a new tab
+            // TODO: delete code not needed.
             _tail?.StopTailFile();
 
             _tail = new Tail(file);
@@ -149,17 +151,11 @@ namespace ListBoxControl.Controls
 
         public void listBox_ScrollChanged(object sender , ScrollChangedEventArgs e)
         {
-            if (Evaluate)
-            {
-                if (e.ExtentHeight == (e.ViewportHeight + e.VerticalOffset))
-                {
-                    GoToEnd = true;
-                }
-                else
-                {
-                    GoToEnd = false;
-                }
-            }
+            if (!Evaluate) return;
+            GoToEnd = e.ExtentHeight 
+                == (e.ViewportHeight + e.VerticalOffset) 
+                ? true 
+                : false;
         }
     }
 }
