@@ -1,12 +1,8 @@
 # Sharp-tail
-C# winforms file tail application. 
+C# Win-Form log reader.
 
 ### Current version
 Alpha 1 
-
-## Tail
-What is tail ?  
-Tail is a unix / linux command to read / monitor files to get update output when file change (new rows is added)
 
 ## What do sharp-tail do ?
 Read user selected file and shows it in a "textbox" sharp-tail will then monitor the file for changes.
