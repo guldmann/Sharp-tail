@@ -406,28 +406,16 @@ namespace MainForm
 
         private void closeAlButThisToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            CloseTabsToRightofSelected();
-
-            //for (int tab = 0; tab < tabControl1.TabCount; ++tab)
-            //{
-            //    if (tab != tabControl1.SelectedTab.TabIndex)
-            //    {
-            //        tabControl1.TabPages.Remove(tabControl1.TabPages[tab]);
-            //        string test = tabControl1.TabPages[tab].Text.Replace(CloseCross, "") + tab;
-            //        _files.Remove(tabControl1.TabPages[tab].Text.Replace(CloseCross, "") + tab);
-            //    }
-            //}
-        }
-
-        private void CloseTabsToRightofSelected()
-        {
-            
-            for (int tab = tabControl1.SelectedTab.TabIndex + 1; tab < tabControl1.TabCount; ++tab)
-            {
-                tabControl1.TabPages.Remove(tabControl1.TabPages[tab]);
-                string test = tabControl1.TabPages[tab].Text.Replace(CloseCross, "") + tab;
-                _files.Remove(tabControl1.TabPages[tab].Name);
-            }
+	        foreach (TabPage page in tabControl1.TabPages)
+	        {
+		        if (page.TabIndex != tabControl1.SelectedTab.TabIndex)
+		        {
+			        _files.Remove(page.Name);
+			        tabControl1.TabPages.Remove(page);
+					page.Dispose();
+				}
+	        }
+		
         }
     }
 }
