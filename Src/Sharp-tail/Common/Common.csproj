@@ -46,9 +46,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ColorRuleSerializer.cs" />
+    <Compile Include="FileDictionarySeriliazer.cs" />
     <Compile Include="Messages\Interfaces\IMassageService.cs" />
     <Compile Include="Messages\Services\MessageService.cs" />
     <Compile Include="Models\ColorRule.cs" />
+    <Compile Include="Models\TaileFileInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tail\Tail.cs" />
   </ItemGroup>

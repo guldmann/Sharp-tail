@@ -28,20 +28,7 @@ namespace Common
 
                 return JsonConvert.DeserializeObject<List<ColorRule>>(jstring);
             }
-
             return null;
-            //if (File.Exists("colorSettings.json"))
-            //{
-            //    JsonSerializer jsonSerializer = new JsonSerializer();
-            //    using (StreamReader sr = new StreamReader("colorSettings.json"))
-            //    {
-            //        using (JsonReader reader = new JsonTextReader(sr))
-            //        {
-            //            return (List<ColorRule>) jsonSerializer.Deserialize(reader);
-            //        }
-            //    }
-            //}
-            //return null;
         }
     }
 }

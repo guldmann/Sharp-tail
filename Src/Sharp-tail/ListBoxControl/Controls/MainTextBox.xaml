@@ -7,9 +7,9 @@
             d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <StackPanel>
-            <ListBox x:Name="listBox" HorizontalAlignment="Left" Height="500"
+            <ListBox  x:Name="listBox" HorizontalAlignment="Left" Height="500"
             VerticalAlignment="Top" Width="800" Background="White"
-            VirtualizingStackPanel.VirtualizationMode="Recycling" >
+            VirtualizingStackPanel.VirtualizationMode="Recycling" ScrollViewer.ScrollChanged="listBox_ScrollChanged"  >
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid Margin="0,0">

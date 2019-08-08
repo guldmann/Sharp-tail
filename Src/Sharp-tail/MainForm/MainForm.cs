@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Net.Mail;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
 using Common;
+using Common.Messages.Services;
 using Common.Models;
 using ListBoxControl.Controls;
 using DataFormats = System.Windows.Forms.DataFormats;
@@ -16,22 +18,72 @@ namespace MainForm
 {
     public partial class MainForm : Form
     {
-		//TabClose Icon 
-		private System.Drawing.Point _ImageLocation = new System.Drawing.Point(19, 5);
-		private System.Drawing.Point _imageHitArea = new System.Drawing.Point(19,2);
-		Image CloseImage;
-
-
-        private FileInfo fInfo;
-        private bool FullScreen = false;
-        private bool ctrlDown = false;
-        private List<ColorRule> ColorRules;
-        private Dictionary<string, string> tabpages;
+        private const string CloseCross = "    [X]   ";
+        private Dictionary<string, string> _files = new Dictionary<string, string>();
+        private FileInfo _fInfo;
+        private bool _fullScreen;
+        private bool _ctrlDown;
+        private List<ColorRule> _colorRules;
+        private readonly MessageService _messageService = MessageService.Instance;
 
         public MainForm()
         {
             InitializeComponent();
-            ColorRules = ColorRuleSerializer.Load();
+            _colorRules = ColorRuleSerializer.Load();
+            _messageService.Subscribe<TaileFileInfo>(TailUpdateEvent);
+            tabControl1.DrawMode = TabDrawMode.OwnerDrawFixed;
+            var files = FileDictionarySeriliazer.Load();
+            if (files.Count > 0)
+            {
+                foreach (var file in files)
+                {
+                    SetFile(new [] {file.Value});
+                }
+            }
+            MainForm_Resize(null,null);
+            tabControl1.MouseClick += new MouseEventHandler(tabControl1_MouseClick);
+        }
+
+        private void tabControl1_MouseClick(object sender, MouseEventArgs e)
+        {
+            //select the tab under the mouse pointer and then show context menu
+            if (e.Button == MouseButtons.Right)
+            {
+                for (int tab = 0; tab < tabControl1.TabCount; ++tab)
+                {
+                    if (tabControl1.GetTabRect(tab).Contains(e.Location))
+                    {
+                        tabControl1.SelectTab(tab);
+                    }
+                }
+                contextMenuStripTabs.Show(tabControl1, e.Location);
+            }
+        }
+
+        private void TailUpdateEvent(TaileFileInfo taileFileInfo)
+        {
+            int index = taileFileInfo.Name.LastIndexOf("\\") + 1;
+            var name = taileFileInfo.Name.Substring(index) + CloseCross;
+            foreach (TabPage tabControl1TabPage in tabControl1.TabPages)
+            {
+                if (tabControl1TabPage.Text == name && tabControl1TabPage.InvokeRequired)
+                {
+                    tabControl1TabPage.Invoke(new EventHandler(delegate { UpdatePage(tabControl1TabPage); }));
+                }
+            }
+        }
+
+        private void UpdatePage(TabPage page)
+        {
+            if (!page.Focused)
+            {
+                var host = (ElementHost) page.Controls[0];
+                var textBox = (MainTextBox) host.Child;
+                textBox.Updated = true;
+            }
+
+            page.Refresh();
+            tabControl1.Refresh();
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
@@ -45,36 +97,40 @@ namespace MainForm
 
             if (result == DialogResult.OK)
             {
-                SetFile(openFileDialog1.FileName);
+                SetFile(openFileDialog1.FileNames);
             }
         }
 
         private void SetFileAtrubutesToGui()
         {
-            toolStripStatusLabelName.Text = "Name: " + fInfo.Name;
-            toolStripStatusLabelSize.Text = "Size: " + (fInfo.Length / 1000) + "Kb";
+            // Note: this is no  good,
+            // Do we want this information ?
+            // then do we want it as per file or for every file combined ?
+            toolStripStatusLabelName.Text = "Name: " + _fInfo.Name;
+            toolStripStatusLabelSize.Text = "Size: " + (_fInfo.Length / 1000) + "Kb";
         }
 
-        private void SetFile(string file)
+        private void SetFile(string[] files)
         {
-            fInfo = new FileInfo(file);
-            SetFileAtrubutesToGui();
-			CreateTab(file);
-
-            //mainTextBox1.SetDataFile(file, ColorRules);
-            //MainForm_Resize(this, null);
+            foreach (var file in files)
+            {
+                _fInfo = new FileInfo(file);
+                SetFileAtrubutesToGui();
+                CreateTab(file);
+            }
         }
 
         private void CreateTab(string file)
         {
-	        
 	        int lastIndex = file.LastIndexOf('\\');
-	        var tabpageName = new TabPage(file.Substring(lastIndex+1));
+	        var tabPage = new TabPage(file.Substring(lastIndex+1) + CloseCross);
+            tabPage.Width = 100;
+
 	        var textbox = new MainTextBox
 	        {
-		        Name = "TextBox"
+		        Name = "TextBox",
 	        };
-	        
+
 			var host = new ElementHost
 			{
 				Name="Host",
@@ -82,23 +138,43 @@ namespace MainForm
 				Child=textbox
 			};
 
-			textbox.SetDataFile(file, ColorRules);
-			tabpageName.Controls.Add(host);
-			tabControl1.TabPages.Add(tabpageName);
-			textbox.SetSize(textbox.ActualWidth, textbox.ActualHeight);
-			//TabControl1_DrawItem(this ,null);
-			//var test = tabControl1.TabPages[0].Controls.Find("TextBox", true);
-			////var test1 = (ElementHost)tabControl1.TabPages[0].Controls.Find("Host", true);
-			//var test1 = (ElementHost) tabControl1.TabPages[0].Controls[0];
-			//var tBox = (MainTextBox)test1.Child;
-			//tBox.Name = "Gurka";
+            tabPage.Name = Guid.NewGuid().ToString();
 
+            textbox.PreviewKeyDown += MainTextBox1_PreviewKeyDown;
+            textbox.PreviewKeyUp += MainTextBox1_PreviewKeyUp;
+            textbox.PreviewMouseWheel += MainTextBox1_MouseWheel;
+            textbox.AllowDrop = true;
+            textbox.Drop += MainTextBox1_Drop;
+            textbox.DragEnter += MainTextBox1_DragEnter;
+            textbox.SetDataFile(file, _colorRules);
+			tabPage.Controls.Add(host);
+			tabControl1.TabPages.Add(tabPage);
+			textbox.SetSize(host.Width, host.Height);
+            textbox.ScrollToEnd();
+            _files.Add(tabPage.Name, file);
         }
 
 
         private void MainForm_Resize(object sender, EventArgs e)
         {
-            mainTextBox1.SetSize(mainTextBox1.ActualWidth, mainTextBox1.ActualHeight);
+            //BUG: When windows display is set to scale above 100%, scrollbars in text view get buggy
+            if (tabControl1.TabCount > 0)
+            {
+                int selected = tabControl1.SelectedIndex;
+                TabPage tab = tabControl1.TabPages[selected];
+
+                var host = (ElementHost) tab.Controls[0];
+                var textBox = (MainTextBox) host.Child;
+                double with = textBox.ActualWidth;
+                double height = textBox.ActualHeight;
+
+                foreach (TabPage tabControl1TabPage in tabControl1.TabPages)
+                {
+                    host = (ElementHost) tabControl1TabPage.Controls[0];
+                    textBox = (MainTextBox) host.Child;
+                    textBox.SetSize(with, height);
+                }
+            }
         }
 
         private void MainForm_DragEnter(object sender, DragEventArgs e)
@@ -109,70 +185,67 @@ namespace MainForm
         private void MainForm_DragDrop(object sender, DragEventArgs e)
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            SetFile(files[0]);
+            SetFile(files);
         }
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            mainTextBox1.AllowDrop = true;
-            mainTextBox1.Drop += MainTextBox1_Drop;
-            mainTextBox1.DragEnter += MainTextBox1_DragEnter;
-            mainTextBox1.PreviewKeyDown += MainTextBox1_PreviewKeyDown;
-            mainTextBox1.PreviewKeyUp += MainTextBox1_PreviewKeyUp;
-            mainTextBox1.PreviewMouseWheel += MainTextBox1_MouseWheel;
-
-			//TODO: if this work make code parmanet Tab controle stuff 
-			tabControl1.DrawMode=TabDrawMode.OwnerDrawFixed;
-			tabControl1.DrawItem+=TabControl1_DrawItem;
-			CloseImage = Properties.Resources.close;
-			//Look in to this if image is wrong 
-			tabControl1.Padding = new System.Drawing.Point(20,5);
-
+            MainForm_Resize(null,null);
         }
 
-		private void TabControl1_DrawItem(object sender, DrawItemEventArgs e)
-		{
-			try
-			{
-				Image img = new Bitmap(CloseImage);
-				
-				Rectangle r = e.Bounds;
-				r = tabControl1.GetTabRect(e.Index);
-				r.Offset(2,2);
-				Brush titleBrush = new SolidBrush(Color.Black);
-				Font font = Font;
-				string title = tabControl1.TabPages[e.Index].Text;
-
-				e.Graphics.DrawString(title, font, titleBrush, new PointF(r.X, r.Y));
-
-				var point = new System.Drawing.Point(r.X+(tabControl1.GetTabRect(e.Index).Width-_ImageLocation.X), _ImageLocation.Y);
-					
-				if (tabControl1.SelectedIndex >= 1)
-				{
-					e.Graphics.DrawImage(img, point);
-				}
-			}
-			catch (Exception exception)
-			{
-				Console.WriteLine(exception);
-				throw;
-			}
-		}
-
-		private void MainTextBox1_MouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
+        private void TabControl1_DrawItem(object sender, DrawItemEventArgs e)
         {
-			//TODO: adjust this to Tabcontrole
-            if (ctrlDown)
+            TabPage tab = tabControl1.TabPages[e.Index];
+
+            var host = (ElementHost) tab.Controls[0];
+            var textBox = (MainTextBox) host.Child;
+
+            Rectangle paddedBounds = e.Bounds;
+            paddedBounds.Inflate(-2, -2);
+            if (textBox.Updated)
+            {
+                if (tabControl1.SelectedIndex != e.Index)
+                {
+                    e.Graphics.FillRectangle(new SolidBrush(Color.LightPink), e.Bounds);
+                    e.Graphics.DrawString(tabControl1.TabPages[e.Index].Text, this.Font, SystemBrushes.ControlText,
+                        paddedBounds);
+                }
+                else
+                {
+                    e.Graphics.DrawString(tabControl1.TabPages[e.Index].Text, this.Font, SystemBrushes.ControlText,
+                        paddedBounds);
+                }
+            }
+            else
+            {
+                e.Graphics.DrawString(tabControl1.TabPages[e.Index].Text, this.Font, SystemBrushes.ControlText,
+                    paddedBounds);
+            }
+        }
+
+        private void MainTextBox1_MouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
+        {
+            if (_ctrlDown)
             {
                 var direction = Math.Sign(e.Delta);
-                if (direction > 0)
+                if (direction > 0 && tabControl1.TabCount > 0)
                 {
-                    mainTextBox1.FontSize++;
+                    foreach (TabPage tabControl1TabPage in tabControl1.TabPages)
+                    {
+                        var host = (ElementHost)tabControl1TabPage.Controls[0];
+                        var textBox = (MainTextBox)host.Child;
+                        textBox.FontSize++;
+                    }
                 }
-                if (direction < 0)
+                if (direction < 0 && tabControl1.TabCount > 0)
                 {
-                    if (mainTextBox1.FontSize > 2)
-                        mainTextBox1.FontSize--;
+                    foreach (TabPage tabControl1TabPage in tabControl1.TabPages)
+                    {
+                        var host = (ElementHost)tabControl1TabPage.Controls[0];
+                        var textBox = (MainTextBox)host.Child;
+                        if (textBox.FontSize > 2)
+                            textBox.FontSize--;
+                    }
                 }
             }
         }
@@ -180,43 +253,56 @@ namespace MainForm
         private void MainTextBox1_PreviewKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
             if (e.Key == System.Windows.Input.Key.LeftCtrl)
-                ctrlDown = false;
+                _ctrlDown = false;
         }
 
         private void MainTextBox1_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
             if (e.Key == System.Windows.Input.Key.F11)
                 ToogleFullScreen();
-            if (e.Key == System.Windows.Input.Key.OemPlus)
-                mainTextBox1.FontSize++;
 
-            if (e.Key == System.Windows.Input.Key.OemMinus)
+            if (tabControl1.TabCount > 0)
             {
-                if (mainTextBox1.FontSize > 2)
-                    mainTextBox1.FontSize--;
-            }
+                if (e.Key == System.Windows.Input.Key.OemPlus)
+                {
+                    foreach (TabPage tabControl1TabPage in tabControl1.TabPages)
+                    {
+                        var host = (ElementHost) tabControl1TabPage.Controls[0];
+                        var textBox = (MainTextBox) host.Child;
+                        textBox.FontSize++;
+                    }
+                }
 
+                if (e.Key == System.Windows.Input.Key.OemMinus)
+                {
+                    foreach (TabPage tabControl1TabPage in tabControl1.TabPages)
+                    {
+                        var host = (ElementHost)tabControl1TabPage.Controls[0];
+                        var textBox = (MainTextBox)host.Child;
+                        if (textBox.FontSize > 2)
+                            textBox.FontSize--;
+                    }
+                }
+            }
             if (e.Key == System.Windows.Input.Key.LeftCtrl)
-                ctrlDown = true;
+                _ctrlDown = true;
         }
 
         private void ToogleFullScreen()
         {
-            if (FullScreen)
+            if (_fullScreen)
             {
-                FullScreen = false;
+                _fullScreen = false;
                 menuStrip1.Visible = true;
                 statusStrip1.Visible = true;
-                //  TopMost = true;
                 FormBorderStyle = FormBorderStyle.Sizable;
                 WindowState = FormWindowState.Normal;
             }
             else
             {
-                FullScreen = true;
+                _fullScreen = true;
                 menuStrip1.Visible = false;
                 statusStrip1.Visible = false;
-                //TopMost = true;
                 FormBorderStyle = FormBorderStyle.None;
                 WindowState = FormWindowState.Maximized;
             }
@@ -230,24 +316,18 @@ namespace MainForm
         private void MainTextBox1_Drop(object sender, System.Windows.DragEventArgs e)
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            SetFile(files[0]);
-        }
-
-        private void mainTextBox1_DragEnter(object sender, DragEventArgs e)
-        {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop)) e.Effect = DragDropEffects.Copy;
+            SetFile(files);
         }
 
         private void toolStripMenuItemColorRule_Click(object sender, EventArgs e)
         {
 
-            ColorRulesForm cf = new ColorRulesForm(ColorRules);
+            ColorRulesForm cf = new ColorRulesForm(_colorRules);
             cf.ShowDialog();
             var result = cf.DialogResult;
             if (result == DialogResult.OK)
             {
-                ColorRules = cf.ColorRules;
-                //mainTextBox1.UpdateColorRules(ColorRules);
+                _colorRules = cf.ColorRules;
 				UpdateTextBoxColorRule();
             }
         }
@@ -258,8 +338,96 @@ namespace MainForm
 	        {
 		        var host = (ElementHost) tabControl1TabPage.Controls[0];
 		        var textBox = (MainTextBox) host.Child;
-				textBox.UpdateColorRules(ColorRules);
+				textBox.UpdateColorRules(_colorRules);
 	        }
 		}
+
+        private void tabControl1_MouseDown(object sender, MouseEventArgs e)
+        {
+            //Catch clicking [X] in tabs
+            for (int i = 0; i < this.tabControl1.TabPages.Count; i++)
+            {
+                Rectangle r = tabControl1.GetTabRect(i);
+                Rectangle closeButton = new Rectangle(r.Right - 30, r.Top, 14, 20);
+                if (closeButton.Contains(e.Location))
+                {
+                    _files.Remove(tabControl1.TabPages[i].Name);
+                    tabControl1.TabPages.RemoveAt(i);
+                    break;
+                }
+            }
+        }
+
+        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (tabControl1.SelectedIndex > -1)
+            {
+                TabPage tabControl1TabPage = tabControl1.TabPages[tabControl1.SelectedIndex];
+                var host = (ElementHost) tabControl1TabPage.Controls[0];
+                var textBox = (MainTextBox) host.Child;
+                textBox.Updated = false;
+            }
+        }
+
+        private void goToEndToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (tabControl1.SelectedIndex > -1)
+            {
+                TabPage tabControl1TabPage = tabControl1.TabPages[tabControl1.SelectedIndex];
+                var host = (ElementHost)tabControl1TabPage.Controls[0];
+                var textBox = (MainTextBox)host.Child;
+                textBox.ScrollToEnd();
+            }
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            FileDictionarySeriliazer.Save(_files);
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void closeThisToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (tabControl1.SelectedIndex > -1)
+            {
+                _files.Remove(tabControl1.TabPages[tabControl1.SelectedTab.TabIndex].Name);
+                tabControl1.TabPages.Remove(tabControl1.SelectedTab);
+            }
+        }
+
+        private void closeAlToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            tabControl1.TabPages.Clear();
+        }
+
+        private void closeAlButThisToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CloseTabsToRightofSelected();
+
+            //for (int tab = 0; tab < tabControl1.TabCount; ++tab)
+            //{
+            //    if (tab != tabControl1.SelectedTab.TabIndex)
+            //    {
+            //        tabControl1.TabPages.Remove(tabControl1.TabPages[tab]);
+            //        string test = tabControl1.TabPages[tab].Text.Replace(CloseCross, "") + tab;
+            //        _files.Remove(tabControl1.TabPages[tab].Text.Replace(CloseCross, "") + tab);
+            //    }
+            //}
+        }
+
+        private void CloseTabsToRightofSelected()
+        {
+            
+            for (int tab = tabControl1.SelectedTab.TabIndex + 1; tab < tabControl1.TabCount; ++tab)
+            {
+                tabControl1.TabPages.Remove(tabControl1.TabPages[tab]);
+                string test = tabControl1.TabPages[tab].Text.Replace(CloseCross, "") + tab;
+                _files.Remove(tabControl1.TabPages[tab].Name);
+            }
+        }
     }
 }
