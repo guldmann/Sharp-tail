@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Net.Mail;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
 using Common;
@@ -40,8 +41,24 @@ namespace MainForm
                 }
             }
             MainForm_Resize(null,null);
+            tabControl1.MouseClick += new MouseEventHandler(tabControl1_MouseClick);
         }
 
+        private void tabControl1_MouseClick(object sender, MouseEventArgs e)
+        {
+            //select the tab under the mouse pointer and then show context menu
+            if (e.Button == MouseButtons.Right)
+            {
+                for (int tab = 0; tab < tabControl1.TabCount; ++tab)
+                {
+                    if (tabControl1.GetTabRect(tab).Contains(e.Location))
+                    {
+                        tabControl1.SelectTab(tab);
+                    }
+                }
+                contextMenuStripTabs.Show(tabControl1, e.Location);
+            }
+        }
 
         private void TailUpdateEvent(TaileFileInfo taileFileInfo)
         {
@@ -106,8 +123,8 @@ namespace MainForm
         private void CreateTab(string file)
         {
 	        int lastIndex = file.LastIndexOf('\\');
-	        var tabpageName = new TabPage(file.Substring(lastIndex+1) + CloseCross);
-            tabpageName.Width = 100;
+	        var tabPage = new TabPage(file.Substring(lastIndex+1) + CloseCross);
+            tabPage.Width = 100;
 
 	        var textbox = new MainTextBox
 	        {
@@ -121,6 +138,8 @@ namespace MainForm
 				Child=textbox
 			};
 
+            tabPage.Name = Guid.NewGuid().ToString();
+
             textbox.PreviewKeyDown += MainTextBox1_PreviewKeyDown;
             textbox.PreviewKeyUp += MainTextBox1_PreviewKeyUp;
             textbox.PreviewMouseWheel += MainTextBox1_MouseWheel;
@@ -128,11 +147,11 @@ namespace MainForm
             textbox.Drop += MainTextBox1_Drop;
             textbox.DragEnter += MainTextBox1_DragEnter;
             textbox.SetDataFile(file, _colorRules);
-			tabpageName.Controls.Add(host);
-			tabControl1.TabPages.Add(tabpageName);
+			tabPage.Controls.Add(host);
+			tabControl1.TabPages.Add(tabPage);
 			textbox.SetSize(host.Width, host.Height);
             textbox.ScrollToEnd();
-            _files.Add(file.Substring(lastIndex + 1) + tabControl1.TabPages.IndexOf(tabpageName), file);
+            _files.Add(tabPage.Name, file);
         }
 
 
@@ -332,7 +351,7 @@ namespace MainForm
                 Rectangle closeButton = new Rectangle(r.Right - 30, r.Top, 14, 20);
                 if (closeButton.Contains(e.Location))
                 {
-                    _files.Remove(tabControl1.TabPages[i].Text.Replace(CloseCross, "")+i);
+                    _files.Remove(tabControl1.TabPages[i].Name);
                     tabControl1.TabPages.RemoveAt(i);
                     break;
                 }
@@ -369,6 +388,46 @@ namespace MainForm
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Close();
+        }
+
+        private void closeThisToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (tabControl1.SelectedIndex > -1)
+            {
+                _files.Remove(tabControl1.TabPages[tabControl1.SelectedTab.TabIndex].Name);
+                tabControl1.TabPages.Remove(tabControl1.SelectedTab);
+            }
+        }
+
+        private void closeAlToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            tabControl1.TabPages.Clear();
+        }
+
+        private void closeAlButThisToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CloseTabsToRightofSelected();
+
+            //for (int tab = 0; tab < tabControl1.TabCount; ++tab)
+            //{
+            //    if (tab != tabControl1.SelectedTab.TabIndex)
+            //    {
+            //        tabControl1.TabPages.Remove(tabControl1.TabPages[tab]);
+            //        string test = tabControl1.TabPages[tab].Text.Replace(CloseCross, "") + tab;
+            //        _files.Remove(tabControl1.TabPages[tab].Text.Replace(CloseCross, "") + tab);
+            //    }
+            //}
+        }
+
+        private void CloseTabsToRightofSelected()
+        {
+            
+            for (int tab = tabControl1.SelectedTab.TabIndex + 1; tab < tabControl1.TabCount; ++tab)
+            {
+                tabControl1.TabPages.Remove(tabControl1.TabPages[tab]);
+                string test = tabControl1.TabPages[tab].Text.Replace(CloseCross, "") + tab;
+                _files.Remove(tabControl1.TabPages[tab].Name);
+            }
         }
     }
 }
