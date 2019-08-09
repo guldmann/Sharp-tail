@@ -337,6 +337,7 @@ namespace MainForm
 
             ColorRulesForm cf = new ColorRulesForm(_colorRules);
             cf.ShowDialog();
+            cf.SetDesktopLocation(Cursor.Position.X, Cursor.Position.Y);
             var result = cf.DialogResult;
             if (result == DialogResult.OK)
             {

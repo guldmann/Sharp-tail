@@ -109,15 +109,25 @@ namespace ListBoxControl.Controls
             _File = file;
             ColorRules = colorRules ?? new List<ColorRule>();
             _rowItems = new ObservableCollection<RowItem>();
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
             watch.Stop();
             Logger.Debug("New colour rule and collection Time: " + watch.ElapsedMilliseconds + "ms");
 
             Stopwatch watchRows = new Stopwatch();
             watchRows.Start();
-            foreach (var row in File.ReadAllLines(file))
+            
+            FileStream fs = new FileStream(file, FileMode.Open,FileAccess.Read ,FileShare.ReadWrite);
+            string line = string.Empty;
+            using (StreamReader reader = new StreamReader(fs))
             {
-                AddRow(row);
+                while ((line = reader.ReadLine()) != null)
+                {
+                    AddRow(line);
+                }   
             }
+
+
             watchRows.Stop();
             Logger.Debug("Adding rows " + file + " Time: " + watchRows.ElapsedMilliseconds + "ms");
 
