@@ -9,6 +9,8 @@ using Common;
 using Common.Messages.Services;
 using Common.Models;
 using ListBoxControl.Controls;
+using Serilog;
+using Serilog.Core;
 using DataFormats = System.Windows.Forms.DataFormats;
 using DragDropEffects = System.Windows.Forms.DragDropEffects;
 using DragEventArgs = System.Windows.Forms.DragEventArgs;
@@ -25,10 +27,19 @@ namespace MainForm
         private bool _ctrlDown;
         private List<ColorRule> _colorRules;
         private readonly MessageService _messageService = MessageService.Instance;
+        public static ILogger Logger;
+
 
         public MainForm()
         {
             InitializeComponent();
+
+            Logger = new LoggerConfiguration()
+                .WriteTo.RollingFile("Logs\\log-{Date}.log")
+                .MinimumLevel.Debug()
+                .CreateLogger();
+            
+
             _colorRules = ColorRuleSerializer.Load();
             _messageService.Subscribe<TaileFileInfo>(TailUpdateEvent);
             tabControl1.DrawMode = TabDrawMode.OwnerDrawFixed;
@@ -46,6 +57,7 @@ namespace MainForm
 
         private void tabControl1_MouseClick(object sender, MouseEventArgs e)
         {
+            
             //select the tab under the mouse pointer and then show context menu
             if (e.Button == MouseButtons.Right)
             {
@@ -106,8 +118,8 @@ namespace MainForm
             // Note: this is no  good,
             // Do we want this information ?
             // then do we want it as per file or for every file combined ?
-            toolStripStatusLabelName.Text = "Name: " + _fInfo.Name;
-            toolStripStatusLabelSize.Text = "Size: " + (_fInfo.Length / 1000) + "Kb";
+            //toolStripStatusLabelName.Text = "Name: " + _fInfo.Name;
+            //toolStripStatusLabelSize.Text = "Size: " + (_fInfo.Length / 1000) + "Kb";
         }
 
         private void SetFile(string[] files)
@@ -122,6 +134,7 @@ namespace MainForm
 
         private void CreateTab(string file)
         {
+            Log.Information("Creating tab for file: " +file );
 	        int lastIndex = file.LastIndexOf('\\');
 	        var tabPage = new TabPage(file.Substring(lastIndex+1) + CloseCross);
             tabPage.Width = 100;
@@ -146,7 +159,7 @@ namespace MainForm
             textbox.AllowDrop = true;
             textbox.Drop += MainTextBox1_Drop;
             textbox.DragEnter += MainTextBox1_DragEnter;
-            textbox.SetDataFile(file, _colorRules);
+            textbox.SetDataFile(file, _colorRules, Logger);
 			tabPage.Controls.Add(host);
 			tabControl1.TabPages.Add(tabPage);
 			textbox.SetSize(host.Width, host.Height);
@@ -338,7 +351,7 @@ namespace MainForm
 	        {
 		        var host = (ElementHost) tabControl1TabPage.Controls[0];
 		        var textBox = (MainTextBox) host.Child;
-				textBox.UpdateColorRules(_colorRules);
+				textBox.UpdateColorRules(_colorRules, Logger);
 	        }
 		}
 

@@ -5,11 +5,12 @@ using ListBoxControl.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Media;
+using Serilog;
 
 namespace ListBoxControl.Controls
 {
@@ -25,6 +26,7 @@ namespace ListBoxControl.Controls
         private bool GoToEnd = true;
         public bool Updated = false;
         private bool Evaluate = true;
+        public static ILogger Logger;
 
         public MainTextBox()
         {
@@ -96,19 +98,36 @@ namespace ListBoxControl.Controls
             if (evaluate) Evaluate = true;
         }
 
-        public void SetDataFile(string file, List<ColorRule> colorRules)
+        public void SetDataFile(string file, List<ColorRule> colorRules, ILogger log)
         {
+            if(Logger == null) Logger = log;
+
             if (file == null)
                 return;
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
             _File = file;
             ColorRules = colorRules ?? new List<ColorRule>();
             _rowItems = new ObservableCollection<RowItem>();
+            watch.Stop();
+            Logger.Debug("New colour rule and collection Time: " + watch.ElapsedMilliseconds + "ms");
 
+            Stopwatch watchRows = new Stopwatch();
+            watchRows.Start();
             foreach (var row in File.ReadAllLines(file))
             {
                 AddRow(row);
             }
+            watchRows.Stop();
+            Logger.Debug("Adding rows " + file + " Time: " + watchRows.ElapsedMilliseconds + "ms");
+
+            Stopwatch watchItemsSource = new Stopwatch();
+            watchItemsSource.Start();
+            listBox.ItemsSource = null;
             listBox.ItemsSource = _rowItems;
+            watchItemsSource.Stop();
+            Logger.Debug("Item source Time: " + watchItemsSource.ElapsedMilliseconds + "ms");
+                
             TailFile(file);
         }
 
@@ -131,9 +150,11 @@ namespace ListBoxControl.Controls
             listBox.Height = H;
         }
 
-        public void UpdateColorRules(List<ColorRule> colorRules)
+        public void UpdateColorRules(List<ColorRule> colorRules, ILogger log)
         {
-            SetDataFile(_File, colorRules);
+            if (Logger == null) Logger = log;
+            Logger.Debug("Updateing Color rules");
+            SetDataFile(_File, colorRules, log);
         }
 
         private void TailFile(string file)
