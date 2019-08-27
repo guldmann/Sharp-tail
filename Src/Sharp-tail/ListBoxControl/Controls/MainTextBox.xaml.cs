@@ -116,7 +116,7 @@ namespace ListBoxControl.Controls
 
             Stopwatch watchRows = new Stopwatch();
             watchRows.Start();
-            
+
             FileStream fs = new FileStream(file, FileMode.Open,FileAccess.Read ,FileShare.ReadWrite);
             string line = string.Empty;
             using (StreamReader reader = new StreamReader(fs))
@@ -124,9 +124,8 @@ namespace ListBoxControl.Controls
                 while ((line = reader.ReadLine()) != null)
                 {
                     AddRow(line);
-                }   
+                }
             }
-
 
             watchRows.Stop();
             Logger.Debug("Adding rows " + file + " Time: " + watchRows.ElapsedMilliseconds + "ms");
@@ -137,7 +136,7 @@ namespace ListBoxControl.Controls
             listBox.ItemsSource = _rowItems;
             watchItemsSource.Stop();
             Logger.Debug("Item source Time: " + watchItemsSource.ElapsedMilliseconds + "ms");
-                
+
             TailFile(file);
         }
 
@@ -164,7 +163,47 @@ namespace ListBoxControl.Controls
         {
             if (Logger == null) Logger = log;
             Logger.Debug("Updateing Color rules");
-            SetDataFile(_File, colorRules, log);
+            ColorRules = colorRules ?? new List<ColorRule>();
+            int rows = _rowItems.Count;
+            int index = 0;
+            bool textWriten = false;
+            Stopwatch UpdateWatch = new Stopwatch();
+            UpdateWatch.Start();
+            while (index < rows)
+            {
+                foreach (var rule in colorRules)
+                {
+
+                    if (_rowItems[index].Text.Contains(rule.Text))
+                    {
+
+                        _rowItems[index].BackColor = Color.FromRgb(
+                                rule.Background.R,
+                                rule.Background.G,
+                                rule.Background.B);
+                        _rowItems[index].FrontColor = Color.FromRgb(
+                                rule.ForeGround.R,
+                                rule.ForeGround.G,
+                                rule.ForeGround.B);
+                        textWriten = true;
+                        break;
+                    }
+
+                }
+                if (!textWriten)
+                {
+                    _rowItems[index].BackColor = Colors.White;
+                    _rowItems[index].FrontColor = Colors.Black;
+                }
+                textWriten = false;
+                index++;
+            }
+
+            listBox.ItemsSource = null;
+            listBox.ItemsSource = _rowItems;
+            UpdateWatch.Stop();
+            Logger.Debug($"Update {_File} Time: " + UpdateWatch.ElapsedMilliseconds + "ms");
+            //SetDataFile(_File, colorRules, log);
         }
 
         private void TailFile(string file)

@@ -10,11 +10,12 @@ using Common.Messages.Services;
 using Common.Models;
 using ListBoxControl.Controls;
 using Serilog;
-using Serilog.Core;
+using Serilog.Sink.AppCenter;
 using DataFormats = System.Windows.Forms.DataFormats;
 using DragDropEffects = System.Windows.Forms.DragDropEffects;
 using DragEventArgs = System.Windows.Forms.DragEventArgs;
 using Point = System.Windows.Point;
+using Microsoft.AppCenter;
 
 namespace MainForm
 {
@@ -36,9 +37,9 @@ namespace MainForm
 
             Logger = new LoggerConfiguration()
                 .WriteTo.RollingFile("Logs\\log-{Date}.log")
+                .WriteTo.AppCenterSink()
                 .MinimumLevel.Debug()
                 .CreateLogger();
-            
 
             _colorRules = ColorRuleSerializer.Load();
             _messageService.Subscribe<TaileFileInfo>(TailUpdateEvent);
@@ -48,6 +49,7 @@ namespace MainForm
             {
                 foreach (var file in files)
                 {
+                    //TODO:  Validate if file exist or try catch here
                     SetFile(new [] {file.Value});
                 }
             }
@@ -57,8 +59,7 @@ namespace MainForm
 
         private void tabControl1_MouseClick(object sender, MouseEventArgs e)
         {
-            
-            //select the tab under the mouse pointer and then show context menu
+            //selects the tab under the mouse pointer and then show context menu
             if (e.Button == MouseButtons.Right)
             {
                 for (int tab = 0; tab < tabControl1.TabCount; ++tab)
@@ -134,6 +135,7 @@ namespace MainForm
 
         private void CreateTab(string file)
         {
+            //TODO: Set focus to last added TAB !
             Log.Information("Creating tab for file: " +file );
 	        int lastIndex = file.LastIndexOf('\\');
 	        var tabPage = new TabPage(file.Substring(lastIndex+1) + CloseCross);
@@ -429,7 +431,7 @@ namespace MainForm
 					page.Dispose();
 				}
 	        }
-		
+
         }
     }
 }
