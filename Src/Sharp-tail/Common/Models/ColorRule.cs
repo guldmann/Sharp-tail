@@ -15,6 +15,7 @@ namespace Common.Models
         public RuleColor Background { get; set; }
         public RuleColor ForeGround { get; set; }
         public Guid Id { get; }
+        public bool Casesensitiv { get; set; }
 
     }
 

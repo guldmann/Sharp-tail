@@ -49,8 +49,10 @@ namespace MainForm
             {
                 foreach (var file in files)
                 {
-                    //TODO:  Validate if file exist or try catch here
-                    SetFile(new [] {file.Value});
+                    if (File.Exists(file.Value))
+                    {
+                        SetFile(new[] { file.Value });
+                    }
                 }
             }
             MainForm_Resize(null,null);
@@ -119,6 +121,7 @@ namespace MainForm
             // Note: this is no  good,
             // Do we want this information ?
             // then do we want it as per file or for every file combined ?
+
             //toolStripStatusLabelName.Text = "Name: " + _fInfo.Name;
             //toolStripStatusLabelSize.Text = "Size: " + (_fInfo.Length / 1000) + "Kb";
         }
@@ -167,6 +170,7 @@ namespace MainForm
 			textbox.SetSize(host.Width, host.Height);
             textbox.ScrollToEnd();
             _files.Add(tabPage.Name, file);
+            tabControl1.SelectTab(tabPage);
         }
 
 
@@ -211,30 +215,32 @@ namespace MainForm
         private void TabControl1_DrawItem(object sender, DrawItemEventArgs e)
         {
             TabPage tab = tabControl1.TabPages[e.Index];
-
-            var host = (ElementHost) tab.Controls[0];
-            var textBox = (MainTextBox) host.Child;
-
-            Rectangle paddedBounds = e.Bounds;
-            paddedBounds.Inflate(-2, -2);
-            if (textBox.Updated)
+            if (tab.Controls.Count > 0)
             {
-                if (tabControl1.SelectedIndex != e.Index)
+                var host = (ElementHost) tab.Controls[0];
+                var textBox = (MainTextBox) host.Child;
+
+                Rectangle paddedBounds = e.Bounds;
+                paddedBounds.Inflate(-2, -2);
+                if (textBox.Updated)
                 {
-                    e.Graphics.FillRectangle(new SolidBrush(Color.LightPink), e.Bounds);
-                    e.Graphics.DrawString(tabControl1.TabPages[e.Index].Text, this.Font, SystemBrushes.ControlText,
-                        paddedBounds);
+                    if (tabControl1.SelectedIndex != e.Index)
+                    {
+                        e.Graphics.FillRectangle(new SolidBrush(Color.LightPink), e.Bounds);
+                        e.Graphics.DrawString(tabControl1.TabPages[e.Index].Text, this.Font, SystemBrushes.ControlText,
+                            paddedBounds);
+                    }
+                    else
+                    {
+                        e.Graphics.DrawString(tabControl1.TabPages[e.Index].Text, this.Font, SystemBrushes.ControlText,
+                            paddedBounds);
+                    }
                 }
                 else
                 {
                     e.Graphics.DrawString(tabControl1.TabPages[e.Index].Text, this.Font, SystemBrushes.ControlText,
                         paddedBounds);
                 }
-            }
-            else
-            {
-                e.Graphics.DrawString(tabControl1.TabPages[e.Index].Text, this.Font, SystemBrushes.ControlText,
-                    paddedBounds);
             }
         }
 
@@ -367,6 +373,7 @@ namespace MainForm
                 Rectangle closeButton = new Rectangle(r.Right - 30, r.Top, 14, 20);
                 if (closeButton.Contains(e.Location))
                 {
+                   Tabcleaner(tabControl1.TabPages[i]);
                     _files.Remove(tabControl1.TabPages[i].Name);
                     tabControl1.TabPages.RemoveAt(i);
                     break;
@@ -374,14 +381,30 @@ namespace MainForm
             }
         }
 
+        void Tabcleaner(TabPage page)
+        {
+            var host = (ElementHost)page.Controls[0];
+            var textBox = (MainTextBox)host.Child;
+            textBox.Close();
+            host.Controls.Clear();
+            page.Controls.RemoveAt(0);
+            page.Controls.Clear();
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+        }
+
+
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (tabControl1.SelectedIndex > -1)
             {
-                TabPage tabControl1TabPage = tabControl1.TabPages[tabControl1.SelectedIndex];
-                var host = (ElementHost) tabControl1TabPage.Controls[0];
-                var textBox = (MainTextBox) host.Child;
-                textBox.Updated = false;
+                TabPage tabPage = tabControl1.TabPages[tabControl1.SelectedIndex];
+                if (tabPage.Controls.Count > 0)
+                {
+                    var host = (ElementHost) tabPage.Controls[0];
+                    var textBox = (MainTextBox) host.Child;
+                    textBox.Updated = false;
+                }
             }
         }
 
@@ -410,6 +433,7 @@ namespace MainForm
         {
             if (tabControl1.SelectedIndex > -1)
             {
+                Tabcleaner(tabControl1.TabPages[tabControl1.SelectedTab.TabIndex]);
                 _files.Remove(tabControl1.TabPages[tabControl1.SelectedTab.TabIndex].Name);
                 tabControl1.TabPages.Remove(tabControl1.SelectedTab);
             }
@@ -417,6 +441,12 @@ namespace MainForm
 
         private void closeAlToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            //TODO: Forech  tab page make a call to Tabclean
+            foreach (TabPage page in tabControl1.TabPages)
+            {
+                Tabcleaner(page);
+                _files.Remove(page.Name);
+            }
             tabControl1.TabPages.Clear();
         }
 
@@ -426,12 +456,17 @@ namespace MainForm
 	        {
 		        if (page.TabIndex != tabControl1.SelectedTab.TabIndex)
 		        {
+                    Tabcleaner(page);
 			        _files.Remove(page.Name);
 			        tabControl1.TabPages.Remove(page);
 					page.Dispose();
 				}
 	        }
+        }
 
+        private void closeAllFilesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            closeAlToolStripMenuItem_Click(null, null);
         }
     }
 }

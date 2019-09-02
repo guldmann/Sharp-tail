@@ -38,6 +38,7 @@
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
             this.listViewColorRules = new System.Windows.Forms.ListView();
             this.Header = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.checkBoxCase = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // label1
@@ -60,7 +61,7 @@
             // 
             this.buttonFrontColor.Location = new System.Drawing.Point(17, 525);
             this.buttonFrontColor.Name = "buttonFrontColor";
-            this.buttonFrontColor.Size = new System.Drawing.Size(112, 66);
+            this.buttonFrontColor.Size = new System.Drawing.Size(165, 66);
             this.buttonFrontColor.TabIndex = 3;
             this.buttonFrontColor.Text = "Front Color";
             this.buttonFrontColor.UseVisualStyleBackColor = true;
@@ -68,9 +69,9 @@
             // 
             // buttonBackColor
             // 
-            this.buttonBackColor.Location = new System.Drawing.Point(135, 525);
+            this.buttonBackColor.Location = new System.Drawing.Point(188, 525);
             this.buttonBackColor.Name = "buttonBackColor";
-            this.buttonBackColor.Size = new System.Drawing.Size(121, 66);
+            this.buttonBackColor.Size = new System.Drawing.Size(165, 66);
             this.buttonBackColor.TabIndex = 4;
             this.buttonBackColor.Text = "Back Color";
             this.buttonBackColor.UseVisualStyleBackColor = true;
@@ -78,9 +79,9 @@
             // 
             // buttonSave
             // 
-            this.buttonSave.Location = new System.Drawing.Point(262, 525);
+            this.buttonSave.Location = new System.Drawing.Point(359, 527);
             this.buttonSave.Name = "buttonSave";
-            this.buttonSave.Size = new System.Drawing.Size(116, 66);
+            this.buttonSave.Size = new System.Drawing.Size(114, 66);
             this.buttonSave.TabIndex = 5;
             this.buttonSave.Text = "Add";
             this.buttonSave.UseVisualStyleBackColor = true;
@@ -88,9 +89,9 @@
             // 
             // buttonClose
             // 
-            this.buttonClose.Location = new System.Drawing.Point(384, 525);
+            this.buttonClose.Location = new System.Drawing.Point(479, 527);
             this.buttonClose.Name = "buttonClose";
-            this.buttonClose.Size = new System.Drawing.Size(102, 66);
+            this.buttonClose.Size = new System.Drawing.Size(132, 66);
             this.buttonClose.TabIndex = 6;
             this.buttonClose.Text = "Close";
             this.buttonClose.UseVisualStyleBackColor = true;
@@ -98,9 +99,9 @@
             // 
             // buttonRemove
             // 
-            this.buttonRemove.Location = new System.Drawing.Point(492, 525);
+            this.buttonRemove.Location = new System.Drawing.Point(617, 525);
             this.buttonRemove.Name = "buttonRemove";
-            this.buttonRemove.Size = new System.Drawing.Size(102, 66);
+            this.buttonRemove.Size = new System.Drawing.Size(156, 66);
             this.buttonRemove.TabIndex = 7;
             this.buttonRemove.Text = "Remove";
             this.buttonRemove.UseVisualStyleBackColor = true;
@@ -117,7 +118,7 @@
             this.listViewColorRules.Location = new System.Drawing.Point(0, 0);
             this.listViewColorRules.MultiSelect = false;
             this.listViewColorRules.Name = "listViewColorRules";
-            this.listViewColorRules.Size = new System.Drawing.Size(604, 463);
+            this.listViewColorRules.Size = new System.Drawing.Size(791, 463);
             this.listViewColorRules.TabIndex = 8;
             this.listViewColorRules.UseCompatibleStateImageBehavior = false;
             this.listViewColorRules.View = System.Windows.Forms.View.Details;
@@ -127,11 +128,22 @@
             this.Header.Text = "Current rules";
             this.Header.Width = 30000;
             // 
+            // checkBoxCase
+            // 
+            this.checkBoxCase.AutoSize = true;
+            this.checkBoxCase.Location = new System.Drawing.Point(600, 483);
+            this.checkBoxCase.Name = "checkBoxCase";
+            this.checkBoxCase.Size = new System.Drawing.Size(173, 29);
+            this.checkBoxCase.TabIndex = 9;
+            this.checkBoxCase.Text = "Case sensitiv";
+            this.checkBoxCase.UseVisualStyleBackColor = true;
+            // 
             // ColorRulesForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(604, 605);
+            this.ClientSize = new System.Drawing.Size(791, 605);
+            this.Controls.Add(this.checkBoxCase);
             this.Controls.Add(this.listViewColorRules);
             this.Controls.Add(this.buttonRemove);
             this.Controls.Add(this.buttonClose);
@@ -158,5 +170,6 @@
         private System.Windows.Forms.ColorDialog colorDialog1;
         private System.Windows.Forms.ListView listViewColorRules;
         private System.Windows.Forms.ColumnHeader Header;
+        private System.Windows.Forms.CheckBox checkBoxCase;
     }
 }

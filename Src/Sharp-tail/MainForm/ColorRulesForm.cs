@@ -73,6 +73,7 @@ namespace MainForm
             ColorRules.Add(new ColorRule
             {
                 Text = textBoxFilterText.Text,
+                Casesensitiv = checkBoxCase.Checked,
                 Background =  new RuleColor
                 {
                     R = textBoxFilterText.BackColor.R,

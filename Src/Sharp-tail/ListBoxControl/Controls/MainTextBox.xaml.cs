@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -20,6 +21,8 @@ namespace ListBoxControl.Controls
         private readonly MessageService _messageService = MessageService.Instance;
 
         private Task _task;
+        CancellationTokenSource tokenSource = new CancellationTokenSource();
+        private CancellationToken token;
         private Tail _tail;
         private List<ColorRule> ColorRules = new List<ColorRule>();
         private string _File;
@@ -32,8 +35,23 @@ namespace ListBoxControl.Controls
         {
             InitializeComponent();
             _messageService.Subscribe<TaileFileInfo>(TailUpdateEvent);
+            token = tokenSource.Token;
         }
 
+        public void Close()
+        {
+            tokenSource.Cancel();
+           // _tail.StopTailFile();
+            //Try to clean up resources
+           // _task.
+            if (_task.IsCanceled || _task.IsCompleted)
+            {
+                _task.Dispose();
+            }
+            _rowItems.Clear();
+            ColorRules.Clear();
+            listBox.ItemsSource = null;
+        }
         private void TailUpdateEvent(TaileFileInfo taileFileInfo)
         {
             if (taileFileInfo.Name == _File)
@@ -68,7 +86,7 @@ namespace ListBoxControl.Controls
 
             foreach (var rule in ColorRules)
             {
-                if (text.Contains(rule.Text))
+                if (CaseCompare(text, rule.Text, rule.Casesensitiv))
                 {
                     _rowItems.Add(new RowItem
                     {
@@ -109,8 +127,6 @@ namespace ListBoxControl.Controls
             _File = file;
             ColorRules = colorRules ?? new List<ColorRule>();
             _rowItems = new ObservableCollection<RowItem>();
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
             watch.Stop();
             Logger.Debug("New colour rule and collection Time: " + watch.ElapsedMilliseconds + "ms");
 
@@ -159,6 +175,19 @@ namespace ListBoxControl.Controls
             listBox.Height = H;
         }
 
+        private bool CaseCompare(string text, string value, bool caseSencetiv)
+        {
+            StringComparison stringComparison = StringComparison.CurrentCulture;
+            if (!caseSencetiv)
+            {
+                stringComparison = StringComparison.CurrentCultureIgnoreCase;
+                return text.IndexOf(value, stringComparison) >= 0;
+            }
+
+            return text.IndexOf(value, stringComparison) >= 0;
+        }
+
+
         public void UpdateColorRules(List<ColorRule> colorRules, ILogger log)
         {
             if (Logger == null) Logger = log;
@@ -174,7 +203,7 @@ namespace ListBoxControl.Controls
                 foreach (var rule in colorRules)
                 {
 
-                    if (_rowItems[index].Text.Contains(rule.Text))
+                    if (CaseCompare(_rowItems[index].Text, rule.Text, rule.Casesensitiv))
                     {
 
                         _rowItems[index].BackColor = Color.FromRgb(
@@ -188,7 +217,6 @@ namespace ListBoxControl.Controls
                         textWriten = true;
                         break;
                     }
-
                 }
                 if (!textWriten)
                 {
@@ -203,28 +231,22 @@ namespace ListBoxControl.Controls
             listBox.ItemsSource = _rowItems;
             UpdateWatch.Stop();
             Logger.Debug($"Update {_File} Time: " + UpdateWatch.ElapsedMilliseconds + "ms");
-            //SetDataFile(_File, colorRules, log);
         }
 
         private void TailFile(string file)
         {
-            //TODO: Evaluate this !!
-            // This is from when only one instance of this was on main form.
-            // Now a new instance is created for every new file opened in a new tab
-            // TODO: delete code not needed.
             _tail?.StopTailFile();
-
             _tail = new Tail(file);
-            _task = new Task(() => _tail.TailFile());
+            _task = new Task(() => _tail.TailFile(token),token);
             _task.Start();
         }
 
         public void listBox_ScrollChanged(object sender , ScrollChangedEventArgs e)
         {
             if (!Evaluate) return;
-            GoToEnd = e.ExtentHeight 
-                == (e.ViewportHeight + e.VerticalOffset) 
-                ? true 
+            GoToEnd = e.ExtentHeight
+                == (e.ViewportHeight + e.VerticalOffset)
+                ? true
                 : false;
         }
     }

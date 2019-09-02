@@ -1,6 +1,7 @@
 ﻿using Common.Messages.Services;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using Common.Models;
 
 namespace Common.Tail
@@ -10,7 +11,7 @@ namespace Common.Tail
         private readonly string _fileName;
         private MessageService _messageService = MessageService.Instance;
         private bool _tailingFile;
-       
+
         public Tail(string file)
         {
             _fileName = file;
@@ -22,7 +23,7 @@ namespace Common.Tail
             _tailingFile = false;
         }
 
-        public void TailFile()
+        public void TailFile(CancellationToken ct)
         {
             using (StreamReader reader =
                 new StreamReader(new FileStream(_fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
@@ -30,7 +31,8 @@ namespace Common.Tail
                 //start at the end of the file
                 long lastMaxOffset = reader.BaseStream.Length;
 
-                while (_tailingFile)
+                //while (_tailingFile)
+                while (!ct.IsCancellationRequested)
                 {
                     System.Threading.Thread.Sleep(100);
 
