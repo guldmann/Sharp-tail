@@ -138,7 +138,6 @@ namespace MainForm
 
         private void CreateTab(string file)
         {
-            //TODO: Set focus to last added TAB !
             Log.Information("Creating tab for file: " +file );
 	        int lastIndex = file.LastIndexOf('\\');
 	        var tabPage = new TabPage(file.Substring(lastIndex+1) + CloseCross);
@@ -441,7 +440,6 @@ namespace MainForm
 
         private void closeAlToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //TODO: Forech  tab page make a call to Tabclean
             foreach (TabPage page in tabControl1.TabPages)
             {
                 Tabcleaner(page);
