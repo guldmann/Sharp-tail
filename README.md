@@ -14,9 +14,9 @@ Search text.
 
 ### Keayboard shortcuts
 
-[F11] Toggle full screen
-[ctrl] + mouse wheel zoom in and out 
-[ctrl] + [+] Zoom in on text
-[ctrl] + [-] Zoom out on text
-[ctrl] + [F] Toggle filter text
+* [F11] Toggle full screen 
+* [ctrl] + mouse wheel zoom in and out 
+* [ctrl] + [+] Zoom in on text
+* [ctrl] + [-] Zoom out on text
+* [ctrl] + [F] Toggle filter text
 
