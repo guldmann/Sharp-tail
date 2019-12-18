@@ -6,11 +6,13 @@ namespace Common
 {
     public static class FileDictionarySeriliazer
     {
+        private const string LastFiles = "lastOpenFiles.json";
+
         public static void Save(Dictionary<string, string> files)
         {
             JsonSerializer jsonSerializer = new JsonSerializer();
             jsonSerializer.Formatting = Formatting.Indented;
-            using (StreamWriter sw = new StreamWriter("lastOpenFiles.json"))
+            using (StreamWriter sw = new StreamWriter(LastFiles))
             {
                 using (JsonWriter writer = new JsonTextWriter(sw))
                 {
@@ -21,9 +23,9 @@ namespace Common
 
         public static Dictionary<string, string> Load()
         {
-            if (File.Exists("lastOpenFiles.json"))
+            if (File.Exists(LastFiles))
             {
-                var jstring = File.ReadAllText("lastOpenFiles.json");
+                var jstring = File.ReadAllText(LastFiles);
 
                 return JsonConvert.DeserializeObject<Dictionary<string,string>>(jstring);
             }

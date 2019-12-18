@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Text;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
 using System.Windows.Input;
@@ -45,21 +46,39 @@ namespace MainForm
             _colorRules = ColorRuleSerializer.Load();
             _messageService.Subscribe<TaileFileInfo>(TailUpdateEvent);
             tabControl1.DrawMode = TabDrawMode.OwnerDrawFixed;
-            var files = FileDictionarySeriliazer.Load();
-            if (files.Count > 0)
-            {
-                foreach (var file in files)
-                {
-                    if (File.Exists(file.Value))
-                    {
-                        SetFile(new[] { file.Value });
-                    }
-                }
-            }
+            
             MainForm_Resize(null, null);
             tabControl1.MouseClick += tabControl1_MouseClick;
             tabControl1.ShowToolTips = true;
             timer1.Enabled = true;
+            LoadPrevious();
+        }
+
+        private void LoadPrevious()
+        {
+            
+            var files = FileDictionarySeriliazer.Load();
+            if (files.Count > 0)
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append("Open previous opened files ?").Append("\n");
+                foreach (var file in files)
+                {
+                    sb.Append("* ").Append(file.Value).Append("\n");
+                }
+                
+                var result = MessageBox.Show(sb.ToString(), "Open previous files?", MessageBoxButtons.OKCancel);
+                if (result == DialogResult.OK)
+                {
+                    foreach (var file in files)
+                    {
+                        if (File.Exists(file.Value))
+                        {
+                            SetFile(new[] {file.Value});
+                        }
+                    }
+                }
+            }
         }
 
         private void tabControl1_MouseClick(object sender, MouseEventArgs e)
