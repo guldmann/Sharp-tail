@@ -26,12 +26,13 @@ namespace ListBoxControl.Controls
         private CancellationToken _token;
         private Tail _tail;
         private List<ColorRule> _colorRules = new List<ColorRule>();
-        private string _file;
+        public string File;
         private bool _goToEnd = true;
         public bool Updated;
         private bool _evaluate = true;
         public static ILogger Logger;
         private bool _filterActive = true;
+        public long FileSize = 0;
 
         public MainTextBox()
         {
@@ -55,14 +56,17 @@ namespace ListBoxControl.Controls
             listBox.ItemsSource = null;
         }
 
+        
+
         private void TailUpdateEvent(TaileFileInfo taileFileInfo)
         {
-            if (taileFileInfo.Name == _file)
+            if (taileFileInfo.Name == File)
             {
                 _evaluate = false;
                 Updated = true;
                 int rows = 1;
-
+                FileSize = taileFileInfo.Size;
+                
                 foreach (var item in taileFileInfo.FilesRows)
                 {
                     if (rows >= taileFileInfo.FilesRows.Count)
@@ -147,7 +151,7 @@ namespace ListBoxControl.Controls
             if (file == null)
                 return;
 
-            _file = file;
+            File = file;
             _colorRules = colorRules ?? new List<ColorRule>();
 
             _rowItems = new ObservableCollection<RowItem>();
@@ -155,6 +159,7 @@ namespace ListBoxControl.Controls
             FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             using (StreamReader reader = new StreamReader(fs))
             {
+                FileSize = reader.BaseStream.Length;
                 string line;
                 while ((line = reader.ReadLine()) != null)
                 {

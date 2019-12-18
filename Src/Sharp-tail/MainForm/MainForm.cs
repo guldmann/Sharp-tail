@@ -116,14 +116,14 @@ namespace MainForm
             }
         }
 
-        private void SetFileAtrubutesToGui()
+        private void SetFileAtrubutesToGui(string name, long size)
         {
             // Note: this is no  good,
             // Do we want this information ?
             // then do we want it as per file or for every file combined ?
 
-            //toolStripStatusLabelName.Text = "Name: " + _fInfo.Name;
-            //toolStripStatusLabelSize.Text = "Size: " + (_fInfo.Length / 1000) + "Kb";
+            toolStripStatusLabelName.Text = "Name: " + name;
+            toolStripStatusLabelSize.Text = "Size: " + (size / 1000) + "Kb";
         }
 
         private void SetFile(string[] files)
@@ -131,7 +131,7 @@ namespace MainForm
             foreach (var file in files)
             {
                 _fInfo = new FileInfo(file);
-                SetFileAtrubutesToGui();
+               // SetFileAtrubutesToGui();
                 CreateTab(file);
             }
         }
@@ -278,7 +278,7 @@ namespace MainForm
         private void MainTextBox1_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
             if (e.Key == Key.F11)
-                ToogleFullScreen();
+                ToggleFullScreen();
 
             if (tabControl1.TabCount > 0)
             {
@@ -317,7 +317,7 @@ namespace MainForm
                 _ctrlDown = true;
         }
 
-        private void ToogleFullScreen()
+        private void ToggleFullScreen()
         {
             if (_fullScreen)
             {
@@ -410,6 +410,7 @@ namespace MainForm
                     var host = (ElementHost)tabPage.Controls[0];
                     var textBox = (MainTextBox)host.Child;
                     textBox.Updated = false;
+                    SetFileAtrubutesToGui(textBox.File, textBox.FileSize);
                 }
             }
         }

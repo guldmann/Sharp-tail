@@ -34,7 +34,7 @@ namespace Common.Tail
                 //while (_tailingFile)
                 while (!ct.IsCancellationRequested)
                 {
-                    System.Threading.Thread.Sleep(100);
+                    Thread.Sleep(100);
 
                     //if the file size has not changed, idle
                     if (reader.BaseStream.Length == lastMaxOffset)
