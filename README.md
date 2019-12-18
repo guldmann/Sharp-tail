@@ -16,7 +16,7 @@ Search text.
 
 * [F11] Toggle full screen 
 * [ctrl] + mouse wheel zoom in and out 
-* [ctrl] + [+] Zoom in on text
-* [ctrl] + [-] Zoom out on text
-* [ctrl] + [F] Toggle filter text
+* [+] Zoom in on text
+* [-] Zoom out on text
+* [F] Toggle filter text
 
