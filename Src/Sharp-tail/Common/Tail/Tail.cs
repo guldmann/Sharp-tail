@@ -1,4 +1,5 @@
-﻿using Common.Messages.Services;
+﻿using System;
+using Common.Messages.Services;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
@@ -6,7 +7,7 @@ using Common.Models;
 
 namespace Common.Tail
 {
-    public class Tail
+    public class Tail : IDisposable
     {
         private readonly string _fileName;
         private MessageService _messageService = MessageService.Instance;
@@ -59,7 +60,37 @@ namespace Common.Tail
                     //update the last max offset
                     lastMaxOffset = reader.BaseStream.Position;
                 }
+                reader.Close();
+                Dispose();
             }
         }
+
+        #region IDisposable Support
+        private bool disposedValue = false; 
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    _messageService = null;
+                }
+
+                // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
+                // TODO: set large fields to null.
+
+                disposedValue = true;
+            }
+        }
+      
+        public void Dispose()
+        {
+            
+            Dispose(true);
+            // TODO: uncomment the following line if the finalizer is overridden above.
+             GC.SuppressFinalize(this);
+        }
+        #endregion
     }
 }

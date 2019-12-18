@@ -15,10 +15,10 @@ using System.Windows.Media;
 
 namespace ListBoxControl.Controls
 {
-    public partial class MainTextBox
+    public partial class MainTextBox : IDisposable
     {
         private ObservableCollection<RowItem> _rowItems;
-        private readonly MessageService _messageService = MessageService.Instance;
+        private  MessageService _messageService = MessageService.Instance;
 
         private Task _task;
         private readonly CancellationTokenSource _tokenSource = new CancellationTokenSource();
@@ -50,6 +50,7 @@ namespace ListBoxControl.Controls
             {
                 _task.Dispose();
             }
+            
             _rowItems.Clear();
             _colorRules.Clear();
             listBox.ItemsSource = null;
@@ -273,6 +274,39 @@ namespace ListBoxControl.Controls
                 == (e.ViewportHeight + e.VerticalOffset)
                 ? true
                 : false;
+        }
+
+        bool disposed = false;
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposed)
+                return;
+
+            if (disposing)
+            {
+                _rowItems.Clear();
+                _rowItems = null;
+                _tokenSource.Cancel();
+                
+                if (_task.IsCanceled || _task.IsCompleted)
+                {
+                    _task.Dispose();
+                }
+                _colorRules.Clear();
+                _colorRules = null;
+                listBox.ItemsSource = null;
+                _messageService = null;
+
+            }
+
+            disposed = true;
         }
     }
 }

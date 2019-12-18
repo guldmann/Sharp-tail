@@ -9,10 +9,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
 using System.Windows.Input;
+using Common.Helpers;
 using Cursor = System.Windows.Forms.Cursor;
 using DataFormats = System.Windows.Forms.DataFormats;
 using DragDropEffects = System.Windows.Forms.DragDropEffects;
@@ -56,7 +58,6 @@ namespace MainForm
 
         private void LoadPrevious()
         {
-            
             var files = FileDictionarySeriliazer.Load();
             if (files.Count > 0)
             {
@@ -68,39 +69,43 @@ namespace MainForm
                 }
                 
                 var result = MessageBox.Show(sb.ToString(), "Open previous files?", MessageBoxButtons.OKCancel);
-                if (result == DialogResult.OK)
+                if (result != DialogResult.OK) return;
                 {
-                    foreach (var file in files)
+                    foreach (var file in files.Where(file => File.Exists(file.Value)))
                     {
-                        if (File.Exists(file.Value))
-                        {
-                            SetFile(new[] {file.Value});
-                        }
+                        SetFile(new[] {file.Value});
                     }
                 }
             }
         }
 
+        /// <summary>
+        /// Select Tab under mouse pointer and show context menu
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void tabControl1_MouseClick(object sender, MouseEventArgs e)
         {
-            //selects the tab under the mouse pointer and then show context menu
-            if (e.Button == MouseButtons.Right)
+            if (e.Button != MouseButtons.Right) return;
+            
+            for (var tab = 0; tab < tabControl1.TabCount; ++tab)
             {
-                for (int tab = 0; tab < tabControl1.TabCount; ++tab)
+                if (tabControl1.GetTabRect(tab).Contains(e.Location))
                 {
-                    if (tabControl1.GetTabRect(tab).Contains(e.Location))
-                    {
-                        tabControl1.SelectTab(tab);
-                    }
+                    tabControl1.SelectTab(tab);
                 }
-                contextMenuStripTabs.Show(tabControl1, e.Location);
             }
+            contextMenuStripTabs.Show(tabControl1, e.Location);
         }
 
+        /// <summary>
+        /// Find tabpage with the tailed file
+        /// and call updatePage 
+        /// </summary>
+        /// <param name="taileFileInfo"></param>
         private void TailUpdateEvent(TaileFileInfo taileFileInfo)
         {
-            int index = taileFileInfo.Name.LastIndexOf("\\") + 1;
-            var name = taileFileInfo.Name.Substring(index) + CloseCross;
+            var name = taileFileInfo.Name.Truncate();
             foreach (TabPage tabControl1TabPage in tabControl1.TabPages)
             {
                 if (tabControl1TabPage.Text == name && tabControl1TabPage.InvokeRequired)
@@ -110,6 +115,10 @@ namespace MainForm
             }
         }
 
+        /// <summary>
+        /// Set textbox in tabpage to update
+        /// </summary>
+        /// <param name="page"></param>
         private void UpdatePage(TabPage page)
         {
             if (!page.Focused)
@@ -123,11 +132,19 @@ namespace MainForm
             tabControl1.Refresh();
         }
 
+        /// <summary>
+        /// Call open file dialog on behalf of tool strip menu
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenFileDialog();
         }
 
+        /// <summary>
+        /// Open file dialog. And if OK open file.
+        /// </summary>
         private void OpenFileDialog()
         {
             var result = openFileDialog1.ShowDialog();
@@ -138,32 +155,42 @@ namespace MainForm
             }
         }
 
+        /// <summary>
+        /// Set values to Tool strip
+        /// </summary>
+        /// <param name="name">Name of file for current selected tab</param>
+        /// <param name="size">Size of file for current selected tab</param>
         private void SetFileAtrubutesToGui(string name, long size)
         {
-            // Note: this is no  good,
-            // Do we want this information ?
-            // then do we want it as per file or for every file combined ?
-
             toolStripStatusLabelName.Text = "Name: " + name;
             toolStripStatusLabelSize.Text = "Size: " + (size / 1000) + "Kb";
         }
 
+        /// <summary>
+        /// Get fileInfo for passed files.
+        /// set tool strip values.
+        /// Calls to create tabs for passed files. 
+        /// </summary>
+        /// <param name="files"></param>
         private void SetFile(string[] files)
         {
             foreach (var file in files)
             {
                 _fInfo = new FileInfo(file);
-               // SetFileAtrubutesToGui();
+                SetFileAtrubutesToGui(_fInfo.Name, _fInfo.Length);
                 CreateTab(file);
             }
         }
 
+        /// <summary>
+        /// Create a tab page for passed file.
+        /// </summary>
+        /// <param name="file"></param>
         private void CreateTab(string file)
         {
             Log.Information("Creating tab for file: " + file);
-            int lastIndex = file.LastIndexOf('\\');
-            var tabPage = new TabPage(file.Substring(lastIndex + 1) + CloseCross);
-            tabPage.Width = 100;
+
+            var tabPage = new TabPage(file.Truncate()) {Width = 100};
 
             var textbox = new MainTextBox
             {
@@ -187,117 +214,179 @@ namespace MainForm
             textbox.Drop += MainTextBox1_Drop;
             textbox.DragEnter += MainTextBox1_DragEnter;
             textbox.SetDataFile(file, _colorRules, Logger);
+
             tabPage.Controls.Add(host);
             tabControl1.TabPages.Add(tabPage);
             textbox.SetSize(host.Width, host.Height);
             textbox.ScrollToEnd();
+            
             _files.Add(tabPage.Name, file);
+            
             tabControl1.SelectTab(tabPage);
         }
 
+        /// <summary>
+        /// Set tabpage content size when main form resizes
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MainForm_Resize(object sender, EventArgs e)
         {
             //BUG: When windows display is set to scale above 100%, scrollbars in text view get buggy
-            if (tabControl1.TabCount > 0)
+            if (tabControl1.TabCount <= 0) return;
+
+            var selected = tabControl1.SelectedIndex;
+            var tab = tabControl1.TabPages[selected];
+
+            var host = (ElementHost)tab.Controls[0];
+            var textBox = (MainTextBox)host.Child;
+            var with = textBox.ActualWidth;
+            var height = textBox.ActualHeight;
+
+            foreach (TabPage tabControl1TabPage in tabControl1.TabPages)
             {
-                int selected = tabControl1.SelectedIndex;
-                TabPage tab = tabControl1.TabPages[selected];
-
-                var host = (ElementHost)tab.Controls[0];
-                var textBox = (MainTextBox)host.Child;
-                double with = textBox.ActualWidth;
-                double height = textBox.ActualHeight;
-
-                foreach (TabPage tabControl1TabPage in tabControl1.TabPages)
-                {
-                    host = (ElementHost)tabControl1TabPage.Controls[0];
-                    textBox = (MainTextBox)host.Child;
-                    textBox.SetSize(with, height);
-                }
+                host = (ElementHost)tabControl1TabPage.Controls[0];
+                textBox = (MainTextBox)host.Child;
+                textBox.SetSize(with, height);
             }
         }
 
+        /// <summary>
+        /// Drag file in to main form event
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MainForm_DragEnter(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop)) e.Effect = DragDropEffects.Copy;
         }
 
+        /// <summary>
+        /// Handle files dropped in main form.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MainForm_DragDrop(object sender, DragEventArgs e)
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             SetFile(files);
         }
 
+        /// <summary>
+        /// Do resizing on form load
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MainForm_Load(object sender, EventArgs e)
         {
             MainForm_Resize(null, null);
         }
 
+        /// <summary>
+        /// This draws text "file name" on tabs 
+        /// If Data in text box in tab page is updated and not selected it gives tab a green background
+        ///
+        /// if Tab is selected give it a darker gray
+        /// 
+        /// NOTE: I think this is creating some flickering av tabs in GUI 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void TabControl1_DrawItem(object sender, DrawItemEventArgs e)
         {
             TabPage tab = tabControl1.TabPages[e.Index];
-            if (tab.Controls.Count > 0)
-            {
-                var host = (ElementHost)tab.Controls[0];
-                var textBox = (MainTextBox)host.Child;
+            
+            if (tab.Controls.Count <= 0) return;
 
-                Rectangle paddedBounds = e.Bounds;
-                paddedBounds.Inflate(-2, -2);
-                if (textBox.Updated)
+            var host = (ElementHost)tab.Controls[0];
+            var textBox = (MainTextBox)host.Child;
+
+            Rectangle paddedBounds = e.Bounds;
+            paddedBounds.Inflate(-2, -2);
+            if (textBox.Updated)
+            {
+                if (tabControl1.SelectedIndex != e.Index)
                 {
-                    if (tabControl1.SelectedIndex != e.Index)
-                    {
-                        e.Graphics.FillRectangle(new SolidBrush(Color.LightPink), e.Bounds);
-                        e.Graphics.DrawString(tabControl1.TabPages[e.Index].Text, this.Font, SystemBrushes.ControlText,
-                            paddedBounds);
-                    }
-                    else
-                    {
-                        e.Graphics.DrawString(tabControl1.TabPages[e.Index].Text, this.Font, SystemBrushes.ControlText,
-                            paddedBounds);
-                    }
+                    e.Graphics.FillRectangle(new SolidBrush(Color.LightSeaGreen), e.Bounds);
+                    e.Graphics.DrawString(tabControl1.TabPages[e.Index].Text, this.Font, SystemBrushes.ControlText,
+                        paddedBounds);
                 }
                 else
                 {
+                    e.Graphics.FillRectangle(new SolidBrush(Color.LightGray),e.Bounds );
                     e.Graphics.DrawString(tabControl1.TabPages[e.Index].Text, this.Font, SystemBrushes.ControlText,
                         paddedBounds);
                 }
             }
+            else
+            {
+                if (tabControl1.SelectedIndex != e.Index)
+                {
+                    e.Graphics.DrawString(tabControl1.TabPages[e.Index].Text, this.Font, SystemBrushes.ControlText,
+                        paddedBounds);
+                }
+                else
+                {
+                    e.Graphics.FillRectangle(new SolidBrush(Color.LightGray), e.Bounds);
+                    e.Graphics.DrawString(tabControl1.TabPages[e.Index].Text, this.Font, SystemBrushes.ControlText,
+                        paddedBounds);
+
+                }
+
+            }
         }
 
+        /// <summary>
+        /// Zoom in/out on text if ctrl and mouse wheel
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MainTextBox1_MouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
         {
-            if (_ctrlDown)
+            if (!_ctrlDown) return;
+
+            var direction = Math.Sign(e.Delta);
+            if (direction > 0 && tabControl1.TabCount > 0)
             {
-                var direction = Math.Sign(e.Delta);
-                if (direction > 0 && tabControl1.TabCount > 0)
+                foreach (TabPage tabControl1TabPage in tabControl1.TabPages)
                 {
-                    foreach (TabPage tabControl1TabPage in tabControl1.TabPages)
-                    {
-                        var host = (ElementHost)tabControl1TabPage.Controls[0];
-                        var textBox = (MainTextBox)host.Child;
-                        textBox.FontSize++;
-                    }
+                    var host = (ElementHost)tabControl1TabPage.Controls[0];
+                    var textBox = (MainTextBox)host.Child;
+                    textBox.FontSize++;
                 }
-                if (direction < 0 && tabControl1.TabCount > 0)
+            }
+
+            if (direction >= 0 || tabControl1.TabCount <= 0) return;
+            {
+                foreach (TabPage tabControl1TabPage in tabControl1.TabPages)
                 {
-                    foreach (TabPage tabControl1TabPage in tabControl1.TabPages)
-                    {
-                        var host = (ElementHost)tabControl1TabPage.Controls[0];
-                        var textBox = (MainTextBox)host.Child;
-                        if (textBox.FontSize > 2)
-                            textBox.FontSize--;
-                    }
+                    var host = (ElementHost)tabControl1TabPage.Controls[0];
+                    var textBox = (MainTextBox)host.Child;
+                    if (textBox.FontSize > 2)
+                        textBox.FontSize--;
                 }
             }
         }
 
+        /// <summary>
+        /// set that left ctrl is not pressed
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MainTextBox1_PreviewKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
             if (e.Key == Key.LeftCtrl)
                 _ctrlDown = false;
         }
 
+        /// <summary>
+        /// If key F11 Toggle full screen
+        /// If key is plus zoom in on text
+        /// If key is minus Zoom out on text
+        /// If key is F Toggle text filter on / off
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MainTextBox1_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
             if (e.Key == Key.F11)
@@ -340,6 +429,9 @@ namespace MainForm
                 _ctrlDown = true;
         }
 
+        /// <summary>
+        /// Make Gui text-box "Full screen"
+        /// </summary>
         private void ToggleFullScreen()
         {
             if (_fullScreen)
@@ -360,30 +452,48 @@ namespace MainForm
             }
         }
 
+        /// <summary>
+        /// When file drags in to main text-Box
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MainTextBox1_DragEnter(object sender, System.Windows.DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop)) e.Effects = System.Windows.DragDropEffects.Copy;
         }
 
+        /// <summary>
+        /// When files is dropped in main text-box
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MainTextBox1_Drop(object sender, System.Windows.DragEventArgs e)
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             SetFile(files);
         }
 
+        /// <summary>
+        /// Open color rule form and apply new rules to text box
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void toolStripMenuItemColorRule_Click(object sender, EventArgs e)
         {
             ColorRulesForm cf = new ColorRulesForm(_colorRules);
             cf.ShowDialog();
             cf.SetDesktopLocation(Cursor.Position.X, Cursor.Position.Y);
             var result = cf.DialogResult;
-            if (result == DialogResult.OK)
-            {
-                _colorRules = cf.ColorRules;
-                UpdateTextBoxColorRule();
-            }
+
+            if (result != DialogResult.OK) return;
+
+            _colorRules = cf.ColorRules;
+            UpdateTextBoxColorRule();
         }
 
+        /// <summary>
+        /// Apply color rule to tabs text-box
+        /// </summary>
         private void UpdateTextBoxColorRule()
         {
             foreach (TabPage tabControl1TabPage in tabControl1.TabPages)
@@ -394,33 +504,46 @@ namespace MainForm
             }
         }
 
+        /// <summary>
+        /// Catch user clicking on tab if clicked position is where text [X] on tab
+        /// Then clean out resources connected to tab and remove tab. 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void tabControl1_MouseDown(object sender, MouseEventArgs e)
         {
-            //Catch clicking [X] in tabs
-            for (int i = 0; i < this.tabControl1.TabPages.Count; i++)
+            for (var i = 0; i < tabControl1.TabPages.Count; i++)
             {
                 Rectangle r = tabControl1.GetTabRect(i);
                 Rectangle closeButton = new Rectangle(r.Right - 30, r.Top, 14, 20);
-                if (closeButton.Contains(e.Location))
-                {
-                    Tabcleaner(tabControl1.TabPages[i]);
-                    _files.Remove(tabControl1.TabPages[i].Name);
-                    tabControl1.TabPages.RemoveAt(i);
-                    break;
-                }
+
+                if (!closeButton.Contains(e.Location)) continue;
+
+                Tabcleaner(tabControl1.TabPages[i]);
+                
+                _files.Remove(tabControl1.TabPages[i].Name);
+                tabControl1.TabPages.RemoveAt(i);
+                break;
             }
         }
 
+        /// <summary>
+        /// remove all resources from a tab.
+        /// For now calling garbage collecting against all recommendation,
+        /// TODO: look in to if this GC is needed or find another way to handle memory not released.
+        /// </summary>
+        /// <param name="page"></param>
         private void Tabcleaner(TabPage page)
         {
             var host = (ElementHost)page.Controls[0];
             var textBox = (MainTextBox)host.Child;
-            textBox.Close();
+            //textBox.Close();
+            textBox.Dispose();
             host.Controls.Clear();
             page.Controls.RemoveAt(0);
             page.Controls.Clear();
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
+            //GC.Collect();
+            //GC.WaitForPendingFinalizers();
         }
 
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
