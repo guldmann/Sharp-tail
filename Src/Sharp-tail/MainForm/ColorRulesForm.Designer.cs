@@ -63,7 +63,7 @@
             this.buttonFrontColor.Name = "buttonFrontColor";
             this.buttonFrontColor.Size = new System.Drawing.Size(165, 66);
             this.buttonFrontColor.TabIndex = 3;
-            this.buttonFrontColor.Text = "Front Color";
+            this.buttonFrontColor.Text = "Front-Color";
             this.buttonFrontColor.UseVisualStyleBackColor = true;
             this.buttonFrontColor.Click += new System.EventHandler(this.buttonFrontColor_Click);
             // 
@@ -73,7 +73,7 @@
             this.buttonBackColor.Name = "buttonBackColor";
             this.buttonBackColor.Size = new System.Drawing.Size(165, 66);
             this.buttonBackColor.TabIndex = 4;
-            this.buttonBackColor.Text = "Back Color";
+            this.buttonBackColor.Text = "Back-Color";
             this.buttonBackColor.UseVisualStyleBackColor = true;
             this.buttonBackColor.Click += new System.EventHandler(this.buttonBackColor_Click);
             // 
@@ -81,7 +81,7 @@
             // 
             this.buttonSave.Location = new System.Drawing.Point(359, 527);
             this.buttonSave.Name = "buttonSave";
-            this.buttonSave.Size = new System.Drawing.Size(114, 66);
+            this.buttonSave.Size = new System.Drawing.Size(149, 66);
             this.buttonSave.TabIndex = 5;
             this.buttonSave.Text = "Add";
             this.buttonSave.UseVisualStyleBackColor = true;
@@ -89,9 +89,9 @@
             // 
             // buttonClose
             // 
-            this.buttonClose.Location = new System.Drawing.Point(479, 527);
+            this.buttonClose.Location = new System.Drawing.Point(695, 527);
             this.buttonClose.Name = "buttonClose";
-            this.buttonClose.Size = new System.Drawing.Size(132, 66);
+            this.buttonClose.Size = new System.Drawing.Size(159, 66);
             this.buttonClose.TabIndex = 6;
             this.buttonClose.Text = "Close";
             this.buttonClose.UseVisualStyleBackColor = true;
@@ -99,9 +99,9 @@
             // 
             // buttonRemove
             // 
-            this.buttonRemove.Location = new System.Drawing.Point(617, 525);
+            this.buttonRemove.Location = new System.Drawing.Point(514, 527);
             this.buttonRemove.Name = "buttonRemove";
-            this.buttonRemove.Size = new System.Drawing.Size(156, 66);
+            this.buttonRemove.Size = new System.Drawing.Size(175, 66);
             this.buttonRemove.TabIndex = 7;
             this.buttonRemove.Text = "Remove";
             this.buttonRemove.UseVisualStyleBackColor = true;
@@ -118,7 +118,7 @@
             this.listViewColorRules.Location = new System.Drawing.Point(0, 0);
             this.listViewColorRules.MultiSelect = false;
             this.listViewColorRules.Name = "listViewColorRules";
-            this.listViewColorRules.Size = new System.Drawing.Size(791, 463);
+            this.listViewColorRules.Size = new System.Drawing.Size(854, 463);
             this.listViewColorRules.TabIndex = 8;
             this.listViewColorRules.UseCompatibleStateImageBehavior = false;
             this.listViewColorRules.View = System.Windows.Forms.View.Details;
@@ -142,7 +142,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(791, 605);
+            this.ClientSize = new System.Drawing.Size(854, 605);
             this.Controls.Add(this.checkBoxCase);
             this.Controls.Add(this.listViewColorRules);
             this.Controls.Add(this.buttonRemove);
