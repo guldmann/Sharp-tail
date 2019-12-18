@@ -6,6 +6,7 @@ using Serilog;
 using Serilog.Sink.AppCenter;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -56,7 +57,9 @@ namespace MainForm
                 }
             }
             MainForm_Resize(null, null);
-            tabControl1.MouseClick += new MouseEventHandler(tabControl1_MouseClick);
+            tabControl1.MouseClick += tabControl1_MouseClick;
+            tabControl1.ShowToolTips = true;
+            timer1.Enabled = true;
         }
 
         private void tabControl1_MouseClick(object sender, MouseEventArgs e)
@@ -154,7 +157,8 @@ namespace MainForm
                 Dock = DockStyle.Fill,
                 Child = textbox
             };
-
+            
+            tabPage.ToolTipText = file;
             tabPage.Name = Guid.NewGuid().ToString();
 
             textbox.PreviewKeyDown += MainTextBox1_PreviewKeyDown;
@@ -473,6 +477,13 @@ namespace MainForm
         private void closeAllFilesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             closeAlToolStripMenuItem_Click(null, null);
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            Process proc = Process.GetCurrentProcess();
+            toolStripStatusLabel1.Text = "Mem usage: " + (proc.PrivateMemorySize64 / 1000000) + "MB";
+            
         }
     }
 }

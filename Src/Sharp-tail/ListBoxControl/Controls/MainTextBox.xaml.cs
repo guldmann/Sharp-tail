@@ -6,7 +6,6 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,8 +21,8 @@ namespace ListBoxControl.Controls
         private readonly MessageService _messageService = MessageService.Instance;
 
         private Task _task;
-        private CancellationTokenSource _tokenSource = new CancellationTokenSource();
-        private CancellationToken _token;
+        private readonly CancellationTokenSource _tokenSource = new CancellationTokenSource();
+        private readonly CancellationToken _token;
         private Tail _tail;
         private List<ColorRule> _colorRules = new List<ColorRule>();
         public string File;
@@ -32,7 +31,7 @@ namespace ListBoxControl.Controls
         private bool _evaluate = true;
         public static ILogger Logger;
         private bool _filterActive = true;
-        public long FileSize = 0;
+        public long FileSize;
 
         public MainTextBox()
         {
@@ -56,8 +55,6 @@ namespace ListBoxControl.Controls
             listBox.ItemsSource = null;
         }
 
-        
-
         private void TailUpdateEvent(TaileFileInfo taileFileInfo)
         {
             if (taileFileInfo.Name == File)
@@ -66,7 +63,7 @@ namespace ListBoxControl.Controls
                 Updated = true;
                 int rows = 1;
                 FileSize = taileFileInfo.Size;
-                
+
                 foreach (var item in taileFileInfo.FilesRows)
                 {
                     if (rows >= taileFileInfo.FilesRows.Count)
@@ -197,7 +194,7 @@ namespace ListBoxControl.Controls
 
         /// <summary>
         /// Toggle Filter on /off
-        /// and refresh text view 
+        /// and refresh text view
         /// </summary>
         public void ActivateFilter()
         {
@@ -225,25 +222,27 @@ namespace ListBoxControl.Controls
             int rows = _rowItems.Count;
             int index = 0;
             bool textWriten = false;
-    
+
             while (index < rows)
             {
-                foreach (var rule in colorRules)
-                {
-                    if (CaseCompare(_rowItems[index].Text, rule.Text, rule.Casesensitiv))
+                if (colorRules != null)
+                    foreach (var rule in colorRules)
                     {
-                        _rowItems[index].BackColor = Color.FromRgb(
+                        if (CaseCompare(_rowItems[index].Text, rule.Text, rule.Casesensitiv))
+                        {
+                            _rowItems[index].BackColor = Color.FromRgb(
                                 rule.Background.R,
                                 rule.Background.G,
                                 rule.Background.B);
-                        _rowItems[index].FrontColor = Color.FromRgb(
+                            _rowItems[index].FrontColor = Color.FromRgb(
                                 rule.ForeGround.R,
                                 rule.ForeGround.G,
                                 rule.ForeGround.B);
-                        textWriten = true;
-                        break;
+                            textWriten = true;
+                            break;
+                        }
                     }
-                }
+
                 if (!textWriten)
                 {
                     _rowItems[index].BackColor = Colors.White;
@@ -255,7 +254,7 @@ namespace ListBoxControl.Controls
 
             listBox.ItemsSource = null;
             listBox.ItemsSource = _rowItems;
-           
+
             CollectionViewSource.GetDefaultView(_rowItems).Refresh();
         }
 

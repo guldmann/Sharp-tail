@@ -32,6 +32,7 @@
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabelName = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabelSize = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -46,6 +47,7 @@
             this.closeAlToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.closeAlButThisToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.reloadFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStripTabs.SuspendLayout();
@@ -56,7 +58,8 @@
             this.statusStrip1.ImageScalingSize = new System.Drawing.Size(32, 32);
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabelName,
-            this.toolStripStatusLabelSize});
+            this.toolStripStatusLabelSize,
+            this.toolStripStatusLabel1});
             this.statusStrip1.Location = new System.Drawing.Point(0, 530);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Padding = new System.Windows.Forms.Padding(0, 0, 7, 0);
@@ -75,6 +78,13 @@
             this.toolStripStatusLabelSize.Name = "toolStripStatusLabelSize";
             this.toolStripStatusLabelSize.Size = new System.Drawing.Size(39, 17);
             this.toolStripStatusLabelSize.Text = "Size: 0";
+            // 
+            // toolStripStatusLabel1
+            // 
+            this.toolStripStatusLabel1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(76, 17);
+            this.toolStripStatusLabel1.Text = "Mem Usage: ";
             // 
             // menuStrip1
             // 
@@ -189,6 +199,10 @@
             this.reloadFileToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.reloadFileToolStripMenuItem.Text = "Reload Tab";
             // 
+            // timer1
+            // 
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
             // MainForm
             // 
             this.AllowDrop = true;
@@ -200,7 +214,7 @@
             this.Controls.Add(this.menuStrip1);
             this.KeyPreview = true;
             this.MainMenuStrip = this.menuStrip1;
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "MainForm";
             this.Text = "Sharp-tail";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
@@ -238,6 +252,8 @@
         private System.Windows.Forms.ToolStripMenuItem closeAlButThisToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem reloadFileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem closeAllFilesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
+        private System.Windows.Forms.Timer timer1;
     }
 }
 
