@@ -110,5 +110,10 @@ namespace MainForm
                 ColorRules.Save();
             }
         }
+
+        private void ColorRulesForm_Load(object sender, EventArgs e)
+        {
+           
+        }
     }
 }
