@@ -9,8 +9,10 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace ListBoxControl.Controls
@@ -308,5 +310,46 @@ namespace ListBoxControl.Controls
 
             disposed = true;
         }
+
+        /// <summary>
+        /// Copy marked row to clipboard
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void CtrlCCopyCmdExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            ListBox lb = (ListBox)(sender);
+            var selected =(RowItem) lb.SelectedItem;
+            if (selected != null) Clipboard.SetText(selected.Text);
+        }
+
+        private void CtrlCCopyCmdCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        //show right click copy menu
+        private void RightClickCopyCmdExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            MenuItem mi = (MenuItem)sender;
+            var selected = (RowItem) mi.DataContext;
+            if (selected != null) Clipboard.SetText(selected.Text);
+        }
+
+        private void RightClickCopyCmdCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+        private void FindExecute(object sender, ExecutedRoutedEventArgs e)
+        {
+            MenuItem mi = (MenuItem)sender;
+            var selected = (RowItem)mi.DataContext;
+            if (selected != null) Clipboard.SetText(selected.Text);
+        }
+        private void FindCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+        
     }
 }
