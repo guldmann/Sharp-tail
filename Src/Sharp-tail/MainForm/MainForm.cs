@@ -600,6 +600,7 @@ namespace MainForm
                 _files.Remove(page.Name);
             }
             tabControl1.TabPages.Clear();
+           
         }
 
         private void closeAlButThisToolStripMenuItem_Click(object sender, EventArgs e)
