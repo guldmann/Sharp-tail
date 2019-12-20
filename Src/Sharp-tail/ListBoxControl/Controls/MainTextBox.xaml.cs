@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -14,6 +15,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using Microsoft.AppCenter.Crashes;
 
 namespace ListBoxControl.Controls
 {
@@ -32,7 +34,7 @@ namespace ListBoxControl.Controls
         public bool Updated;
         private bool _evaluate = true;
         public static ILogger Logger;
-        private bool _filterActive = true;
+        private bool _filterActive = false;
         public long FileSize;
 
         public MainTextBox()
@@ -88,29 +90,32 @@ namespace ListBoxControl.Controls
 
         private void AddRow(string text, bool evaluate = false)
         {
-            //Note first rule matching will apply
             bool textWriten = false;
-
-            foreach (var rule in _colorRules)
+            if (_colorRules != null)
             {
-                if (CaseCompare(text, rule.Text, rule.Casesensitiv))
+                //Note first Color rule matching will apply
+                foreach (var rule in _colorRules)
                 {
-                    _rowItems.Add(new RowItem
+                    if (CaseCompare(text, rule.Text, rule.Casesensitiv))
                     {
-                        BackColor = Color.FromRgb(
-                            rule.Background.R,
-                            rule.Background.G,
-                            rule.Background.B),
-                        FrontColor = Color.FromRgb(
-                            rule.ForeGround.R,
-                            rule.ForeGround.G,
-                            rule.ForeGround.B),
-                        Text = text
-                    });
-                    textWriten = true;
-                    break;
+                        _rowItems.Add(new RowItem
+                        {
+                            BackColor = Color.FromRgb(
+                                rule.Background.R,
+                                rule.Background.G,
+                                rule.Background.B),
+                            FrontColor = Color.FromRgb(
+                                rule.ForeGround.R,
+                                rule.ForeGround.G,
+                                rule.ForeGround.B),
+                            Text = text
+                        });
+                        textWriten = true;
+                        break;
+                    }
                 }
             }
+
             if (!textWriten)
             {
                 _rowItems.Add(new RowItem { BackColor = Colors.White, FrontColor = Colors.Black, Text = text });
@@ -150,30 +155,53 @@ namespace ListBoxControl.Controls
 
             if (file == null)
                 return;
-
-            File = file;
-            _colorRules = colorRules ?? new List<ColorRule>();
-
-            _rowItems = new ObservableCollection<RowItem>();
-
-            FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-            using (StreamReader reader = new StreamReader(fs))
+            try
             {
-                FileSize = reader.BaseStream.Length;
-                string line;
-                while ((line = reader.ReadLine()) != null)
+                File = file;
+                _colorRules = colorRules ?? new List<ColorRule>();
+
+                _rowItems = new ObservableCollection<RowItem>();
+
+                FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                using (StreamReader reader = new StreamReader(fs))
                 {
-                    AddRow(line);
+                    FileSize = reader.BaseStream.Length;
+                    string line;
+                    while ((line = reader.ReadLine()) != null)
+                    {
+                        AddRow(line);
+                    }
                 }
+
+                listBox.ItemsSource = null;
+                listBox.ItemsSource = _rowItems;
+
+                //Filterable collection
+                if (CollectionViewSource.GetDefaultView(listBox.ItemsSource) is CollectionView view) view.Filter = CustomFilter;
+
+                TailFile(file);
             }
+            catch (Exception e)
+            {
+                CrachReport(e, file);
+            }
+        }
 
-            listBox.ItemsSource = null;
-            listBox.ItemsSource = _rowItems;
 
-            //Filterable collection
-            if (CollectionViewSource.GetDefaultView(listBox.ItemsSource) is CollectionView view) view.Filter = CustomFilter;
 
-            TailFile(file);
+        private void CrachReport(Exception e, string extra)
+        {
+            StringBuilder sb = new StringBuilder();
+            var values = new Dictionary<string, string>();
+            sb.Append("Color rules");
+            foreach (var rule in _colorRules)
+            {
+                sb.Append(rule.ToJson()).Append("\n");
+            }
+            values.Add("Color_rules", sb.ToString());
+            values.Add("Extra ", extra);
+
+            Crashes.TrackError(e, values);
         }
 
         public void ScrollToEnd(string text = "")

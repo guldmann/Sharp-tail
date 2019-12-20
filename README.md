@@ -19,4 +19,4 @@ Search text.
 * [+] Zoom in on text
 * [-] Zoom out on text
 * [F] Toggle filter text
-
+* [CTRL]+[C] Copy marked text  

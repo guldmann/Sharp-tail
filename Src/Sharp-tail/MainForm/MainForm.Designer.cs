@@ -48,6 +48,7 @@
             this.closeAlButThisToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.reloadFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.toolStripMenuItemFilter = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStripTabs.SuspendLayout();
@@ -92,7 +93,8 @@
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItem1,
             this.toolStripMenuItemColorRule,
-            this.goToEndToolStripMenuItem});
+            this.goToEndToolStripMenuItem,
+            this.toolStripMenuItemFilter});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(3, 1, 0, 1);
@@ -113,21 +115,21 @@
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.openToolStripMenuItem.Text = "Open File";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // closeAllFilesToolStripMenuItem
             // 
             this.closeAllFilesToolStripMenuItem.Name = "closeAllFilesToolStripMenuItem";
-            this.closeAllFilesToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.closeAllFilesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.closeAllFilesToolStripMenuItem.Text = "Close All Files";
             this.closeAllFilesToolStripMenuItem.Click += new System.EventHandler(this.closeAllFilesToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -203,6 +205,14 @@
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // toolStripMenuItemFilter
+            // 
+            this.toolStripMenuItemFilter.BackColor = System.Drawing.Color.Red;
+            this.toolStripMenuItemFilter.Name = "toolStripMenuItemFilter";
+            this.toolStripMenuItemFilter.Size = new System.Drawing.Size(89, 22);
+            this.toolStripMenuItemFilter.Text = "Filter Inactive";
+            this.toolStripMenuItemFilter.Click += new System.EventHandler(this.toolStripMenuItemFilter_Click);
+            // 
             // MainForm
             // 
             this.AllowDrop = true;
@@ -254,6 +264,7 @@
         private System.Windows.Forms.ToolStripMenuItem closeAllFilesToolStripMenuItem;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemFilter;
     }
 }
 
