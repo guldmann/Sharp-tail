@@ -1,6 +1,8 @@
 ﻿
 
 using System;
+using System.Runtime.Remoting.Messaging;
+using Newtonsoft.Json;
 
 namespace Common.Models
 {
@@ -17,6 +19,11 @@ namespace Common.Models
         public Guid Id { get; }
         public bool Casesensitiv { get; set; }
 
+        public string ToJson()
+        {
+            return JsonConvert.SerializeObject(this);
+        }
+
     }
 
     public class RuleColor
@@ -25,4 +32,6 @@ namespace Common.Models
         public byte G { get; set; }
         public byte B { get; set; }
     }
+
+   
 }

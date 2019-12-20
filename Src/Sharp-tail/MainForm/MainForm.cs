@@ -34,6 +34,7 @@ namespace MainForm
         private List<ColorRule> _colorRules;
         private readonly MessageService _messageService = MessageService.Instance;
         public static ILogger Logger;
+        private bool filter = false;
 
         public MainForm()
         {
@@ -423,10 +424,28 @@ namespace MainForm
                         var textBox = (MainTextBox)host.Child;
                         textBox.ActivateFilter();
                     }
+
+                    filter = !filter;
+                    ChangeFilterGui();
+                    
                 }
             }
             if (e.Key == Key.LeftCtrl)
                 _ctrlDown = true;
+        }
+
+        private void ChangeFilterGui()
+        {
+            if (filter)
+            {
+                toolStripMenuItemFilter.Text = "Filter Active";
+                toolStripMenuItemFilter.BackColor = Color.LightGreen;
+            }
+            else
+            {
+                toolStripMenuItemFilter.Text = " Filter Inactive";
+                toolStripMenuItemFilter.BackColor = Color.Red;
+            }
         }
 
         /// <summary>
@@ -626,6 +645,19 @@ namespace MainForm
             Process proc = Process.GetCurrentProcess();
             toolStripStatusLabel1.Text = "Mem usage: " + (proc.PrivateMemorySize64 / 1000000) + "MB";
             
+        }
+
+        private void toolStripMenuItemFilter_Click(object sender, EventArgs e)
+        {
+            foreach (TabPage tabControl1TabPage in tabControl1.TabPages)
+            {
+                var host = (ElementHost)tabControl1TabPage.Controls[0];
+                var textBox = (MainTextBox)host.Child;
+                textBox.ActivateFilter();
+            }
+
+            filter = !filter;
+            ChangeFilterGui();
         }
     }
 }
