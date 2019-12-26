@@ -23,7 +23,6 @@ namespace ListBoxControl.Controls
     {
         private ObservableCollection<RowItem> _rowItems;
         private  MessageService _messageService = MessageService.Instance;
-
         private Task _task;
         private readonly CancellationTokenSource _tokenSource = new CancellationTokenSource();
         private readonly CancellationToken _token;
@@ -34,7 +33,7 @@ namespace ListBoxControl.Controls
         public bool Updated;
         private bool _evaluate = true;
         public static ILogger Logger;
-        private bool _filterActive = false;
+        private bool _filterActive;
         public long FileSize;
 
         public MainTextBox()
@@ -42,22 +41,6 @@ namespace ListBoxControl.Controls
             InitializeComponent();
             _messageService.Subscribe<TaileFileInfo>(TailUpdateEvent);
             _token = _tokenSource.Token;
-        }
-
-        public void Close()
-        {
-            _tokenSource.Cancel();
-            // _tail.StopTailFile();
-            //Try to clean up resources
-            // _task.
-            if (_task.IsCanceled || _task.IsCompleted)
-            {
-                _task.Dispose();
-            }
-            
-            _rowItems.Clear();
-            _colorRules.Clear();
-            listBox.ItemsSource = null;
         }
 
         private void TailUpdateEvent(TaileFileInfo taileFileInfo)
@@ -171,6 +154,10 @@ namespace ListBoxControl.Controls
                     {
                         AddRow(line);
                     }
+                    reader.Close();
+                    fs.Close();
+                    reader.Dispose();
+                    fs.Dispose();
                 }
 
                 listBox.ItemsSource = null;
@@ -193,13 +180,20 @@ namespace ListBoxControl.Controls
         {
             StringBuilder sb = new StringBuilder();
             var values = new Dictionary<string, string>();
-            sb.Append("Color rules");
+            
             foreach (var rule in _colorRules)
             {
                 sb.Append(rule.ToJson()).Append("\n");
             }
             values.Add("Color_rules", sb.ToString());
             values.Add("Extra ", extra);
+            values.Add("nuber off RowItems", _rowItems.Count.ToString());
+            values.Add("Task", _task.Status.ToString());
+            values.Add("GotToEnd", _goToEnd.ToString());
+            values.Add("Updated", Updated.ToString());
+            values.Add("Evaluate", _evaluate.ToString());
+            values.Add("_filterActive", _filterActive.ToString());
+            values.Add("FileSize", FileSize.ToString());
 
             Crashes.TrackError(e, values);
         }
@@ -323,6 +317,7 @@ namespace ListBoxControl.Controls
             {
                 _rowItems.Clear();
                 _rowItems = null;
+                
                 _tokenSource.Cancel();
                 
                 if (_task.IsCanceled || _task.IsCompleted)
@@ -333,6 +328,7 @@ namespace ListBoxControl.Controls
                 _colorRules = null;
                 listBox.ItemsSource = null;
                 _messageService = null;
+              _tail.Dispose();
 
             }
 

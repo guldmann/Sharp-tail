@@ -21,8 +21,7 @@ namespace MainForm
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            AppCenter.Start("4cacde5b-7808-459a-942e-86584c277500",
-                   typeof(Analytics), typeof(Crashes), typeof(Distribute));
+            //AppCenter.Start("4cacde5b-7808-459a-942e-86584c277500",typeof(Analytics), typeof(Crashes), typeof(Distribute));
             Application.Run(new MainForm());
         }
     }

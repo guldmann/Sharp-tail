@@ -1,9 +1,8 @@
-﻿using System;
-using Common.Messages.Services;
-using System.Collections.Generic;
+﻿using Common.Messages.Services;
+using Common.Models;
+using System;
 using System.IO;
 using System.Threading;
-using Common.Models;
 
 namespace Common.Tail
 {
@@ -40,12 +39,15 @@ namespace Common.Tail
                     //if the file size has not changed, idle
                     if (reader.BaseStream.Length == lastMaxOffset)
                         continue;
+
+                    //Create tailfile info object
                     var tailFileInfo = new TaileFileInfo
                     {
                         Name = _fileName,
                         Size = reader.BaseStream.Length
                     };
-                   //seek to the last max offset
+
+                    //seek to the last max offset
                     reader.BaseStream.Seek(lastMaxOffset, SeekOrigin.Begin);
 
                     //read out of the file until the EOF
@@ -61,36 +63,36 @@ namespace Common.Tail
                     lastMaxOffset = reader.BaseStream.Position;
                 }
                 reader.Close();
+                reader.DiscardBufferedData();
+                reader.Dispose();
                 Dispose();
             }
         }
 
         #region IDisposable Support
-        private bool disposedValue = false; 
+
+        private bool _disposedValue;
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposedValue)
+            if (!_disposedValue)
             {
                 if (disposing)
                 {
                     _messageService = null;
                 }
 
-                // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
-                // TODO: set large fields to null.
-
-                disposedValue = true;
+                _messageService = null;
+                _disposedValue = true;
             }
         }
-      
+
         public void Dispose()
         {
-            
             Dispose(true);
-            // TODO: uncomment the following line if the finalizer is overridden above.
-             GC.SuppressFinalize(this);
+            GC.SuppressFinalize(this);
         }
-        #endregion
+
+        #endregion IDisposable Support
     }
 }

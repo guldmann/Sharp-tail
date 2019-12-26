@@ -1,4 +1,5 @@
 ﻿using Common;
+using Common.Helpers;
 using Common.Messages.Services;
 using Common.Models;
 using ListBoxControl.Controls;
@@ -14,27 +15,24 @@ using System.Text;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
 using System.Windows.Input;
-using Common.Helpers;
 using Cursor = System.Windows.Forms.Cursor;
 using DataFormats = System.Windows.Forms.DataFormats;
 using DragDropEffects = System.Windows.Forms.DragDropEffects;
 using DragEventArgs = System.Windows.Forms.DragEventArgs;
 using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
-using MouseEventHandler = System.Windows.Forms.MouseEventHandler;
 
 namespace MainForm
 {
     public partial class MainForm : Form
     {
-        private const string CloseCross = "    [X]   ";
-        private Dictionary<string, string> _files = new Dictionary<string, string>();
+        private Dictionary<int, string> _files = new Dictionary<int, string>();
         private FileInfo _fInfo;
         private bool _fullScreen;
         private bool _ctrlDown;
         private List<ColorRule> _colorRules;
         private readonly MessageService _messageService = MessageService.Instance;
         public static ILogger Logger;
-        private bool filter = false;
+        private bool _filter;
 
         public MainForm()
         {
@@ -49,7 +47,7 @@ namespace MainForm
             _colorRules = ColorRuleSerializer.Load();
             _messageService.Subscribe<TaileFileInfo>(TailUpdateEvent);
             tabControl1.DrawMode = TabDrawMode.OwnerDrawFixed;
-            
+
             MainForm_Resize(null, null);
             tabControl1.MouseClick += tabControl1_MouseClick;
             tabControl1.ShowToolTips = true;
@@ -57,6 +55,9 @@ namespace MainForm
             LoadPrevious();
         }
 
+        /// <summary>
+        /// Ask user to open previous files.
+        /// </summary>
         private void LoadPrevious()
         {
             var files = FileDictionarySeriliazer.Load();
@@ -68,13 +69,13 @@ namespace MainForm
                 {
                     sb.Append("* ").Append(file.Value).Append("\n");
                 }
-                
+
                 var result = MessageBox.Show(sb.ToString(), "Open previous files?", MessageBoxButtons.OKCancel);
                 if (result != DialogResult.OK) return;
                 {
                     foreach (var file in files.Where(file => File.Exists(file.Value)))
                     {
-                        SetFile(new[] {file.Value});
+                        SetFile(new[] { file.Value });
                     }
                 }
             }
@@ -88,7 +89,7 @@ namespace MainForm
         private void tabControl1_MouseClick(object sender, MouseEventArgs e)
         {
             if (e.Button != MouseButtons.Right) return;
-            
+
             for (var tab = 0; tab < tabControl1.TabCount; ++tab)
             {
                 if (tabControl1.GetTabRect(tab).Contains(e.Location))
@@ -101,7 +102,7 @@ namespace MainForm
 
         /// <summary>
         /// Find tabpage with the tailed file
-        /// and call updatePage 
+        /// and call updatePage
         /// </summary>
         /// <param name="taileFileInfo"></param>
         private void TailUpdateEvent(TaileFileInfo taileFileInfo)
@@ -170,7 +171,7 @@ namespace MainForm
         /// <summary>
         /// Get fileInfo for passed files.
         /// set tool strip values.
-        /// Calls to create tabs for passed files. 
+        /// Calls to create tabs for passed files.
         /// </summary>
         /// <param name="files"></param>
         private void SetFile(string[] files)
@@ -191,7 +192,7 @@ namespace MainForm
         {
             Log.Information("Creating tab for file: " + file);
 
-            var tabPage = new TabPage(file.Truncate()) {Width = 100};
+            var tabPage = new TabPage(file.Truncate()) { Width = 100 };
 
             var textbox = new MainTextBox
             {
@@ -204,7 +205,7 @@ namespace MainForm
                 Dock = DockStyle.Fill,
                 Child = textbox
             };
-            
+
             tabPage.ToolTipText = file;
             tabPage.Name = Guid.NewGuid().ToString();
 
@@ -221,8 +222,9 @@ namespace MainForm
             textbox.SetSize(host.Width, host.Height);
             textbox.ScrollToEnd();
             
-            _files.Add(tabPage.Name, file);
-            
+            _files.Add(tabPage.TabIndex, file);
+            //_files.Add(tabPage.Name, file);
+
             tabControl1.SelectTab(tabPage);
         }
 
@@ -284,19 +286,19 @@ namespace MainForm
         }
 
         /// <summary>
-        /// This draws text "file name" on tabs 
+        /// This draws text "file name" on tabs
         /// If Data in text box in tab page is updated and not selected it gives tab a green background
         ///
         /// if Tab is selected give it a darker gray
-        /// 
-        /// NOTE: I think this is creating some flickering av tabs in GUI 
+        ///
+        /// NOTE: I think this is creating some flickering av tabs in GUI
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void TabControl1_DrawItem(object sender, DrawItemEventArgs e)
         {
             TabPage tab = tabControl1.TabPages[e.Index];
-            
+
             if (tab.Controls.Count <= 0) return;
 
             var host = (ElementHost)tab.Controls[0];
@@ -314,7 +316,7 @@ namespace MainForm
                 }
                 else
                 {
-                    e.Graphics.FillRectangle(new SolidBrush(Color.LightGray),e.Bounds );
+                    e.Graphics.FillRectangle(new SolidBrush(Color.LightGray), e.Bounds);
                     e.Graphics.DrawString(tabControl1.TabPages[e.Index].Text, this.Font, SystemBrushes.ControlText,
                         paddedBounds);
                 }
@@ -331,9 +333,7 @@ namespace MainForm
                     e.Graphics.FillRectangle(new SolidBrush(Color.LightGray), e.Bounds);
                     e.Graphics.DrawString(tabControl1.TabPages[e.Index].Text, this.Font, SystemBrushes.ControlText,
                         paddedBounds);
-
                 }
-
             }
         }
 
@@ -342,7 +342,7 @@ namespace MainForm
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void MainTextBox1_MouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
+        private void MainTextBox1_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             if (!_ctrlDown) return;
 
@@ -425,18 +425,20 @@ namespace MainForm
                         textBox.ActivateFilter();
                     }
 
-                    filter = !filter;
+                    _filter = !_filter;
                     ChangeFilterGui();
-                    
                 }
             }
             if (e.Key == Key.LeftCtrl)
                 _ctrlDown = true;
         }
 
+        /// <summary>
+        /// Update Gui to show if filer is on or off.
+        /// </summary>
         private void ChangeFilterGui()
         {
-            if (filter)
+            if (_filter)
             {
                 toolStripMenuItemFilter.Text = "Filter Active";
                 toolStripMenuItemFilter.BackColor = Color.LightGreen;
@@ -525,7 +527,7 @@ namespace MainForm
 
         /// <summary>
         /// Catch user clicking on tab if clicked position is where text [X] on tab
-        /// Then clean out resources connected to tab and remove tab. 
+        /// Then clean out resources connected to tab and remove tab.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -539,30 +541,26 @@ namespace MainForm
                 if (!closeButton.Contains(e.Location)) continue;
 
                 Tabcleaner(tabControl1.TabPages[i]);
-                
-                _files.Remove(tabControl1.TabPages[i].Name);
+
+                _files.Remove(tabControl1.TabPages[i].TabIndex);
                 tabControl1.TabPages.RemoveAt(i);
                 break;
             }
         }
 
         /// <summary>
-        /// remove all resources from a tab.
-        /// For now calling garbage collecting against all recommendation,
-        /// TODO: look in to if this GC is needed or find another way to handle memory not released.
+        /// remove all resources from a tab. to free memory
+        /// NOTE: this is not working...
         /// </summary>
         /// <param name="page"></param>
         private void Tabcleaner(TabPage page)
         {
             var host = (ElementHost)page.Controls[0];
             var textBox = (MainTextBox)host.Child;
-            //textBox.Close();
             textBox.Dispose();
             host.Controls.Clear();
             page.Controls.RemoveAt(0);
-            page.Controls.Clear();
-            //GC.Collect();
-            //GC.WaitForPendingFinalizers();
+            page.Dispose();
         }
 
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
@@ -580,6 +578,11 @@ namespace MainForm
             }
         }
 
+        /// <summary>
+        /// Move to end of text-box select last row.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void goToEndToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (tabControl1.SelectedIndex > -1)
@@ -591,37 +594,62 @@ namespace MainForm
             }
         }
 
+        /// <summary>
+        /// When form is closing.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             FileDictionarySeriliazer.Save(_files);
         }
 
+        /// <summary>
+        /// Action to close application from tool strip menu.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Close();
         }
 
+        /// <summary>
+        /// Close selected tab.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void closeThisToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            //BUG: index of tabs don change when one is closed and this gets out of sync with file ID 
             if (tabControl1.SelectedIndex > -1)
             {
                 Tabcleaner(tabControl1.TabPages[tabControl1.SelectedTab.TabIndex]);
-                _files.Remove(tabControl1.TabPages[tabControl1.SelectedTab.TabIndex].Name);
+                _files.Remove(tabControl1.TabPages[tabControl1.SelectedTab.TabIndex].TabIndex);
                 tabControl1.TabPages.Remove(tabControl1.SelectedTab);
             }
         }
 
+        /// <summary>
+        /// Close all tabs
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void closeAlToolStripMenuItem_Click(object sender, EventArgs e)
         {
             foreach (TabPage page in tabControl1.TabPages)
             {
                 Tabcleaner(page);
-                _files.Remove(page.Name);
+                _files.Remove(page.TabIndex);
             }
             tabControl1.TabPages.Clear();
-           
         }
 
+        /// <summary>
+        /// Close all but this tab
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void closeAlButThisToolStripMenuItem_Click(object sender, EventArgs e)
         {
             foreach (TabPage page in tabControl1.TabPages)
@@ -629,25 +657,39 @@ namespace MainForm
                 if (page.TabIndex != tabControl1.SelectedTab.TabIndex)
                 {
                     Tabcleaner(page);
-                    _files.Remove(page.Name);
+                    _files.Remove(page.TabIndex);
                     tabControl1.TabPages.Remove(page);
                     page.Dispose();
                 }
             }
         }
 
+        /// <summary>
+        /// Close all open files.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void closeAllFilesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             closeAlToolStripMenuItem_Click(null, null);
         }
 
+        /// <summary>
+        /// Timer to update memory usage
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void timer1_Tick(object sender, EventArgs e)
         {
             Process proc = Process.GetCurrentProcess();
             toolStripStatusLabel1.Text = "Mem usage: " + (proc.PrivateMemorySize64 / 1000000) + "MB";
-            
         }
 
+        /// <summary>
+        /// Filter On/Off
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void toolStripMenuItemFilter_Click(object sender, EventArgs e)
         {
             foreach (TabPage tabControl1TabPage in tabControl1.TabPages)
@@ -657,7 +699,7 @@ namespace MainForm
                 textBox.ActivateFilter();
             }
 
-            filter = !filter;
+            _filter = !_filter;
             ChangeFilterGui();
         }
     }
