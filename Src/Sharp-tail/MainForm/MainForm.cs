@@ -82,7 +82,7 @@ namespace MainForm
         }
 
         /// <summary>
-        /// Select Tab under mouse pointer and show context menu
+        /// Select Tab under mouse pointer and show context menu.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -525,13 +525,17 @@ namespace MainForm
         }
 
         /// <summary>
+        /// Only react on right mouse button click else return.
         /// Catch user clicking on tab if clicked position is where text [X] on tab
         /// Then clean out resources connected to tab and remove tab.
+        /// 
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void tabControl1_MouseDown(object sender, MouseEventArgs e)
         {
+            if (e.Button != MouseButtons.Left) return;
+
             for (var i = 0; i < tabControl1.TabPages.Count; i++)
             {
                 Rectangle r = tabControl1.GetTabRect(i);
@@ -641,7 +645,6 @@ namespace MainForm
         /// <param name="e"></param>
         private void closeAlToolStripMenuItem_Click(object sender, EventArgs e)
         {
-          
             _files = new Dictionary<string, string>();
             tabControl1.TabPages.Clear();
         }
