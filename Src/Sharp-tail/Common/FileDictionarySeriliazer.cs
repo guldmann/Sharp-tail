@@ -8,7 +8,7 @@ namespace Common
     {
         private const string LastFiles = "lastOpenFiles.json";
 
-        public static void Save(Dictionary<int, string> files)
+        public static void Save(Dictionary<string, string> files)
         {
             JsonSerializer jsonSerializer = new JsonSerializer();
             jsonSerializer.Formatting = Formatting.Indented;
@@ -21,15 +21,15 @@ namespace Common
             }
         }
 
-        public static Dictionary<int, string> Load()
+        public static Dictionary<string, string> Load()
         {
             if (File.Exists(LastFiles))
             {
                 var jstring = File.ReadAllText(LastFiles);
 
-                return JsonConvert.DeserializeObject<Dictionary<int,string>>(jstring);
+                return JsonConvert.DeserializeObject<Dictionary<string,string>>(jstring);
             }
-            return new Dictionary<int, string>();
+            return new Dictionary<string, string>();
         }
     }
 }

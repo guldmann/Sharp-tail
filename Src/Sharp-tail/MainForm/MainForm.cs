@@ -25,7 +25,7 @@ namespace MainForm
 {
     public partial class MainForm : Form
     {
-        private Dictionary<int, string> _files = new Dictionary<int, string>();
+        private Dictionary<string, string> _files = new Dictionary<string, string>();
         private FileInfo _fInfo;
         private bool _fullScreen;
         private bool _ctrlDown;
@@ -222,8 +222,7 @@ namespace MainForm
             textbox.SetSize(host.Width, host.Height);
             textbox.ScrollToEnd();
             
-            _files.Add(tabPage.TabIndex, file);
-            //_files.Add(tabPage.Name, file);
+            _files.Add(tabPage.Name, file);
 
             tabControl1.SelectTab(tabPage);
         }
@@ -540,10 +539,13 @@ namespace MainForm
 
                 if (!closeButton.Contains(e.Location)) continue;
 
-                Tabcleaner(tabControl1.TabPages[i]);
+                var name = tabControl1.TabPages[i].Name;
+                var page = tabControl1.TabPages[name];
+                _files.Remove(name);
 
-                _files.Remove(tabControl1.TabPages[i].TabIndex);
-                tabControl1.TabPages.RemoveAt(i);
+                Tabcleaner(page);
+                tabControl1.TabPages.Remove(page);
+
                 break;
             }
         }
@@ -621,12 +623,15 @@ namespace MainForm
         /// <param name="e"></param>
         private void closeThisToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //BUG: index of tabs don change when one is closed and this gets out of sync with file ID 
+            
             if (tabControl1.SelectedIndex > -1)
             {
-                Tabcleaner(tabControl1.TabPages[tabControl1.SelectedTab.TabIndex]);
-                _files.Remove(tabControl1.TabPages[tabControl1.SelectedTab.TabIndex].TabIndex);
-                tabControl1.TabPages.Remove(tabControl1.SelectedTab);
+                var name = tabControl1.SelectedTab.Name;
+                var page = tabControl1.TabPages[name];
+                _files.Remove(name);
+               
+                Tabcleaner(page);
+                tabControl1.TabPages.Remove(page);
             }
         }
 
@@ -640,7 +645,7 @@ namespace MainForm
             foreach (TabPage page in tabControl1.TabPages)
             {
                 Tabcleaner(page);
-                _files.Remove(page.TabIndex);
+                _files.Remove(page.Name);
             }
             tabControl1.TabPages.Clear();
         }
@@ -657,7 +662,7 @@ namespace MainForm
                 if (page.TabIndex != tabControl1.SelectedTab.TabIndex)
                 {
                     Tabcleaner(page);
-                    _files.Remove(page.TabIndex);
+                    _files.Remove(page.Name);
                     tabControl1.TabPages.Remove(page);
                     page.Dispose();
                 }
