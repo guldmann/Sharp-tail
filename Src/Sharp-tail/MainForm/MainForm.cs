@@ -642,11 +642,8 @@ namespace MainForm
         /// <param name="e"></param>
         private void closeAlToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            foreach (TabPage page in tabControl1.TabPages)
-            {
-                Tabcleaner(page);
-                _files.Remove(page.Name);
-            }
+          
+            _files = new Dictionary<string, string>();
             tabControl1.TabPages.Clear();
         }
 
