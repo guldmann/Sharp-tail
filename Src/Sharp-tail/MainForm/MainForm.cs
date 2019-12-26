@@ -539,13 +539,7 @@ namespace MainForm
 
                 if (!closeButton.Contains(e.Location)) continue;
 
-                var name = tabControl1.TabPages[i].Name;
-                var page = tabControl1.TabPages[name];
-                _files.Remove(name);
-
-                Tabcleaner(page);
-                tabControl1.TabPages.Remove(page);
-
+                CloseRemoveTab(tabControl1.TabPages[i].Name);
                 break;
             }
         }
@@ -623,16 +617,21 @@ namespace MainForm
         /// <param name="e"></param>
         private void closeThisToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            
             if (tabControl1.SelectedIndex > -1)
             {
                 var name = tabControl1.SelectedTab.Name;
-                var page = tabControl1.TabPages[name];
-                _files.Remove(name);
-               
-                Tabcleaner(page);
-                tabControl1.TabPages.Remove(page);
+                CloseRemoveTab(name);
             }
+        }
+
+        private void CloseRemoveTab(string name)
+        {
+            var page = tabControl1.TabPages[name];
+            _files.Remove(name);
+
+            Tabcleaner(page);
+            tabControl1.TabPages.Remove(page);
+            page.Dispose();
         }
 
         /// <summary>
@@ -658,10 +657,7 @@ namespace MainForm
             {
                 if (page.TabIndex != tabControl1.SelectedTab.TabIndex)
                 {
-                    Tabcleaner(page);
-                    _files.Remove(page.Name);
-                    tabControl1.TabPages.Remove(page);
-                    page.Dispose();
+                    CloseRemoveTab(page.Name);
                 }
             }
         }
