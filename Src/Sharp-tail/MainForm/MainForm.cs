@@ -101,20 +101,19 @@ namespace MainForm
         }
 
         /// <summary>
-        /// Find tabpage with the tailed file
+        /// Find tab page by name from tail file 
         /// and call updatePage
         /// </summary>
         /// <param name="taileFileInfo"></param>
         private void TailUpdateEvent(TaileFileInfo taileFileInfo)
         {
-            var name = taileFileInfo.Name.Truncate();
-            foreach (TabPage tabControl1TabPage in tabControl1.TabPages)
+            var page = tabControl1.TabPages[taileFileInfo.TabName];
+          
+            if (page.InvokeRequired)
             {
-                if (tabControl1TabPage.Text == name && tabControl1TabPage.InvokeRequired)
-                {
-                    tabControl1TabPage.Invoke(new EventHandler(delegate { UpdatePage(tabControl1TabPage); }));
-                }
+                page.Invoke(new EventHandler(delegate { UpdatePage(page); }));
             }
+           
         }
 
         /// <summary>
@@ -215,7 +214,7 @@ namespace MainForm
             textbox.AllowDrop = true;
             textbox.Drop += MainTextBox1_Drop;
             textbox.DragEnter += MainTextBox1_DragEnter;
-            textbox.SetDataFile(file, _colorRules, Logger);
+            textbox.SetDataFile(file, _colorRules, Logger, tabPage.Name);
 
             tabPage.Controls.Add(host);
             tabControl1.TabPages.Add(tabPage);

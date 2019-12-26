@@ -11,11 +11,14 @@ namespace Common.Tail
         private readonly string _fileName;
         private MessageService _messageService = MessageService.Instance;
         private bool _tailingFile;
+        private string _tabName;
 
-        public Tail(string file)
+        public Tail(string file, string tabName)
         {
             _fileName = file;
             _tailingFile = true;
+            _tabName = tabName;
+
         }
 
         public void StopTailFile()
@@ -44,7 +47,8 @@ namespace Common.Tail
                     var tailFileInfo = new TaileFileInfo
                     {
                         Name = _fileName,
-                        Size = reader.BaseStream.Length
+                        Size = reader.BaseStream.Length,
+                        TabName = _tabName
                     };
 
                     //seek to the last max offset

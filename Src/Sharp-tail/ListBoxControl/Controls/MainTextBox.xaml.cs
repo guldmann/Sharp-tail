@@ -132,7 +132,7 @@ namespace ListBoxControl.Controls
             return true;
         }
 
-        public void SetDataFile(string file, List<ColorRule> colorRules, ILogger log)
+        public void SetDataFile(string file, List<ColorRule> colorRules, ILogger log, string tabName)
         {
             if (Logger == null) Logger = log;
 
@@ -166,7 +166,7 @@ namespace ListBoxControl.Controls
                 //Filterable collection
                 if (CollectionViewSource.GetDefaultView(listBox.ItemsSource) is CollectionView view) view.Filter = CustomFilter;
 
-                TailFile(file);
+                TailFile(file, tabName);
             }
             catch (Exception e)
             {
@@ -283,10 +283,10 @@ namespace ListBoxControl.Controls
             CollectionViewSource.GetDefaultView(_rowItems).Refresh();
         }
 
-        private void TailFile(string file)
+        private void TailFile(string file, string tabName)
         {
             _tail?.StopTailFile();
-            _tail = new Tail(file);
+            _tail = new Tail(file, tabName);
             _task = new Task(() => _tail.TailFile(_token), _token);
             _task.Start();
         }
