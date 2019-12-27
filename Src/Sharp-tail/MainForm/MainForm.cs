@@ -112,7 +112,7 @@ namespace MainForm
           
             if (page.InvokeRequired)
             {
-                page.Invoke(new EventHandler(delegate { page.UpdatePage(tabControl1); }));
+                page.Invoke(new EventHandler(delegate { page.Update(tabControl1); }));
             }
         }
 
@@ -210,7 +210,7 @@ namespace MainForm
         }
 
         /// <summary>
-        /// Set tabpage content size when main form resizes
+        /// Set tab-page content size when main form resizes
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -490,21 +490,9 @@ namespace MainForm
             if (result != DialogResult.OK) return;
 
             _colorRules = cf.ColorRules;
-            UpdateTextBoxColorRule();
+            tabControl1.UpdateTextBoxColorRule(_colorRules, Logger);
         }
 
-        /// <summary>
-        /// Apply color rule to tabs text-box
-        /// </summary>
-        private void UpdateTextBoxColorRule()
-        {
-            foreach (TabPage tabControl1TabPage in tabControl1.TabPages)
-            {
-                var host = (ElementHost)tabControl1TabPage.Controls[0];
-                var textBox = (MainTextBox)host.Child;
-                textBox.UpdateColorRules(_colorRules, Logger);
-            }
-        }
 
         /// <summary>
         /// Only react on right mouse button click else return.
@@ -530,21 +518,7 @@ namespace MainForm
             }
         }
 
-        /// <summary>
-        /// remove all resources from a tab. to free memory
-        /// NOTE: this is not working...
-        /// </summary>
-        /// <param name="page"></param>
-        private void Tabcleaner(TabPage page)
-        {
-            var host = (ElementHost)page.Controls[0];
-            var textBox = (MainTextBox)host.Child;
-            textBox.Dispose();
-            host.Controls.Clear();
-            page.Controls.RemoveAt(0);
-            page.Dispose();
-        }
-
+       
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (tabControl1.SelectedIndex > -1)
@@ -614,10 +588,8 @@ namespace MainForm
         {
             var page = tabControl1.TabPages[name];
             _files.Remove(name);
-
-            Tabcleaner(page);
+            page.Clean();
             tabControl1.TabPages.Remove(page);
-            page.Dispose();
         }
 
         /// <summary>

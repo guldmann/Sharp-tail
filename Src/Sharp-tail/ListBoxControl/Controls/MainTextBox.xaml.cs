@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -106,11 +107,16 @@ namespace ListBoxControl.Controls
 
             if (_goToEnd)
             {
-                ScrollToEnd(text);
+                ScrollToEnd();
             }
             if (evaluate) _evaluate = true;
         }
 
+        /// <summary>
+        /// Custom list-box filter, if active filter to only show rows with match to rows in color rule  
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns>Return true on items to show false on items to hide</returns>
         private bool CustomFilter(object obj)
         {
             if (!_filterActive) return true;
@@ -132,12 +138,19 @@ namespace ListBoxControl.Controls
             return true;
         }
 
+        /// <summary>
+        /// set data for file to tail and color rules to apply.
+        /// </summary>
+        /// <param name="file"></param>
+        /// <param name="colorRules"></param>
+        /// <param name="log"></param>
+        /// <param name="tabName"></param>
         public void SetDataFile(string file, List<ColorRule> colorRules, ILogger log, string tabName)
         {
             if (Logger == null) Logger = log;
 
-            if (file == null)
-                return;
+            if (file == null) return;
+
             try
             {
                 File = file;
@@ -154,10 +167,6 @@ namespace ListBoxControl.Controls
                     {
                         AddRow(line);
                     }
-                    reader.Close();
-                    fs.Close();
-                    reader.Dispose();
-                    fs.Dispose();
                 }
 
                 listBox.ItemsSource = null;
@@ -175,7 +184,12 @@ namespace ListBoxControl.Controls
         }
 
 
-
+        /// <summary>
+        /// Note: move this to new files.
+        /// Try to get information for error tracing. 
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="extra"></param>
         private void CrachReport(Exception e, string extra)
         {
             StringBuilder sb = new StringBuilder();
@@ -198,7 +212,10 @@ namespace ListBoxControl.Controls
             Crashes.TrackError(e, values);
         }
 
-        public void ScrollToEnd(string text = "")
+        /// <summary>
+        /// Scroll to last row in list-box
+        /// </summary>
+        public void ScrollToEnd()
         {
             //https://stackoverflow.com/questions/2006729/how-can-i-have-a-listbox-auto-scroll-when-a-new-item-is-added
             if (listBox.Items.Count > 1)
@@ -227,10 +244,17 @@ namespace ListBoxControl.Controls
             CollectionViewSource.GetDefaultView(_rowItems).Refresh();
         }
 
-        private bool CaseCompare(string text, string value, bool caseSencetiv)
+        /// <summary>
+        /// Compare if strings is equal.
+        /// </summary>
+        /// <param name="text">text to find value in </param>
+        /// <param name="value">string to find in text.</param>
+        /// <param name="caseSensitive">use case sensitive ro not</param>
+        /// <returns>true if equal else false</returns>
+        private bool CaseCompare(string text, string value, bool caseSensitive)
         {
             StringComparison stringComparison = StringComparison.CurrentCulture;
-            if (!caseSencetiv)
+            if (!caseSensitive)
             {
                 stringComparison = StringComparison.CurrentCultureIgnoreCase;
                 return text.IndexOf(value, stringComparison) >= 0;
@@ -239,41 +263,43 @@ namespace ListBoxControl.Controls
             return text.IndexOf(value, stringComparison) >= 0;
         }
 
+        /// <summary>
+        /// Update color rules with new rules.
+        /// </summary>
+        /// <param name="colorRules">New set of color rules</param>
+        /// <param name="log">Logger</param>
         public void UpdateColorRules(List<ColorRule> colorRules, ILogger log)
         {
             if (Logger == null) Logger = log;
             Logger.Debug("Updateing Color rules");
             _colorRules = colorRules ?? new List<ColorRule>();
-            int rows = _rowItems.Count;
-            int index = 0;
-            bool textWriten = false;
+            var rows = _rowItems.Count;
+            var index = 0;
+            var textWritten = false;
 
             while (index < rows)
             {
                 if (colorRules != null)
-                    foreach (var rule in colorRules)
+                    foreach (var rule in colorRules.Where(rule => CaseCompare(_rowItems[index].Text, rule.Text, rule.Casesensitiv)))
                     {
-                        if (CaseCompare(_rowItems[index].Text, rule.Text, rule.Casesensitiv))
-                        {
-                            _rowItems[index].BackColor = Color.FromRgb(
-                                rule.Background.R,
-                                rule.Background.G,
-                                rule.Background.B);
-                            _rowItems[index].FrontColor = Color.FromRgb(
-                                rule.ForeGround.R,
-                                rule.ForeGround.G,
-                                rule.ForeGround.B);
-                            textWriten = true;
-                            break;
-                        }
+                        _rowItems[index].BackColor = Color.FromRgb(
+                            rule.Background.R,
+                            rule.Background.G,
+                            rule.Background.B);
+                        _rowItems[index].FrontColor = Color.FromRgb(
+                            rule.ForeGround.R,
+                            rule.ForeGround.G,
+                            rule.ForeGround.B);
+                        textWritten = true;
+                        break;
                     }
 
-                if (!textWriten)
+                if (!textWritten)
                 {
                     _rowItems[index].BackColor = Colors.White;
                     _rowItems[index].FrontColor = Colors.Black;
                 }
-                textWriten = false;
+                textWritten = false;
                 index++;
             }
 
@@ -291,6 +317,11 @@ namespace ListBoxControl.Controls
             _task.Start();
         }
 
+        /// <summary>
+        /// Check if scroll changed in list-box if _evaluate is set to true. 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public void listBox_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
             if (!_evaluate) return;
@@ -300,7 +331,8 @@ namespace ListBoxControl.Controls
                 : false;
         }
 
-        bool disposed = false;
+        bool _disposed;
+
         public void Dispose()
         {
             Dispose(true);
@@ -310,7 +342,7 @@ namespace ListBoxControl.Controls
 
         protected virtual void Dispose(bool disposing)
         {
-            if (disposed)
+            if (_disposed)
                 return;
 
             if (disposing)
@@ -332,7 +364,7 @@ namespace ListBoxControl.Controls
 
             }
 
-            disposed = true;
+            _disposed = true;
         }
 
         /// <summary>
@@ -364,6 +396,7 @@ namespace ListBoxControl.Controls
         {
             e.CanExecute = true;
         }
+
         private void FindExecute(object sender, ExecutedRoutedEventArgs e)
         {
             MenuItem mi = (MenuItem)sender;

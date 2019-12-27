@@ -15,7 +15,9 @@ namespace MainForm.Extension
         /// Set text-box in tab page to update
         /// </summary>
         /// <param name="page"></param>
-        public static TabPage UpdatePage(this TabPage page, TabControl control)
+        /// <param name="control"></param>
+        /// <returns></returns>
+        public static TabPage Update(this TabPage page, TabControl control)
         {
             if (!page.Focused)
             {
@@ -28,7 +30,22 @@ namespace MainForm.Extension
             return page;
         }
 
-       
+        /// <summary>
+        /// remove all resources from a tab. to free memory
+        /// NOTE: this is not working...
+        /// </summary>
+        /// <param name="page"></param>
+        public static void Clean(this TabPage page)
+        {
+            var host = (ElementHost)page.Controls[0];
+            var textBox = (MainTextBox)host.Child;
+            textBox.Dispose();
+            host.Controls.Clear();
+            page.Controls.RemoveAt(0);
+            page.Dispose();
+        }
+
+
 
     }
 }
