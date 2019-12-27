@@ -15,6 +15,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
 using System.Windows.Input;
+using MainForm.Extension;
 using Cursor = System.Windows.Forms.Cursor;
 using DataFormats = System.Windows.Forms.DataFormats;
 using DragDropEffects = System.Windows.Forms.DragDropEffects;
@@ -111,26 +112,8 @@ namespace MainForm
           
             if (page.InvokeRequired)
             {
-                page.Invoke(new EventHandler(delegate { UpdatePage(page); }));
+                page.Invoke(new EventHandler(delegate { page.UpdatePage(tabControl1); }));
             }
-           
-        }
-
-        /// <summary>
-        /// Set textbox in tabpage to update
-        /// </summary>
-        /// <param name="page"></param>
-        private void UpdatePage(TabPage page)
-        {
-            if (!page.Focused)
-            {
-                var host = (ElementHost)page.Controls[0];
-                var textBox = (MainTextBox)host.Child;
-                textBox.Updated = true;
-            }
-
-            page.Refresh();
-            tabControl1.Refresh();
         }
 
         /// <summary>
@@ -161,7 +144,7 @@ namespace MainForm
         /// </summary>
         /// <param name="name">Name of file for current selected tab</param>
         /// <param name="size">Size of file for current selected tab</param>
-        private void SetFileAtrubutesToGui(string name, long size)
+        private void SetFileAttributesToGui(string name, long size)
         {
             toolStripStatusLabelName.Text = "Name: " + name;
             toolStripStatusLabelSize.Text = "Size: " + (size / 1000) + "Kb";
@@ -178,7 +161,7 @@ namespace MainForm
             foreach (var file in files)
             {
                 _fInfo = new FileInfo(file);
-                SetFileAtrubutesToGui(_fInfo.Name, _fInfo.Length);
+                SetFileAttributesToGui(_fInfo.Name, _fInfo.Length);
                 CreateTab(file);
             }
         }
@@ -572,7 +555,7 @@ namespace MainForm
                     var host = (ElementHost)tabPage.Controls[0];
                     var textBox = (MainTextBox)host.Child;
                     textBox.Updated = false;
-                    SetFileAtrubutesToGui(textBox.File, textBox.FileSize);
+                    SetFileAttributesToGui(textBox.File, textBox.FileSize);
                 }
             }
         }
