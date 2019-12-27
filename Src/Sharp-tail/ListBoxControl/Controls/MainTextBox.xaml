@@ -24,12 +24,12 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock Text="{Binding Text}" >
+                            <TextBlock Text="{Binding Text, Mode=OneTime}" >
                                 <TextBlock.Foreground>
-                                    <SolidColorBrush Color="{Binding FrontColor}"/>
+                                    <SolidColorBrush Color="{Binding FrontColor, Mode=OneTime}"/>
                                 </TextBlock.Foreground>
                                 <TextBlock.Background>
-                                    <SolidColorBrush Color="{Binding BackColor}"/>
+                                    <SolidColorBrush Color="{Binding BackColor, Mode=OneTime}"/>
                                 </TextBlock.Background>
                                 <TextBlock.ContextMenu>
                                     <ContextMenu>

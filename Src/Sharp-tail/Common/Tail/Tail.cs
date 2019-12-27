@@ -28,8 +28,7 @@ namespace Common.Tail
 
         public void TailFile(CancellationToken ct)
         {
-            using (StreamReader reader =
-                new StreamReader(new FileStream(_fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
+            using (StreamReader reader = new StreamReader(new FileStream(_fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
             {
                 //start at the end of the file
                 long lastMaxOffset = reader.BaseStream.Length;

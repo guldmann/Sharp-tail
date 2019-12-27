@@ -8,7 +8,5 @@ namespace ListBoxControl.Models
         public string Text { get; set; }
         public Color FrontColor { get; set; }
         public Color BackColor { get; set; }
-
-        
     }
 }

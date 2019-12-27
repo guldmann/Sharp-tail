@@ -158,16 +158,19 @@ namespace ListBoxControl.Controls
 
                 _rowItems = new ObservableCollection<RowItem>();
 
-                FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-                using (StreamReader reader = new StreamReader(fs))
+                using (FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
-                    FileSize = reader.BaseStream.Length;
-                    string line;
-                    while ((line = reader.ReadLine()) != null)
+                    using (StreamReader reader = new StreamReader(fs))
                     {
-                        AddRow(line);
+                        FileSize = reader.BaseStream.Length;
+                        string line;
+                        while ((line = reader.ReadLine()) != null)
+                        {
+                            AddRow(line);
+                        }
                     }
                 }
+
 
                 listBox.ItemsSource = null;
                 listBox.ItemsSource = _rowItems;
@@ -358,6 +361,8 @@ namespace ListBoxControl.Controls
                 }
                 _colorRules.Clear();
                 _colorRules = null;
+                _rowItems.Clear();
+                
                 listBox.ItemsSource = null;
                 _messageService = null;
               _tail.Dispose();
@@ -407,6 +412,5 @@ namespace ListBoxControl.Controls
         {
             e.CanExecute = true;
         }
-        
     }
 }
