@@ -350,9 +350,6 @@ namespace ListBoxControl.Controls
 
             if (disposing)
             {
-                _rowItems.Clear();
-                _rowItems = null;
-                
                 _tokenSource.Cancel();
                 
                 if (_task.IsCanceled || _task.IsCompleted)
@@ -362,6 +359,7 @@ namespace ListBoxControl.Controls
                 _colorRules.Clear();
                 _colorRules = null;
                 _rowItems.Clear();
+                _rowItems = null;
                 
                 listBox.ItemsSource = null;
                 _messageService = null;
