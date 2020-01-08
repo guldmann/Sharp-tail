@@ -34,11 +34,12 @@ namespace MainForm
         private readonly MessageService _messageService = MessageService.Instance;
         public static ILogger Logger;
         private bool _filter;
+       
 
-        public MainForm()
+        public MainForm(string [] args)
         {
             InitializeComponent();
-
+           
             Logger = new LoggerConfiguration()
                 .WriteTo.RollingFile("Logs\\log-{Date}.log")
                 .WriteTo.AppCenterSink()
@@ -53,8 +54,14 @@ namespace MainForm
             tabControl1.MouseClick += tabControl1_MouseClick;
             tabControl1.ShowToolTips = true;
             timer1.Enabled = true;
+            if (args != null)
+            {
+                SetFile(args);
+            }
             LoadPrevious();
         }
+
+      
 
         /// <summary>
         /// Ask user to open previous files.
@@ -71,8 +78,8 @@ namespace MainForm
                     sb.Append("* ").Append(file.Value).Append("\n");
                 }
 
-                var result = MessageBox.Show(sb.ToString(), "Open previous files?", MessageBoxButtons.OKCancel);
-                if (result != DialogResult.OK) return;
+                var result = MessageBox.Show(sb.ToString(), "Open previous files?", MessageBoxButtons.YesNo);
+                if (result != DialogResult.Yes) return;
                 {
                     foreach (var file in files.Where(file => File.Exists(file.Value)))
                     {

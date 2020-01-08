@@ -17,12 +17,12 @@ namespace MainForm
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string[] args )
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             //AppCenter.Start("4cacde5b-7808-459a-942e-86584c277500",typeof(Analytics), typeof(Crashes), typeof(Distribute));
-            Application.Run(new MainForm());
+            Application.Run(new MainForm(args));
         }
     }
 }
