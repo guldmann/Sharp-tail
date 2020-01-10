@@ -490,8 +490,9 @@ namespace MainForm
         private void toolStripMenuItemColorRule_Click(object sender, EventArgs e)
         {
             ColorRulesForm cf = new ColorRulesForm(_colorRules);
+            cf.StartPosition = FormStartPosition.CenterParent;
             cf.ShowDialog();
-            cf.SetDesktopLocation(Cursor.Position.X, Cursor.Position.Y);
+           // cf.SetDesktopLocation(Cursor.Position.X, Cursor.Position.Y);
             var result = cf.DialogResult;
 
             if (result != DialogResult.OK) return;
@@ -663,6 +664,30 @@ namespace MainForm
 
             _filter = !_filter;
             ChangeFilterGui();
+        }
+
+        /// <summary>
+        /// Open form to change text on selected tab
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void renameTabToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (TabPage page in tabControl1.TabPages)
+            {
+                if (page.TabIndex == tabControl1.SelectedTab.TabIndex)
+                {
+                    RenameTabForm rtf = new RenameTabForm(page);
+                    rtf.StartPosition = FormStartPosition.CenterParent;
+
+                    var result = rtf.ShowDialog();
+                    if (result == DialogResult.OK)
+                    {
+                        page.Text = rtf.tabText;
+                    }
+                    return;
+                }
+            }
         }
     }
 }

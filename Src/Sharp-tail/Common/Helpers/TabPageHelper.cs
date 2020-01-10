@@ -28,9 +28,16 @@ namespace Common.Helpers
             if (substring.Length > length)
             {
                 cut = substring.Length - length;
+                sb.Append("...");
             }
 
-            return sb.Append("...").Append(substring.Substring(cut)).Append(CloseCross).ToString();
+            return sb.Append(substring.Substring(cut)).Append(CloseCross).ToString();
+        }
+
+
+        public static string RemoveCross(this string s)
+        {
+            return s.Replace(CloseCross, "");
         }
     }
 }
