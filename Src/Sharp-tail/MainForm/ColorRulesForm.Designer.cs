@@ -49,7 +49,7 @@
             // 
             this.label1.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(160, 27);
+            this.label1.Location = new System.Drawing.Point(4, 7);
             this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(60, 25);
@@ -59,8 +59,8 @@
             // textBoxFilterText
             // 
             this.textBoxFilterText.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.textBoxFilterText.Location = new System.Drawing.Point(228, 24);
-            this.textBoxFilterText.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.textBoxFilterText.Location = new System.Drawing.Point(72, 4);
+            this.textBoxFilterText.Margin = new System.Windows.Forms.Padding(4);
             this.textBoxFilterText.Name = "textBoxFilterText";
             this.textBoxFilterText.Size = new System.Drawing.Size(516, 31);
             this.textBoxFilterText.TabIndex = 2;
@@ -70,7 +70,7 @@
             this.buttonFrontColor.AutoSize = true;
             this.buttonFrontColor.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonFrontColor.Location = new System.Drawing.Point(4, 4);
-            this.buttonFrontColor.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.buttonFrontColor.Margin = new System.Windows.Forms.Padding(4);
             this.buttonFrontColor.Name = "buttonFrontColor";
             this.buttonFrontColor.Size = new System.Drawing.Size(260, 71);
             this.buttonFrontColor.TabIndex = 3;
@@ -83,7 +83,7 @@
             this.buttonBackColor.AutoSize = true;
             this.buttonBackColor.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonBackColor.Location = new System.Drawing.Point(272, 4);
-            this.buttonBackColor.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.buttonBackColor.Margin = new System.Windows.Forms.Padding(4);
             this.buttonBackColor.Name = "buttonBackColor";
             this.buttonBackColor.Size = new System.Drawing.Size(252, 71);
             this.buttonBackColor.TabIndex = 4;
@@ -95,8 +95,8 @@
             // 
             this.buttonSave.AutoSize = true;
             this.buttonSave.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonSave.Location = new System.Drawing.Point(4, 4);
-            this.buttonSave.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.buttonSave.Location = new System.Drawing.Point(532, 4);
+            this.buttonSave.Margin = new System.Windows.Forms.Padding(4);
             this.buttonSave.Name = "buttonSave";
             this.buttonSave.Size = new System.Drawing.Size(148, 71);
             this.buttonSave.TabIndex = 5;
@@ -108,8 +108,8 @@
             // 
             this.buttonClose.AutoSize = true;
             this.buttonClose.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonClose.Location = new System.Drawing.Point(742, 4);
-            this.buttonClose.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.buttonClose.Location = new System.Drawing.Point(898, 4);
+            this.buttonClose.Margin = new System.Windows.Forms.Padding(4);
             this.buttonClose.Name = "buttonClose";
             this.buttonClose.Size = new System.Drawing.Size(160, 71);
             this.buttonClose.TabIndex = 6;
@@ -121,8 +121,8 @@
             // 
             this.buttonRemove.AutoSize = true;
             this.buttonRemove.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonRemove.Location = new System.Drawing.Point(532, 4);
-            this.buttonRemove.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.buttonRemove.Location = new System.Drawing.Point(688, 4);
+            this.buttonRemove.Margin = new System.Windows.Forms.Padding(4);
             this.buttonRemove.Name = "buttonRemove";
             this.buttonRemove.Size = new System.Drawing.Size(202, 71);
             this.buttonRemove.TabIndex = 7;
@@ -139,7 +139,7 @@
             this.listViewColorRules.GridLines = true;
             this.listViewColorRules.HideSelection = false;
             this.listViewColorRules.Location = new System.Drawing.Point(0, 0);
-            this.listViewColorRules.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.listViewColorRules.Margin = new System.Windows.Forms.Padding(4);
             this.listViewColorRules.MultiSelect = false;
             this.listViewColorRules.Name = "listViewColorRules";
             this.listViewColorRules.Size = new System.Drawing.Size(1091, 464);
@@ -157,8 +157,8 @@
             // 
             this.checkBoxCase.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.checkBoxCase.AutoSize = true;
-            this.checkBoxCase.Location = new System.Drawing.Point(752, 25);
-            this.checkBoxCase.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.checkBoxCase.Location = new System.Drawing.Point(596, 5);
+            this.checkBoxCase.Margin = new System.Windows.Forms.Padding(4);
             this.checkBoxCase.Name = "checkBoxCase";
             this.checkBoxCase.Size = new System.Drawing.Size(173, 29);
             this.checkBoxCase.TabIndex = 9;
@@ -171,13 +171,14 @@
             this.flowLayoutPanel1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.flowLayoutPanel1.Controls.Add(this.buttonFrontColor);
             this.flowLayoutPanel1.Controls.Add(this.buttonBackColor);
+            this.flowLayoutPanel1.Controls.Add(this.buttonSave);
             this.flowLayoutPanel1.Controls.Add(this.buttonRemove);
             this.flowLayoutPanel1.Controls.Add(this.buttonClose);
             this.flowLayoutPanel1.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.flowLayoutPanel1.Location = new System.Drawing.Point(16, 568);
-            this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(6);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(950, 83);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(1062, 83);
             this.flowLayoutPanel1.TabIndex = 10;
             this.flowLayoutPanel1.WrapContents = false;
             // 
@@ -185,12 +186,11 @@
             // 
             this.flowLayoutPanel2.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.flowLayoutPanel2.AutoSize = true;
-            this.flowLayoutPanel2.Controls.Add(this.buttonSave);
             this.flowLayoutPanel2.Controls.Add(this.label1);
             this.flowLayoutPanel2.Controls.Add(this.textBoxFilterText);
             this.flowLayoutPanel2.Controls.Add(this.checkBoxCase);
             this.flowLayoutPanel2.Location = new System.Drawing.Point(16, 483);
-            this.flowLayoutPanel2.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.flowLayoutPanel2.Margin = new System.Windows.Forms.Padding(6);
             this.flowLayoutPanel2.Name = "flowLayoutPanel2";
             this.flowLayoutPanel2.Size = new System.Drawing.Size(929, 79);
             this.flowLayoutPanel2.TabIndex = 11;
@@ -205,10 +205,9 @@
             this.Controls.Add(this.flowLayoutPanel2);
             this.Controls.Add(this.flowLayoutPanel1);
             this.Controls.Add(this.listViewColorRules);
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "ColorRulesForm";
             this.Text = "Set color rules";
-            this.Load += new System.EventHandler(this.ColorRulesForm_Load);
             this.flowLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel1.PerformLayout();
             this.flowLayoutPanel2.ResumeLayout(false);

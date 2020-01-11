@@ -190,6 +190,12 @@
     <Compile Include="ColorRulesForm.Designer.cs">
       <DependentUpon>ColorRulesForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="EditColorRuleForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditColorRuleForm.Designer.cs">
+      <DependentUpon>EditColorRuleForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Extension\TabControlExtension.cs" />
     <Compile Include="Extension\TabPageExtension.cs" />
     <Compile Include="MainForm.cs">
@@ -208,6 +214,9 @@
     </Compile>
     <EmbeddedResource Include="ColorRulesForm.resx">
       <DependentUpon>ColorRulesForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditColorRuleForm.resx">
+      <DependentUpon>EditColorRuleForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>

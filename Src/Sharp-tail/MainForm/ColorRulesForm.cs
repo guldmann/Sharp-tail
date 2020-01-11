@@ -130,11 +130,6 @@ namespace MainForm
             }
         }
 
-        private void ColorRulesForm_Load(object sender, EventArgs e)
-        {
-           
-        }
-
         private void listViewColorRules_SelectedIndexChanged(object sender, EventArgs e)
         {
             //if (listViewColorRules.SelectedIndices.Count >= 1)
