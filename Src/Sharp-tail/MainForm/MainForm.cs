@@ -26,7 +26,7 @@ namespace MainForm
 {
     public partial class MainForm : Form
     {
-        private Dictionary<string, string> _files = new Dictionary<string, string>();
+        private List<TabFile> _files = new List<TabFile>();
         private FileInfo _fInfo;
         private bool _fullScreen;
         private bool _ctrlDown;
@@ -56,7 +56,17 @@ namespace MainForm
             timer1.Enabled = true;
             if (args != null)
             {
-                SetFile(args);
+                var tabFiles = new List<TabFile>();
+                foreach (var file in args)
+                {
+                    tabFiles.Add(new TabFile
+                    {
+                        File = file,
+                        Name = Guid.NewGuid().ToString(),
+                        TabName = file
+                    });
+                }
+                SetFile(tabFiles);
             }
             LoadPrevious();
         }
@@ -69,24 +79,26 @@ namespace MainForm
         private void LoadPrevious()
         {
             var files = FileDictionarySeriliazer.Load();
-            if (files.Count > 0)
-            {
-                StringBuilder sb = new StringBuilder();
-                sb.Append("Open previous opened files ?").Append("\n");
-                foreach (var file in files)
-                {
-                    sb.Append("* ").Append(file.Value).Append("\n");
-                }
+            if (files.Count <= 0) return;
 
-                var result = MessageBox.Show(sb.ToString(), "Open previous files?", MessageBoxButtons.YesNo);
-                if (result != DialogResult.Yes) return;
-                {
-                    foreach (var file in files.Where(file => File.Exists(file.Value)))
-                    {
-                        SetFile(new[] { file.Value });
-                    }
-                }
+            StringBuilder sb = new StringBuilder();
+            sb.Append("Open previous opened files ?").Append("\n");
+            foreach (var file in files)
+            {
+                sb.Append("* ").Append(file.File).Append("\n");
             }
+
+            var result = MessageBox.Show(sb.ToString(), "Open previous files?", MessageBoxButtons.YesNo);
+
+            if (result != DialogResult.Yes) return;
+            var tabFiles = new List<TabFile>();
+            foreach (var file in files.Where(file => File.Exists(file.File)))
+            {
+               tabFiles.Add(file);
+            }
+
+            SetFile(tabFiles);
+            
         }
 
         /// <summary>
@@ -109,7 +121,7 @@ namespace MainForm
         }
 
         /// <summary>
-        /// Find tab page by name from tail file 
+        /// Find tab page by name from tail tabFile 
         /// and call updatePage
         /// </summary>
         /// <param name="taileFileInfo"></param>
@@ -124,7 +136,7 @@ namespace MainForm
         }
 
         /// <summary>
-        /// Call open file dialog on behalf of tool strip menu
+        /// Call open tabFile dialog on behalf of tool strip menu
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -134,23 +146,25 @@ namespace MainForm
         }
 
         /// <summary>
-        /// Open file dialog. And if OK open file.
+        /// Open tabFile dialog. And if OK open tabFile.
         /// </summary>
         private void OpenFileDialog()
         {
             var result = openFileDialog1.ShowDialog();
+            if (result != DialogResult.OK) return;
 
-            if (result == DialogResult.OK)
-            {
-                SetFile(openFileDialog1.FileNames);
-            }
+            var tabFiles = openFileDialog1.FileNames
+                .Select(fileName => new TabFile {File = fileName, Name = Guid.NewGuid().ToString(), TabName = fileName})
+                .ToList();
+
+            SetFile(tabFiles);
         }
 
         /// <summary>
         /// Set values to Tool strip
         /// </summary>
-        /// <param name="name">Name of file for current selected tab</param>
-        /// <param name="size">Size of file for current selected tab</param>
+        /// <param name="name">Name of tabFile for current selected tab</param>
+        /// <param name="size">Size of tabFile for current selected tab</param>
         private void SetFileAttributesToGui(string name, long size)
         {
             toolStripStatusLabelName.Text = "Name: " + name;
@@ -163,25 +177,25 @@ namespace MainForm
         /// Calls to create tabs for passed files.
         /// </summary>
         /// <param name="files"></param>
-        private void SetFile(string[] files)
+        private void SetFile(List<TabFile> files)
         {
             foreach (var file in files)
             {
-                _fInfo = new FileInfo(file);
+                _fInfo = new FileInfo(file.File);
                 SetFileAttributesToGui(_fInfo.Name, _fInfo.Length);
                 CreateTab(file);
             }
         }
 
         /// <summary>
-        /// Create a tab page for passed file.
+        /// Create a tab page for passed tabFile.
         /// </summary>
-        /// <param name="file"></param>
-        private void CreateTab(string file)
+        /// <param name="tabFile"></param>
+        private void CreateTab(TabFile tabFile)
         {
-            Log.Information("Creating tab for file: " + file);
+            Log.Information("Creating tab for tabFile: " + tabFile);
 
-            var tabPage = new TabPage(file.Truncate()) { Width = 100 };
+            var tabPage = new TabPage(tabFile.TabName) { Width = 100 };
 
             var textbox = new MainTextBox
             {
@@ -195,8 +209,8 @@ namespace MainForm
                 Child = textbox
             };
 
-            tabPage.ToolTipText = file;
-            tabPage.Name = Guid.NewGuid().ToString();
+            tabPage.ToolTipText = tabFile.File;
+            tabPage.Name = tabFile.Name;// Guid.NewGuid().ToString();
 
             textbox.PreviewKeyDown += MainTextBox1_PreviewKeyDown;
             textbox.PreviewKeyUp += MainTextBox1_PreviewKeyUp;
@@ -204,14 +218,14 @@ namespace MainForm
             textbox.AllowDrop = true;
             textbox.Drop += MainTextBox1_Drop;
             textbox.DragEnter += MainTextBox1_DragEnter;
-            textbox.SetDataFile(file, _colorRules, Logger, tabPage.Name);
+            textbox.SetDataFile(tabFile.File, _colorRules, Logger, tabPage.Name);
 
             tabPage.Controls.Add(host);
             tabControl1.TabPages.Add(tabPage);
             textbox.SetSize(host.Width, host.Height);
             textbox.ScrollToEnd();
-            
-            _files.Add(tabPage.Name, file);
+
+            _files.Add(tabFile);
 
             tabControl1.SelectTab(tabPage);
         }
@@ -243,7 +257,7 @@ namespace MainForm
         }
 
         /// <summary>
-        /// Drag file in to main form event
+        /// Drag tabFile in to main form event
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -259,8 +273,19 @@ namespace MainForm
         /// <param name="e"></param>
         private void MainForm_DragDrop(object sender, DragEventArgs e)
         {
+            var tabFiles = new List<TabFile>();
+
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            SetFile(files);
+            foreach (var file in files)
+            {
+                tabFiles.Add(new TabFile
+                {
+                    File = file,
+                    Name = Guid.NewGuid().ToString(),
+                    TabName = file
+                });
+            }
+            SetFile(tabFiles);
         }
 
         /// <summary>
@@ -274,7 +299,7 @@ namespace MainForm
         }
 
         /// <summary>
-        /// This draws text "file name" on tabs
+        /// This draws text "tabFile name" on tabs
         /// If Data in text box in tab page is updated and not selected it gives tab a green background
         ///
         /// if Tab is selected give it a darker gray
@@ -462,7 +487,7 @@ namespace MainForm
         }
 
         /// <summary>
-        /// When file drags in to main text-Box
+        /// When tabFile drags in to main text-Box
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -478,8 +503,19 @@ namespace MainForm
         /// <param name="e"></param>
         private void MainTextBox1_Drop(object sender, System.Windows.DragEventArgs e)
         {
+            var tabFiles = new List<TabFile>();
+
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            SetFile(files);
+            foreach (var file in files)
+            {
+                tabFiles.Add(new TabFile
+                {
+                    File = file,
+                    Name =  Guid.NewGuid().ToString(),
+                    TabName = file
+                });
+            }
+            SetFile(tabFiles);
         }
 
         /// <summary>
@@ -595,7 +631,7 @@ namespace MainForm
         private void CloseRemoveTab(string name)
         {
             var page = tabControl1.TabPages[name];
-            _files.Remove(name);
+            _files.Remove(_files.FirstOrDefault(x => x.Name == name));
             page.Clean();
             tabControl1.TabPages.Remove(page);
         }
@@ -607,7 +643,7 @@ namespace MainForm
         /// <param name="e"></param>
         private void closeAlToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            _files = new Dictionary<string, string>();
+            _files = new List<TabFile>();
             tabControl1.TabPages.Clear();
         }
 
@@ -684,6 +720,7 @@ namespace MainForm
                     if (result == DialogResult.OK)
                     {
                         page.Text = rtf.tabText;
+                        _files.Find(x => x.Name == page.Name).TabName = rtf.tabText;
                     }
                     return;
                 }

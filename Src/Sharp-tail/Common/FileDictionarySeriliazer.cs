@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net.Mime;
 using System.Windows.Forms;
+using Common.Models;
 using Newtonsoft.Json;
 
 namespace Common
@@ -12,7 +13,7 @@ namespace Common
         private const string LastFiles = "lastOpenFiles.json";
         private static readonly string Root = Application.StartupPath;
 
-        public static void Save(Dictionary<string, string> files)
+        public static void Save(List<TabFile> files)
         {
             JsonSerializer jsonSerializer = new JsonSerializer();
             jsonSerializer.Formatting = Formatting.Indented;
@@ -25,15 +26,15 @@ namespace Common
             }
         }
 
-        public static Dictionary<string, string> Load()
+        public static List<TabFile> Load()
         {
             if (File.Exists(Path.Combine(Root,LastFiles)))
             {
                 var jstring = File.ReadAllText(Path.Combine(Root, LastFiles));
 
-                return JsonConvert.DeserializeObject<Dictionary<string,string>>(jstring);
+                return JsonConvert.DeserializeObject<List<TabFile>>(jstring);
             }
-            return new Dictionary<string, string>();
+            return new List<TabFile>();
         }
     }
 }
