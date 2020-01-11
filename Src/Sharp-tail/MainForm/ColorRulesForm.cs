@@ -11,6 +11,9 @@ namespace MainForm
     {
         public List<ColorRule> ColorRules { get;}
 
+        private ColorRule selectedColorRule = null;
+        private ColorRule newColorRule = null;
+
 
         public ColorRulesForm(List<ColorRule> colorRules)
         {
@@ -33,14 +36,8 @@ namespace MainForm
             foreach(var rule in ColorRules)
             {
                 listViewColorRules.Items.Add(rule.Text);
-                listViewColorRules.Items[line].BackColor = Color.FromArgb(
-                    rule.Background.R,
-                    rule.Background.G,
-                    rule.Background.B);
-                listViewColorRules.Items[line].ForeColor = Color.FromArgb(
-                    rule.ForeGround.R,
-                    rule.ForeGround.G,
-                    rule.ForeGround.B);
+                listViewColorRules.Items[line].BackColor = GetColorFromRuleColor(rule.Background);
+                listViewColorRules.Items[line].ForeColor = GetColorFromRuleColor(rule.ForeGround);
                     line++;
             }
         }
@@ -65,6 +62,23 @@ namespace MainForm
 
         private void buttonSave_Click(object sender, EventArgs e)
         {
+            //if (selectedColorRule != null)
+            //{
+            //    selectedColorRule = new ColorRule
+            //    {
+            //        Background = GetRuleColor(Color.White),
+            //        ForeGround = GetRuleColor(Color.Black),
+            //        Casesensitiv = false,
+            //        Text = ""
+
+            //    };
+            //    newColorRule = selectedColorRule;
+            //}
+
+            //int line = listViewColorRules.Items.Count;
+            //listViewColorRules.Items.Add(textBoxFilterText.Text);
+
+
             int line = listViewColorRules.Items.Count;
             listViewColorRules.Items.Add(textBoxFilterText.Text);
             listViewColorRules.Items[line].BackColor = textBoxFilterText.BackColor;
@@ -74,22 +88,27 @@ namespace MainForm
             {
                 Text = textBoxFilterText.Text,
                 Casesensitiv = checkBoxCase.Checked,
-                Background =  new RuleColor
-                {
-                    R = textBoxFilterText.BackColor.R,
-                    G = textBoxFilterText.BackColor.G,
-                    B = textBoxFilterText.BackColor.B
-                },
-                ForeGround = new RuleColor
-                {
-                    R = textBoxFilterText.ForeColor.R,
-                    G = textBoxFilterText.ForeColor.G,
-                    B = textBoxFilterText.ForeColor.B
-                }
+                Background = GetRuleColor(textBoxFilterText.BackColor),
+                ForeGround = GetRuleColor(textBoxFilterText.ForeColor),
             });
             textBoxFilterText.BackColor = Color.White;
             textBoxFilterText.ForeColor = Color.Black;
             textBoxFilterText.Text = "";
+        }
+
+        private RuleColor GetRuleColor(Color color)
+        {
+            return new RuleColor
+            {
+                R = color.R,
+                G = color.G,
+                B = color.B
+            };
+        }
+
+        private Color GetColorFromRuleColor(RuleColor ruleColor)
+        {
+            return Color.FromArgb(ruleColor.R, ruleColor.G, ruleColor.B);
         }
 
         private void buttonClose_Click(object sender, EventArgs e)
@@ -114,6 +133,18 @@ namespace MainForm
         private void ColorRulesForm_Load(object sender, EventArgs e)
         {
            
+        }
+
+        private void listViewColorRules_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            //if (listViewColorRules.SelectedIndices.Count >= 1)
+            //{
+            //    var index = listViewColorRules.SelectedIndices[0];
+            //    selectedColorRule = ColorRules[index];
+            //    textBoxFilterText.Text = selectedColorRule.Text;
+            //    textBoxFilterText.ForeColor = GetColorFromRuleColor(selectedColorRule.ForeGround);
+            //    textBoxFilterText.BackColor = GetColorFromRuleColor(selectedColorRule.Background);
+            //}
         }
     }
 }

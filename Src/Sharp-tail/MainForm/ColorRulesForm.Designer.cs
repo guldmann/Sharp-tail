@@ -49,7 +49,7 @@
             // 
             this.label1.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(4, 7);
+            this.label1.Location = new System.Drawing.Point(160, 27);
             this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(60, 25);
@@ -59,7 +59,7 @@
             // textBoxFilterText
             // 
             this.textBoxFilterText.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.textBoxFilterText.Location = new System.Drawing.Point(72, 4);
+            this.textBoxFilterText.Location = new System.Drawing.Point(228, 24);
             this.textBoxFilterText.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.textBoxFilterText.Name = "textBoxFilterText";
             this.textBoxFilterText.Size = new System.Drawing.Size(516, 31);
@@ -95,7 +95,7 @@
             // 
             this.buttonSave.AutoSize = true;
             this.buttonSave.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonSave.Location = new System.Drawing.Point(532, 4);
+            this.buttonSave.Location = new System.Drawing.Point(4, 4);
             this.buttonSave.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.buttonSave.Name = "buttonSave";
             this.buttonSave.Size = new System.Drawing.Size(148, 71);
@@ -108,12 +108,12 @@
             // 
             this.buttonClose.AutoSize = true;
             this.buttonClose.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonClose.Location = new System.Drawing.Point(898, 4);
+            this.buttonClose.Location = new System.Drawing.Point(742, 4);
             this.buttonClose.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.buttonClose.Name = "buttonClose";
             this.buttonClose.Size = new System.Drawing.Size(160, 71);
             this.buttonClose.TabIndex = 6;
-            this.buttonClose.Text = "Close";
+            this.buttonClose.Text = "Save close";
             this.buttonClose.UseVisualStyleBackColor = true;
             this.buttonClose.Click += new System.EventHandler(this.buttonClose_Click);
             // 
@@ -121,7 +121,7 @@
             // 
             this.buttonRemove.AutoSize = true;
             this.buttonRemove.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonRemove.Location = new System.Drawing.Point(688, 4);
+            this.buttonRemove.Location = new System.Drawing.Point(532, 4);
             this.buttonRemove.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.buttonRemove.Name = "buttonRemove";
             this.buttonRemove.Size = new System.Drawing.Size(202, 71);
@@ -142,10 +142,11 @@
             this.listViewColorRules.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.listViewColorRules.MultiSelect = false;
             this.listViewColorRules.Name = "listViewColorRules";
-            this.listViewColorRules.Size = new System.Drawing.Size(1087, 464);
+            this.listViewColorRules.Size = new System.Drawing.Size(1091, 464);
             this.listViewColorRules.TabIndex = 8;
             this.listViewColorRules.UseCompatibleStateImageBehavior = false;
             this.listViewColorRules.View = System.Windows.Forms.View.Details;
+            this.listViewColorRules.SelectedIndexChanged += new System.EventHandler(this.listViewColorRules_SelectedIndexChanged);
             // 
             // Header
             // 
@@ -156,7 +157,7 @@
             // 
             this.checkBoxCase.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.checkBoxCase.AutoSize = true;
-            this.checkBoxCase.Location = new System.Drawing.Point(596, 5);
+            this.checkBoxCase.Location = new System.Drawing.Point(752, 25);
             this.checkBoxCase.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.checkBoxCase.Name = "checkBoxCase";
             this.checkBoxCase.Size = new System.Drawing.Size(173, 29);
@@ -170,14 +171,13 @@
             this.flowLayoutPanel1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.flowLayoutPanel1.Controls.Add(this.buttonFrontColor);
             this.flowLayoutPanel1.Controls.Add(this.buttonBackColor);
-            this.flowLayoutPanel1.Controls.Add(this.buttonSave);
             this.flowLayoutPanel1.Controls.Add(this.buttonRemove);
             this.flowLayoutPanel1.Controls.Add(this.buttonClose);
             this.flowLayoutPanel1.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(16, 546);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(16, 568);
             this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(1062, 83);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(950, 83);
             this.flowLayoutPanel1.TabIndex = 10;
             this.flowLayoutPanel1.WrapContents = false;
             // 
@@ -185,13 +185,14 @@
             // 
             this.flowLayoutPanel2.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.flowLayoutPanel2.AutoSize = true;
+            this.flowLayoutPanel2.Controls.Add(this.buttonSave);
             this.flowLayoutPanel2.Controls.Add(this.label1);
             this.flowLayoutPanel2.Controls.Add(this.textBoxFilterText);
             this.flowLayoutPanel2.Controls.Add(this.checkBoxCase);
-            this.flowLayoutPanel2.Location = new System.Drawing.Point(16, 477);
+            this.flowLayoutPanel2.Location = new System.Drawing.Point(16, 483);
             this.flowLayoutPanel2.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.flowLayoutPanel2.Name = "flowLayoutPanel2";
-            this.flowLayoutPanel2.Size = new System.Drawing.Size(812, 58);
+            this.flowLayoutPanel2.Size = new System.Drawing.Size(929, 79);
             this.flowLayoutPanel2.TabIndex = 11;
             this.flowLayoutPanel2.WrapContents = false;
             // 
@@ -200,7 +201,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(1087, 652);
+            this.ClientSize = new System.Drawing.Size(1091, 664);
             this.Controls.Add(this.flowLayoutPanel2);
             this.Controls.Add(this.flowLayoutPanel1);
             this.Controls.Add(this.listViewColorRules);
