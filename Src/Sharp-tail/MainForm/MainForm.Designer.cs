@@ -48,8 +48,8 @@
             this.closeAlToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.closeAlButThisToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.reloadFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.renameTabToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStripTabs.SuspendLayout();
@@ -163,6 +163,7 @@
             // tabControl1
             // 
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl1.ItemSize = new System.Drawing.Size(0, 22);
             this.tabControl1.Location = new System.Drawing.Point(0, 24);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -182,45 +183,45 @@
             this.reloadFileToolStripMenuItem,
             this.renameTabToolStripMenuItem});
             this.contextMenuStripTabs.Name = "contextMenuStripTabs";
-            this.contextMenuStripTabs.Size = new System.Drawing.Size(181, 136);
+            this.contextMenuStripTabs.Size = new System.Drawing.Size(164, 114);
             // 
             // closeThisToolStripMenuItem
             // 
             this.closeThisToolStripMenuItem.Name = "closeThisToolStripMenuItem";
-            this.closeThisToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.closeThisToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.closeThisToolStripMenuItem.Text = "Close";
             this.closeThisToolStripMenuItem.Click += new System.EventHandler(this.closeThisToolStripMenuItem_Click);
             // 
             // closeAlToolStripMenuItem
             // 
             this.closeAlToolStripMenuItem.Name = "closeAlToolStripMenuItem";
-            this.closeAlToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.closeAlToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.closeAlToolStripMenuItem.Text = "Close All";
             this.closeAlToolStripMenuItem.Click += new System.EventHandler(this.closeAlToolStripMenuItem_Click);
             // 
             // closeAlButThisToolStripMenuItem
             // 
             this.closeAlButThisToolStripMenuItem.Name = "closeAlButThisToolStripMenuItem";
-            this.closeAlButThisToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.closeAlButThisToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.closeAlButThisToolStripMenuItem.Text = "Close All But this";
             this.closeAlButThisToolStripMenuItem.Click += new System.EventHandler(this.closeAlButThisToolStripMenuItem_Click);
             // 
             // reloadFileToolStripMenuItem
             // 
             this.reloadFileToolStripMenuItem.Name = "reloadFileToolStripMenuItem";
-            this.reloadFileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.reloadFileToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.reloadFileToolStripMenuItem.Text = "Reload Tab";
-            // 
-            // timer1
-            // 
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // renameTabToolStripMenuItem
             // 
             this.renameTabToolStripMenuItem.Name = "renameTabToolStripMenuItem";
-            this.renameTabToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.renameTabToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.renameTabToolStripMenuItem.Text = "Rename Tab";
             this.renameTabToolStripMenuItem.Click += new System.EventHandler(this.renameTabToolStripMenuItem_Click);
+            // 
+            // timer1
+            // 
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // MainForm
             // 

@@ -318,7 +318,9 @@ namespace MainForm
             var textBox = (MainTextBox)host.Child;
 
             Rectangle paddedBounds = e.Bounds;
-            paddedBounds.Inflate(-2, -2);
+            paddedBounds.Height = 23;
+            
+            paddedBounds.Inflate(-2, -5);
             if (textBox.Updated)
             {
                 if (tabControl1.SelectedIndex != e.Index)
@@ -539,7 +541,7 @@ namespace MainForm
 
 
         /// <summary>
-        /// Only react on right mouse button click else return.
+        /// Only react on left mouse button click else return.
         /// Catch user clicking on tab if clicked position is where text [X] on tab
         /// Then clean out resources connected to tab and remove tab.
         /// 
@@ -553,7 +555,7 @@ namespace MainForm
             for (var i = 0; i < tabControl1.TabPages.Count; i++)
             {
                 Rectangle r = tabControl1.GetTabRect(i);
-                Rectangle closeButton = new Rectangle(r.Right - 30, r.Top, 14, 20);
+                Rectangle closeButton = new Rectangle(r.Right - 30, r.Top, 14, 23);
 
                 if (!closeButton.Contains(e.Location)) continue;
 
