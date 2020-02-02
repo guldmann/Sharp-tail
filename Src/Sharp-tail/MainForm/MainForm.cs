@@ -34,12 +34,11 @@ namespace MainForm
         private readonly MessageService _messageService = MessageService.Instance;
         public static ILogger Logger;
         private bool _filter;
-       
 
-        public MainForm(string [] args)
+        public MainForm(string[] args)
         {
             InitializeComponent();
-           
+
             Logger = new LoggerConfiguration()
                 .WriteTo.RollingFile("Logs\\log-{Date}.log")
                 .WriteTo.AppCenterSink()
@@ -71,8 +70,6 @@ namespace MainForm
             LoadPrevious();
         }
 
-      
-
         /// <summary>
         /// Ask user to open previous files.
         /// </summary>
@@ -94,11 +91,10 @@ namespace MainForm
             var tabFiles = new List<TabFile>();
             foreach (var file in files.Where(file => File.Exists(file.File)))
             {
-               tabFiles.Add(file);
+                tabFiles.Add(file);
             }
 
             SetFile(tabFiles);
-            
         }
 
         /// <summary>
@@ -121,14 +117,14 @@ namespace MainForm
         }
 
         /// <summary>
-        /// Find tab page by name from tail tabFile 
+        /// Find tab page by name from tail tabFile
         /// and call updatePage
         /// </summary>
         /// <param name="taileFileInfo"></param>
         private void TailUpdateEvent(TaileFileInfo taileFileInfo)
         {
             var page = tabControl1.TabPages[taileFileInfo.TabName];
-          
+
             if (page.InvokeRequired)
             {
                 page.Invoke(new EventHandler(delegate { page.Update(tabControl1); }));
@@ -154,7 +150,7 @@ namespace MainForm
             if (result != DialogResult.OK) return;
 
             var tabFiles = openFileDialog1.FileNames
-                .Select(fileName => new TabFile {File = fileName, Name = Guid.NewGuid().ToString(), TabName = fileName})
+                .Select(fileName => new TabFile { File = fileName, Name = Guid.NewGuid().ToString(), TabName = fileName })
                 .ToList();
 
             SetFile(tabFiles);
@@ -319,7 +315,7 @@ namespace MainForm
 
             Rectangle paddedBounds = e.Bounds;
             paddedBounds.Height = 23;
-            
+
             paddedBounds.Inflate(-2, -5);
             if (textBox.Updated)
             {
@@ -400,6 +396,7 @@ namespace MainForm
         /// If key is plus zoom in on text
         /// If key is minus Zoom out on text
         /// If key is F Toggle text filter on / off
+        /// if key is CTRL + S search for word in search text box.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -431,6 +428,11 @@ namespace MainForm
                     }
                 }
 
+                if (e.Key == Key.S)
+                {
+                    if (_ctrlDown) Search();
+                }
+
                 if (e.Key == Key.F)
                 {
                     foreach (TabPage tabControl1TabPage in tabControl1.TabPages)
@@ -446,6 +448,23 @@ namespace MainForm
             }
             if (e.Key == Key.LeftCtrl)
                 _ctrlDown = true;
+        }
+
+        private void Search()
+        {
+            if (toolStripTextBoxSearch.TextBox != null && !string.IsNullOrEmpty(toolStripTextBoxSearch.TextBox.Text))
+            {
+                if (tabControl1.SelectedIndex > -1)
+                {
+                    TabPage tabPage = tabControl1.TabPages[tabControl1.SelectedIndex];
+                    if (tabPage.Controls.Count > 0)
+                    {
+                        var host = (ElementHost)tabPage.Controls[0];
+                        var textBox = (MainTextBox)host.Child;
+                        textBox.Search(toolStripTextBoxSearch.TextBox.Text);
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -513,7 +532,7 @@ namespace MainForm
                 tabFiles.Add(new TabFile
                 {
                     File = file,
-                    Name =  Guid.NewGuid().ToString(),
+                    Name = Guid.NewGuid().ToString(),
                     TabName = file
                 });
             }
@@ -530,7 +549,7 @@ namespace MainForm
             ColorRulesForm cf = new ColorRulesForm(_colorRules);
             cf.StartPosition = FormStartPosition.CenterParent;
             cf.ShowDialog();
-           // cf.SetDesktopLocation(Cursor.Position.X, Cursor.Position.Y);
+            // cf.SetDesktopLocation(Cursor.Position.X, Cursor.Position.Y);
             var result = cf.DialogResult;
 
             if (result != DialogResult.OK) return;
@@ -539,12 +558,11 @@ namespace MainForm
             tabControl1.UpdateTextBoxColorRule(_colorRules, Logger);
         }
 
-
         /// <summary>
         /// Only react on left mouse button click else return.
         /// Catch user clicking on tab if clicked position is where text [X] on tab
         /// Then clean out resources connected to tab and remove tab.
-        /// 
+        ///
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -564,7 +582,6 @@ namespace MainForm
             }
         }
 
-       
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (tabControl1.SelectedIndex > -1)

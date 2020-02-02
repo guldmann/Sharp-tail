@@ -23,7 +23,7 @@ namespace ListBoxControl.Controls
     public partial class MainTextBox : IDisposable
     {
         private ObservableCollection<RowItem> _rowItems;
-        private  MessageService _messageService = MessageService.Instance;
+        private MessageService _messageService = MessageService.Instance;
         private Task _task;
         private readonly CancellationTokenSource _tokenSource = new CancellationTokenSource();
         private readonly CancellationToken _token;
@@ -36,6 +36,8 @@ namespace ListBoxControl.Controls
         public static ILogger Logger;
         private bool _filterActive;
         public long FileSize;
+
+        //temp solution for search
 
         public MainTextBox()
         {
@@ -113,7 +115,7 @@ namespace ListBoxControl.Controls
         }
 
         /// <summary>
-        /// Custom list-box filter, if active filter to only show rows with match to rows in color rule  
+        /// Custom list-box filter, if active filter to only show rows with match to rows in color rule
         /// </summary>
         /// <param name="obj"></param>
         /// <returns>Return true on items to show false on items to hide</returns>
@@ -171,7 +173,6 @@ namespace ListBoxControl.Controls
                     }
                 }
 
-
                 listBox.ItemsSource = null;
                 listBox.ItemsSource = _rowItems;
 
@@ -186,10 +187,9 @@ namespace ListBoxControl.Controls
             }
         }
 
-
         /// <summary>
         /// Note: move this to new files.
-        /// Try to get information for error tracing. 
+        /// Try to get information for error tracing.
         /// </summary>
         /// <param name="e"></param>
         /// <param name="extra"></param>
@@ -197,7 +197,7 @@ namespace ListBoxControl.Controls
         {
             StringBuilder sb = new StringBuilder();
             var values = new Dictionary<string, string>();
-            
+
             foreach (var rule in _colorRules)
             {
                 sb.Append(rule.ToJson()).Append("\n");
@@ -321,7 +321,7 @@ namespace ListBoxControl.Controls
         }
 
         /// <summary>
-        /// Check if scroll changed in list-box if _evaluate is set to true. 
+        /// Check if scroll changed in list-box if _evaluate is set to true.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -334,13 +334,12 @@ namespace ListBoxControl.Controls
                 : false;
         }
 
-        bool _disposed;
+        private bool _disposed;
 
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
-
         }
 
         protected virtual void Dispose(bool disposing)
@@ -351,7 +350,7 @@ namespace ListBoxControl.Controls
             if (disposing)
             {
                 _tokenSource.Cancel();
-                
+
                 if (_task.IsCanceled || _task.IsCompleted)
                 {
                     _task.Dispose();
@@ -360,11 +359,10 @@ namespace ListBoxControl.Controls
                 _colorRules = null;
                 _rowItems.Clear();
                 _rowItems = null;
-                
+
                 listBox.ItemsSource = null;
                 _messageService = null;
-              _tail.Dispose();
-
+                _tail.Dispose();
             }
 
             _disposed = true;
@@ -378,7 +376,7 @@ namespace ListBoxControl.Controls
         private void CtrlCCopyCmdExecuted(object sender, ExecutedRoutedEventArgs e)
         {
             ListBox lb = (ListBox)(sender);
-            var selected =(RowItem) lb.SelectedItem;
+            var selected = (RowItem)lb.SelectedItem;
             if (selected != null) Clipboard.SetText(selected.Text);
         }
 
@@ -391,7 +389,7 @@ namespace ListBoxControl.Controls
         private void RightClickCopyCmdExecuted(object sender, ExecutedRoutedEventArgs e)
         {
             MenuItem mi = (MenuItem)sender;
-            var selected = (RowItem) mi.DataContext;
+            var selected = (RowItem)mi.DataContext;
             if (selected != null) Clipboard.SetText(selected.Text);
         }
 
@@ -406,9 +404,38 @@ namespace ListBoxControl.Controls
             var selected = (RowItem)mi.DataContext;
             if (selected != null) Clipboard.SetText(selected.Text);
         }
+
         private void FindCanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
+        }
+
+        /// <summary>
+        /// Search for word and select and scroll into view if found.
+        /// when last row is reached return to row 0. to start search from first row.
+        ///
+        /// </summary>
+        /// <param name="word"></param>
+        public void Search(string word)
+        {
+            int startIndex = listBox.SelectedIndex;
+            int rowCounter = 0;
+            foreach (var rowItem in _rowItems)
+            {
+                if (rowItem.Text.Contains(word))
+                {
+                    listBox.SelectedItem = rowItem;
+                    if (listBox.SelectedIndex > startIndex)
+                    {
+                        listBox.ScrollIntoView(listBox.SelectedItem);
+                        break;
+                    }
+                }
+
+                rowCounter++;
+                if (rowCounter >= listBox.Items.Count)
+                    listBox.SelectedIndex = 0;
+            }
         }
     }
 }
