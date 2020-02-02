@@ -1,15 +1,19 @@
 # Sharp-tail
-C# Win-Form log reader.
+Sharp-tail is a attempt to write a C# win-form log reader.
+To get faster text render a UWP ListBoxControl is used to render log data.
 
 ### Current version
 Alpha 1 
 
-## What do sharp-tail do ?
-Read user selected files and shows it in a "textbox" sharp-tail will then monitor the file for changes.
-If changes appare in file new rows will get added to the "textBox".  
+## What do sharp-tail do so far.
+Read user selected files and shows it in a "logView" sharp-tail will then monitor files for changes.
+*	Tail files, If changes appear in file new rows will get added to the "logView".
+*	Monitored files will get presented in tabs, when non focused tab get changes to log file tab will change colour.
+*	Colure “rules” to find and highlight log rows matching rule with set colure.
+*	Filter out rows matching colure rules to only show rows of interest.
+*	 Follow log, will keep last log rows in focus.
+*	Remember last opened files and ask user to reopen files at start.
 
-To aid the user to find rows of interrest there is the abillity to set color rules for 
-Search text. 
 
 
 ### Keayboard shortcuts
