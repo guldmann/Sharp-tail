@@ -10,7 +10,6 @@ namespace MainForm.Extension
 {
     public static class TabPageExtension
     {
-
         /// <summary>
         /// Set text-box in tab page to update
         /// </summary>
@@ -21,8 +20,8 @@ namespace MainForm.Extension
         {
             if (!page.Focused)
             {
-                var host = (ElementHost) page.Controls[0];
-                var textBox = (MainTextBox) host.Child;
+                var host = (ElementHost)page.Controls[0];
+                var textBox = (MainTextBox)host.Child;
                 textBox.Updated = true;
             }
             page.Refresh();
@@ -40,12 +39,9 @@ namespace MainForm.Extension
             var host = (ElementHost)page.Controls[0];
             var textBox = (MainTextBox)host.Child;
             textBox.Dispose();
-            host.Controls.Clear();
-            page.Controls.RemoveAt(0);
             page.Dispose();
+            host.Controls.Clear();
+            //page.Controls.RemoveAt(0);
         }
-
-
-
     }
 }

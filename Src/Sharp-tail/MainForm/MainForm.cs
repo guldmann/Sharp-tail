@@ -1,8 +1,8 @@
 ﻿using Common;
-using Common.Helpers;
 using Common.Messages.Services;
 using Common.Models;
 using ListBoxControl.Controls;
+using MainForm.Extension;
 using Serilog;
 using Serilog.Sink.AppCenter;
 using System;
@@ -15,8 +15,6 @@ using System.Text;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
 using System.Windows.Input;
-using MainForm.Extension;
-using Cursor = System.Windows.Forms.Cursor;
 using DataFormats = System.Windows.Forms.DataFormats;
 using DragDropEffects = System.Windows.Forms.DragDropEffects;
 using DragEventArgs = System.Windows.Forms.DragEventArgs;
@@ -580,6 +578,8 @@ namespace MainForm
                 CloseRemoveTab(tabControl1.TabPages[i].Name);
                 break;
             }
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
         }
 
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
@@ -663,7 +663,13 @@ namespace MainForm
         private void closeAlToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _files = new List<TabFile>();
-            tabControl1.TabPages.Clear();
+            foreach (TabPage tabControl1TabPage in tabControl1.TabPages)
+            {
+                CloseRemoveTab(tabControl1TabPage.Name);
+            }
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            //tabControl1.TabPages.Clear();
         }
 
         /// <summary>
@@ -680,6 +686,8 @@ namespace MainForm
                     CloseRemoveTab(page.Name);
                 }
             }
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
         }
 
         /// <summary>

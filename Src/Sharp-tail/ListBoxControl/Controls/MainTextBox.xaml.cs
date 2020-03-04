@@ -44,6 +44,7 @@ namespace ListBoxControl.Controls
             InitializeComponent();
             _messageService.Subscribe<TaileFileInfo>(TailUpdateEvent);
             _token = _tokenSource.Token;
+            _rowItems = new ObservableCollection<RowItem>();
         }
 
         private void TailUpdateEvent(TaileFileInfo taileFileInfo)
@@ -158,7 +159,7 @@ namespace ListBoxControl.Controls
                 File = file;
                 _colorRules = colorRules ?? new List<ColorRule>();
 
-                _rowItems = new ObservableCollection<RowItem>();
+                //_rowItems = new ObservableCollection<RowItem>();
 
                 using (FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
@@ -357,9 +358,10 @@ namespace ListBoxControl.Controls
                 }
                 _colorRules.Clear();
                 _colorRules = null;
+                listBox.ItemsSource = new string[] { };
                 _rowItems.Clear();
                 _rowItems = null;
-
+                _messageService.Unsubscribe<TaileFileInfo>(TailUpdateEvent);
                 listBox.ItemsSource = null;
                 _messageService = null;
                 _tail.Dispose();
