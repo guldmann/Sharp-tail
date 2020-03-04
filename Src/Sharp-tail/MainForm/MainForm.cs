@@ -753,5 +753,20 @@ namespace MainForm
                 }
             }
         }
+
+        private void saveOpenFilesAsGroupToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // keep all groups in a json files  ? 
+            //TODO open form and ask form group name 
+            //Save open files to file {Groupname-date.stf} 
+        }
+
+        private void loadGroupToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+             // ask user what group to open 
+            //TODO ask user to kepp current files open yes /no . 
+            //if no close all files.
+            //load files from group.
+        }
     }
 }
