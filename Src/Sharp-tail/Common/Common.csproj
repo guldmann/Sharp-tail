@@ -144,6 +144,7 @@
     <Compile Include="Messages\Interfaces\IMassageService.cs" />
     <Compile Include="Messages\Services\MessageService.cs" />
     <Compile Include="Models\ColorRule.cs" />
+    <Compile Include="Models\FileGroup.cs" />
     <Compile Include="Models\TabFile.cs" />
     <Compile Include="Models\TaileFileInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
