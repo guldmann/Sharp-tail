@@ -140,6 +140,7 @@
   <ItemGroup>
     <Compile Include="ColorRuleSerializer.cs" />
     <Compile Include="FileDictionarySeriliazer.cs" />
+    <Compile Include="FileGroupHandler.cs" />
     <Compile Include="Helpers\TabPageHelper.cs" />
     <Compile Include="Messages\Interfaces\IMassageService.cs" />
     <Compile Include="Messages\Services\MessageService.cs" />
