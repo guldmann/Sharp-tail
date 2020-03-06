@@ -14,6 +14,7 @@ Read user selected files and shows it in a "logView" sharp-tail will then monito
 *	 Follow log, will keep last log rows in focus.
 *	Remember last opened files and ask user to reopen files at start.
 * Search and focus on word
+* Right click on tab to rename it
 
 
 
