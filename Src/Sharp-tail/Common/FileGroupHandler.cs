@@ -1,6 +1,6 @@
-﻿using Common.Models;
+﻿using System.Collections.Generic;
+using Common.Models;
 using Newtonsoft.Json;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -12,7 +12,7 @@ namespace Common
         private const string GroupsFile = "FileGroup.json";
         private static readonly string Root = Application.StartupPath;
 
-        public static void Save(List<Groups> files)
+        public static void Save(Groups groups)
         {
             JsonSerializer jsonSerializer = new JsonSerializer();
             jsonSerializer.Formatting = Formatting.Indented;
@@ -20,30 +20,33 @@ namespace Common
             {
                 using (JsonWriter writer = new JsonTextWriter(sw))
                 {
-                    jsonSerializer.Serialize(writer, files);
+                    jsonSerializer.Serialize(writer, groups);
                 }
             }
         }
 
-        public static List<Groups> Load()
+        public static Groups Load()
         {
             if (File.Exists(Path.Combine(Root, GroupsFile)))
             {
                 var jstring = File.ReadAllText(Path.Combine(Root, GroupsFile));
 
-                return JsonConvert.DeserializeObject<List<Groups>>(jstring);
+                return JsonConvert.DeserializeObject<Groups>(jstring);
             }
-            return new List<Groups>();
+            return new Groups
+            {
+              FileGroups  = new List<FileGroup>()
+            };
         }
 
-        public static FileGroup GetByName(this List<Groups> groups, string name)
+        public static FileGroup GetByName(this Groups groups, string name)
+        { 
+            return groups.FileGroups.FirstOrDefault(t => t.GroupName == name);
+        }
+
+        public static FileGroup GetByIndex(this Groups groups, int index)
         {
-            // return groups.FirstOrDefault(p => p.fileGroups).fileGroups.FirstOrDefault(p => p.GroupName == name);
+            return groups.FileGroups[index];
         }
-
-        //public static void Add(this List<Groups> groups)
-        //{
-        //    groups.
-        //}
     }
 }

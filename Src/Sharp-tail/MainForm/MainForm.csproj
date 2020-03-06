@@ -212,6 +212,12 @@
     <Compile Include="ColorRulesForm.Designer.cs">
       <DependentUpon>ColorRulesForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="CreateGroupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CreateGroupForm.Designer.cs">
+      <DependentUpon>CreateGroupForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="EditColorRuleForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -236,6 +242,9 @@
     </Compile>
     <EmbeddedResource Include="ColorRulesForm.resx">
       <DependentUpon>ColorRulesForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CreateGroupForm.resx">
+      <DependentUpon>CreateGroupForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="EditColorRuleForm.resx">
       <DependentUpon>EditColorRuleForm.cs</DependentUpon>

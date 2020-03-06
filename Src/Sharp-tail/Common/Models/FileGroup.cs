@@ -4,7 +4,7 @@ namespace Common.Models
 {
     public class Groups
     {
-        public List<FileGroup> fileGroups { get; set; }
+        public List<FileGroup> FileGroups { get; set; }
     }
 
     public class FileGroup

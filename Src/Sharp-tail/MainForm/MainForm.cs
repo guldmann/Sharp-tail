@@ -15,6 +15,8 @@ using System.Text;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
 using System.Windows.Input;
+using Common.Helpers;
+using Microsoft.AppCenter.Crashes;
 using DataFormats = System.Windows.Forms.DataFormats;
 using DragDropEffects = System.Windows.Forms.DragDropEffects;
 using DragEventArgs = System.Windows.Forms.DragEventArgs;
@@ -32,7 +34,7 @@ namespace MainForm
         private readonly MessageService _messageService = MessageService.Instance;
         public static ILogger Logger;
         private bool _filter;
-        private List<Groups> _groups;
+        private Groups _groups;
 
         public MainForm(string[] args)
         {
@@ -763,6 +765,34 @@ namespace MainForm
 
         private void saveOpenFilesAsGroupToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            var groupForm = new CreateGroupForm();
+            groupForm.StartPosition = FormStartPosition.CenterParent;
+            var result = groupForm.ShowDialog();
+
+            if (result == DialogResult.OK)
+            {
+                List<TabFile> tabFiles = new List<TabFile>();
+
+                foreach (TabPage tabPage in tabControl1.TabPages)
+                {
+                    var tabfile = new TabFile
+                    {
+                        TabName = tabPage.Text,
+                        File = tabPage.ToolTipText,
+                        Name = tabPage.Name,
+                    };
+                    tabFiles.Add(tabfile);
+                }
+
+                var group = new FileGroup
+                {
+                    GroupName = groupForm.name,
+                    Tabfiles = tabFiles
+                };
+                _groups.FileGroups.Add(group); 
+            }
+
+
             // keep all groups in a json files  ?
             //TODO open form and ask form group name
             //Save open files to file {Groupname-date.stf}
