@@ -226,6 +226,12 @@
     </Compile>
     <Compile Include="Extension\TabControlExtension.cs" />
     <Compile Include="Extension\TabPageExtension.cs" />
+    <Compile Include="LoadGroupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LoadGroupForm.Designer.cs">
+      <DependentUpon>LoadGroupForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -248,6 +254,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="EditColorRuleForm.resx">
       <DependentUpon>EditColorRuleForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LoadGroupForm.resx">
+      <DependentUpon>LoadGroupForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>

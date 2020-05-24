@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Common.Models;
 using Newtonsoft.Json;
 using System.IO;
@@ -14,8 +15,15 @@ namespace Common
 
         public static void Save(Groups groups)
         {
+            // Delete old FileGroup file if exist.
+            if (File.Exists(Path.Combine(Root, GroupsFile)))
+            {
+                File.Delete(Path.Combine(Root, GroupsFile));
+            }
+
             JsonSerializer jsonSerializer = new JsonSerializer();
             jsonSerializer.Formatting = Formatting.Indented;
+
             using (StreamWriter sw = new StreamWriter(Path.Combine(Root, GroupsFile)))
             {
                 using (JsonWriter writer = new JsonTextWriter(sw))
@@ -35,12 +43,12 @@ namespace Common
             }
             return new Groups
             {
-              FileGroups  = new List<FileGroup>()
+                FileGroups = new List<FileGroup>()
             };
         }
 
         public static FileGroup GetByName(this Groups groups, string name)
-        { 
+        {
             return groups.FileGroups.FirstOrDefault(t => t.GroupName == name);
         }
 

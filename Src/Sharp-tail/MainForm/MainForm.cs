@@ -789,21 +789,28 @@ namespace MainForm
                     GroupName = groupForm.name,
                     Tabfiles = tabFiles
                 };
-                _groups.FileGroups.Add(group); 
+                _groups.FileGroups.Add(group);
+
+                FileGroupHandler.Save(_groups);
             }
-
-
-            // keep all groups in a json files  ?
-            //TODO open form and ask form group name
-            //Save open files to file {Groupname-date.stf}
         }
 
         private void loadGroupToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // ask user what group to open
-            //TODO ask user to kepp current files open yes /no .
-            //if no close all files.
-            //load files from group.
+            var lgf = new LoadGroupForm(_groups);
+            var result = lgf.ShowDialog();
+            if (result != DialogResult.OK) return;
+
+            var selectedGroups = lgf.SelectedGroups;
+            var cloaseDialog = MessageBox.Show("Close current open files?", "Close files ", MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (cloaseDialog == DialogResult.OK)
+            {
+                // TODO close all open files here.
+            }
+
+            // TODO: iterate selected groups and open files
         }
     }
 }

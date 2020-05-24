@@ -160,16 +160,19 @@ namespace ListBoxControl.Controls
                 _colorRules = colorRules ?? new List<ColorRule>();
 
                 //_rowItems = new ObservableCollection<RowItem>();
-
-                using (FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                FileInfo fi = new FileInfo(file);
+                if (fi.Length < 52865000)
                 {
-                    using (StreamReader reader = new StreamReader(fs))
+                    using (FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                     {
-                        FileSize = reader.BaseStream.Length;
-                        string line;
-                        while ((line = reader.ReadLine()) != null)
+                        using (StreamReader reader = new StreamReader(fs))
                         {
-                            AddRow(line);
+                            FileSize = reader.BaseStream.Length;
+                            string line;
+                            while ((line = reader.ReadLine()) != null)
+                            {
+                                AddRow(line);
+                            }
                         }
                     }
                 }
@@ -184,7 +187,7 @@ namespace ListBoxControl.Controls
             }
             catch (Exception e)
             {
-                CrachReport(e, file);
+                CrashReport(e, file);
             }
         }
 
@@ -194,7 +197,7 @@ namespace ListBoxControl.Controls
         /// </summary>
         /// <param name="e"></param>
         /// <param name="extra"></param>
-        private void CrachReport(Exception e, string extra)
+        private void CrashReport(Exception e, string extra)
         {
             StringBuilder sb = new StringBuilder();
             var values = new Dictionary<string, string>();
