@@ -47,7 +47,7 @@ namespace MainForm
                 .CreateLogger();
 
             _colorRules = ColorRuleSerializer.Load();
-            _messageService.Subscribe<TaileFileInfo>(TailUpdateEvent);
+            //_messageService.Subscribe<TaileFileInfo>(TailUpdateEvent);
             tabControl1.DrawMode = TabDrawMode.OwnerDrawFixed;
 
             MainForm_Resize(null, null);

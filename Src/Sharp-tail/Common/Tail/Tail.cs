@@ -18,7 +18,6 @@ namespace Common.Tail
             _fileName = file;
             _tailingFile = true;
             _tabName = tabName;
-
         }
 
         public void StopTailFile()
