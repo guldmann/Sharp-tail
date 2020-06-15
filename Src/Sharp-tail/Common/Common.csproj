@@ -149,6 +149,7 @@
     <Compile Include="Models\TabFile.cs" />
     <Compile Include="Models\TaileFileInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RecursiveFileReader.cs" />
     <Compile Include="Tail\Tail.cs" />
   </ItemGroup>
   <ItemGroup>

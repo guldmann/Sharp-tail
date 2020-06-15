@@ -15,6 +15,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
 using System.Windows.Input;
+using MainForm.Properties;
 using DataFormats = System.Windows.Forms.DataFormats;
 using DragDropEffects = System.Windows.Forms.DragDropEffects;
 using DragEventArgs = System.Windows.Forms.DragEventArgs;
@@ -271,7 +272,32 @@ namespace MainForm
         /// <param name="e"></param>
         private void MainForm_DragDrop(object sender, DragEventArgs e)
         {
-            var files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            var dataDrop = (string[])e.Data.GetData(DataFormats.FileDrop);
+            var files = new List<string>();
+            var folders = new List<string>();
+            foreach (var dataItem in dataDrop)
+            {
+                FileAttributes fAttributes = File.GetAttributes(@dataItem);
+                if ((fAttributes & FileAttributes.Directory) == FileAttributes.Directory)
+                {
+                    folders.Add(dataItem);
+                }
+                else
+                {
+                    files.Add(dataItem);
+                }
+            }
+
+            if (folders.Count > 0)
+            {
+                RecursiveFileReader rfr = new RecursiveFileReader();
+                foreach (var folder in folders)
+                {
+                    files.AddRange(rfr.GetFiles(folder, Settings.Default.FolderDepth));
+                }
+            }
+
+
             var tabFiles = files.Select(file => new TabFile {File = file, Name = Guid.NewGuid().ToString(), TabName = file}).ToList();
             SetFile(tabFiles);
         }
@@ -519,6 +545,7 @@ namespace MainForm
         /// <param name="e"></param>
         private void MainTextBox1_Drop(object sender, System.Windows.DragEventArgs e)
         {
+            
             var files = (string[])e.Data.GetData(DataFormats.FileDrop);
 
             if (files == null) return;
@@ -738,6 +765,11 @@ namespace MainForm
             }
         }
 
+        /// <summary>
+        /// Open form for saving open files as a group.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void saveOpenFilesAsGroupToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (tabControl1.TabPages.Count > 0)
@@ -764,6 +796,11 @@ namespace MainForm
             }
         }
 
+        /// <summary>
+        /// Open form to load files from group.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void loadGroupToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var lgf = new LoadGroupForm(_groups);
