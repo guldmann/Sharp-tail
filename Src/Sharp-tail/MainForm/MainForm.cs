@@ -15,8 +15,6 @@ using System.Text;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
 using System.Windows.Input;
-using Common.Helpers;
-using Microsoft.AppCenter.Crashes;
 using DataFormats = System.Windows.Forms.DataFormats;
 using DragDropEffects = System.Windows.Forms.DragDropEffects;
 using DragEventArgs = System.Windows.Forms.DragEventArgs;
@@ -56,19 +54,10 @@ namespace MainForm
             timer1.Enabled = true;
             if (args != null)
             {
-                var tabFiles = new List<TabFile>();
-                foreach (var file in args)
-                {
-                    tabFiles.Add(new TabFile
-                    {
-                        File = file,
-                        Name = Guid.NewGuid().ToString(),
-                        TabName = file
-                    });
-                }
+                var tabFiles = args.Select(file => new TabFile {File = file, Name = Guid.NewGuid().ToString(), TabName = file}).ToList();
                 SetFile(tabFiles);
             }
-            LoadPrevious();
+            LoadTabFiles();
             LoadGroups();
         }
 
@@ -80,10 +69,18 @@ namespace MainForm
         /// <summary>
         /// Ask user to open previous files.
         /// </summary>
-        private void LoadPrevious()
+        private void LoadTabFiles(List<TabFile> loadTabFiles = null)
         {
-            var files = FileDictionarySeriliazer.Load();
-            if (files.Count <= 0) return;
+            List<TabFile> files;
+            if (loadTabFiles == null)
+            {
+                files = FileDictionarySeriliazer.Load();
+                if (files.Count <= 0) return;
+            }
+            else
+            {
+                files = loadTabFiles;
+            }
 
             StringBuilder sb = new StringBuilder();
             sb.Append("Open previous opened files ?").Append("\n");
@@ -92,14 +89,15 @@ namespace MainForm
                 sb.Append("* ").Append(file.File).Append("\n");
             }
 
-            var result = MessageBox.Show(sb.ToString(), "Open previous files?", MessageBoxButtons.YesNo);
+            var result = DialogResult.Yes; 
+            if (loadTabFiles == null)
+            {
+                result = MessageBox.Show(sb.ToString(), "Open previous files?", MessageBoxButtons.YesNo);
+            }
+
 
             if (result != DialogResult.Yes) return;
-            var tabFiles = new List<TabFile>();
-            foreach (var file in files.Where(file => File.Exists(file.File)))
-            {
-                tabFiles.Add(file);
-            }
+            var tabFiles = files.Where(file => File.Exists(file.File)).ToList();
 
             SetFile(tabFiles);
         }
@@ -200,33 +198,30 @@ namespace MainForm
 
             var tabPage = new TabPage(tabFile.TabName) { Width = 100 };
 
-            var textbox = new MainTextBox
-            {
-                Name = "TextBox",
-            };
+            var textBox = new MainTextBox {Name = "TextBox"};
 
             var host = new ElementHost
             {
                 Name = "Host",
                 Dock = DockStyle.Fill,
-                Child = textbox
+                Child = textBox
             };
 
             tabPage.ToolTipText = tabFile.File;
             tabPage.Name = tabFile.Name;// Guid.NewGuid().ToString();
 
-            textbox.PreviewKeyDown += MainTextBox1_PreviewKeyDown;
-            textbox.PreviewKeyUp += MainTextBox1_PreviewKeyUp;
-            textbox.PreviewMouseWheel += MainTextBox1_MouseWheel;
-            textbox.AllowDrop = true;
-            textbox.Drop += MainTextBox1_Drop;
-            textbox.DragEnter += MainTextBox1_DragEnter;
-            textbox.SetDataFile(tabFile.File, _colorRules, Logger, tabPage.Name);
+            textBox.PreviewKeyDown += MainTextBox1_PreviewKeyDown;
+            textBox.PreviewKeyUp += MainTextBox1_PreviewKeyUp;
+            textBox.PreviewMouseWheel += MainTextBox1_MouseWheel;
+            textBox.AllowDrop = true;
+            textBox.Drop += MainTextBox1_Drop;
+            textBox.DragEnter += MainTextBox1_DragEnter;
+            textBox.SetDataFile(tabFile.File, _colorRules, Logger, tabPage.Name);
 
             tabPage.Controls.Add(host);
             tabControl1.TabPages.Add(tabPage);
-            textbox.SetSize(host.Width, host.Height);
-            textbox.ScrollToEnd();
+            textBox.SetSize(host.Width, host.Height);
+            textBox.ScrollToEnd();
 
             _files.Add(tabFile);
 
@@ -276,18 +271,8 @@ namespace MainForm
         /// <param name="e"></param>
         private void MainForm_DragDrop(object sender, DragEventArgs e)
         {
-            var tabFiles = new List<TabFile>();
-
-            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            foreach (var file in files)
-            {
-                tabFiles.Add(new TabFile
-                {
-                    File = file,
-                    Name = Guid.NewGuid().ToString(),
-                    TabName = file
-                });
-            }
+            var files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            var tabFiles = files.Select(file => new TabFile {File = file, Name = Guid.NewGuid().ToString(), TabName = file}).ToList();
             SetFile(tabFiles);
         }
 
@@ -313,14 +298,14 @@ namespace MainForm
         /// <param name="e"></param>
         private void TabControl1_DrawItem(object sender, DrawItemEventArgs e)
         {
-            TabPage tab = tabControl1.TabPages[e.Index];
+            var tab = tabControl1.TabPages[e.Index];
 
             if (tab.Controls.Count <= 0) return;
 
             var host = (ElementHost)tab.Controls[0];
             var textBox = (MainTextBox)host.Child;
 
-            Rectangle paddedBounds = e.Bounds;
+            var paddedBounds = e.Bounds;
             paddedBounds.Height = 23;
 
             paddedBounds.Inflate(-2, -5);
@@ -414,43 +399,49 @@ namespace MainForm
 
             if (tabControl1.TabCount > 0)
             {
-                if (e.Key == Key.OemPlus)
+                switch (e.Key)
                 {
-                    foreach (TabPage tabControl1TabPage in tabControl1.TabPages)
+                    case Key.OemPlus:
                     {
-                        var host = (ElementHost)tabControl1TabPage.Controls[0];
-                        var textBox = (MainTextBox)host.Child;
-                        textBox.FontSize++;
-                    }
-                }
+                        foreach (TabPage tabControl1TabPage in tabControl1.TabPages)
+                        {
+                            var host = (ElementHost)tabControl1TabPage.Controls[0];
+                            var textBox = (MainTextBox)host.Child;
+                            textBox.FontSize++;
+                        }
 
-                if (e.Key == Key.OemMinus)
-                {
-                    foreach (TabPage tabControl1TabPage in tabControl1.TabPages)
+                        break;
+                    }
+                    case Key.OemMinus:
                     {
-                        var host = (ElementHost)tabControl1TabPage.Controls[0];
-                        var textBox = (MainTextBox)host.Child;
-                        if (textBox.FontSize > 2)
-                            textBox.FontSize--;
+                        foreach (TabPage tabControl1TabPage in tabControl1.TabPages)
+                        {
+                            var host = (ElementHost)tabControl1TabPage.Controls[0];
+                            var textBox = (MainTextBox)host.Child;
+                            if (textBox.FontSize > 2)
+                                textBox.FontSize--;
+                        }
+
+                        break;
                     }
-                }
-
-                if (e.Key == Key.S)
-                {
-                    if (_ctrlDown) Search();
-                }
-
-                if (e.Key == Key.F)
-                {
-                    foreach (TabPage tabControl1TabPage in tabControl1.TabPages)
+                    case Key.S:
                     {
-                        var host = (ElementHost)tabControl1TabPage.Controls[0];
-                        var textBox = (MainTextBox)host.Child;
-                        textBox.ActivateFilter();
+                        if (_ctrlDown) Search();
+                        break;
                     }
+                    case Key.F:
+                    {
+                        foreach (TabPage tabControl1TabPage in tabControl1.TabPages)
+                        {
+                            var host = (ElementHost)tabControl1TabPage.Controls[0];
+                            var textBox = (MainTextBox)host.Child;
+                            textBox.ActivateFilter();
+                        }
 
-                    _filter = !_filter;
-                    ChangeFilterGui();
+                        _filter = !_filter;
+                        ChangeFilterGui();
+                        break;
+                    }
                 }
             }
             if (e.Key == Key.LeftCtrl)
@@ -459,19 +450,16 @@ namespace MainForm
 
         private void Search()
         {
-            if (toolStripTextBoxSearch.TextBox != null && !string.IsNullOrEmpty(toolStripTextBoxSearch.TextBox.Text))
-            {
-                if (tabControl1.SelectedIndex > -1)
-                {
-                    TabPage tabPage = tabControl1.TabPages[tabControl1.SelectedIndex];
-                    if (tabPage.Controls.Count > 0)
-                    {
-                        var host = (ElementHost)tabPage.Controls[0];
-                        var textBox = (MainTextBox)host.Child;
-                        textBox.Search(toolStripTextBoxSearch.TextBox.Text);
-                    }
-                }
-            }
+            if (toolStripTextBoxSearch.TextBox == null || string.IsNullOrEmpty(toolStripTextBoxSearch.TextBox.Text)) return;
+
+            if (tabControl1.SelectedIndex <= -1) return;
+
+            var tabPage = tabControl1.TabPages[tabControl1.SelectedIndex];
+            if (tabPage.Controls.Count <= 0) return;
+
+            var host = (ElementHost)tabPage.Controls[0];
+            var textBox = (MainTextBox)host.Child;
+            textBox.Search(toolStripTextBoxSearch.TextBox.Text);
         }
 
         /// <summary>
@@ -531,18 +519,12 @@ namespace MainForm
         /// <param name="e"></param>
         private void MainTextBox1_Drop(object sender, System.Windows.DragEventArgs e)
         {
-            var tabFiles = new List<TabFile>();
+            var files = (string[])e.Data.GetData(DataFormats.FileDrop);
 
-            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            foreach (var file in files)
-            {
-                tabFiles.Add(new TabFile
-                {
-                    File = file,
-                    Name = Guid.NewGuid().ToString(),
-                    TabName = file
-                });
-            }
+            if (files == null) return;
+
+            var tabFiles = files.Select(file => new TabFile {File = file, Name = Guid.NewGuid().ToString(), TabName = file}).ToList();
+
             SetFile(tabFiles);
         }
 
@@ -553,12 +535,11 @@ namespace MainForm
         /// <param name="e"></param>
         private void toolStripMenuItemColorRule_Click(object sender, EventArgs e)
         {
-            ColorRulesForm cf = new ColorRulesForm(_colorRules);
-            cf.StartPosition = FormStartPosition.CenterParent;
+            var cf = new ColorRulesForm(_colorRules){StartPosition = FormStartPosition.CenterParent};
             cf.ShowDialog();
             // cf.SetDesktopLocation(Cursor.Position.X, Cursor.Position.Y);
-            var result = cf.DialogResult;
 
+            var result = cf.DialogResult;
             if (result != DialogResult.OK) return;
 
             _colorRules = cf.ColorRules;
@@ -579,8 +560,8 @@ namespace MainForm
 
             for (var i = 0; i < tabControl1.TabPages.Count; i++)
             {
-                Rectangle r = tabControl1.GetTabRect(i);
-                Rectangle closeButton = new Rectangle(r.Right - 30, r.Top, 14, 23);
+                var r = tabControl1.GetTabRect(i);
+                var closeButton = new Rectangle(r.Right - 30, r.Top, 14, 23);
 
                 if (!closeButton.Contains(e.Location)) continue;
 
@@ -593,17 +574,16 @@ namespace MainForm
 
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (tabControl1.SelectedIndex > -1)
-            {
-                TabPage tabPage = tabControl1.TabPages[tabControl1.SelectedIndex];
-                if (tabPage.Controls.Count > 0)
-                {
-                    var host = (ElementHost)tabPage.Controls[0];
-                    var textBox = (MainTextBox)host.Child;
-                    textBox.Updated = false;
-                    SetFileAttributesToGui(textBox.File, textBox.FileSize);
-                }
-            }
+            if (tabControl1.SelectedIndex <= -1) return;
+
+            var tabPage = tabControl1.TabPages[tabControl1.SelectedIndex];
+
+            if (tabPage.Controls.Count <= 0) return;
+
+            var host = (ElementHost)tabPage.Controls[0];
+            var textBox = (MainTextBox)host.Child;
+            textBox.Updated = false;
+            SetFileAttributesToGui(textBox.File, textBox.FileSize);
         }
 
         /// <summary>
@@ -613,13 +593,12 @@ namespace MainForm
         /// <param name="e"></param>
         private void goToEndToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (tabControl1.SelectedIndex > -1)
-            {
-                TabPage tabControl1TabPage = tabControl1.TabPages[tabControl1.SelectedIndex];
-                var host = (ElementHost)tabControl1TabPage.Controls[0];
-                var textBox = (MainTextBox)host.Child;
-                textBox.ScrollToEnd();
-            }
+            if (tabControl1.SelectedIndex <= -1) return;
+
+            var tabControl1TabPage = tabControl1.TabPages[tabControl1.SelectedIndex];
+            var host = (ElementHost)tabControl1TabPage.Controls[0];
+            var textBox = (MainTextBox)host.Child;
+            textBox.ScrollToEnd();
         }
 
         /// <summary>
@@ -649,11 +628,10 @@ namespace MainForm
         /// <param name="e"></param>
         private void closeThisToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (tabControl1.SelectedIndex > -1)
-            {
-                var name = tabControl1.SelectedTab.Name;
-                CloseRemoveTab(name);
-            }
+            if (tabControl1.SelectedIndex <= -1) return;
+
+            var name = tabControl1.SelectedTab.Name;
+            CloseRemoveTab(name);
         }
 
         private void CloseRemoveTab(string name)
@@ -716,8 +694,8 @@ namespace MainForm
         /// <param name="e"></param>
         private void timer1_Tick(object sender, EventArgs e)
         {
-            Process proc = Process.GetCurrentProcess();
-            toolStripStatusLabel1.Text = "Mem usage: " + (proc.PrivateMemorySize64 / 1000000) + "MB";
+            var proc = Process.GetCurrentProcess();
+            toolStripStatusLabel1.Text = "Mem usage: " + (proc.PrivateMemorySize64 / 1000000) + "Mb";
         }
 
         /// <summary>
@@ -747,51 +725,46 @@ namespace MainForm
         {
             foreach (TabPage page in tabControl1.TabPages)
             {
-                if (page.TabIndex == tabControl1.SelectedTab.TabIndex)
-                {
-                    RenameTabForm rtf = new RenameTabForm(page);
-                    rtf.StartPosition = FormStartPosition.CenterParent;
+                if (page.TabIndex != tabControl1.SelectedTab.TabIndex) continue;
 
-                    var result = rtf.ShowDialog();
-                    if (result == DialogResult.OK)
-                    {
-                        page.Text = rtf.tabText;
-                        _files.Find(x => x.Name == page.Name).TabName = rtf.tabText;
-                    }
-                    return;
-                }
+                var rtf = new RenameTabForm(page) {StartPosition = FormStartPosition.CenterParent};
+
+                var result = rtf.ShowDialog();
+                if (result != DialogResult.OK) return;
+
+                page.Text = rtf.tabText;
+                _files.Find(x => x.Name == page.Name).TabName = rtf.tabText;
+                return;
             }
         }
 
         private void saveOpenFilesAsGroupToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var groupForm = new CreateGroupForm();
-            groupForm.StartPosition = FormStartPosition.CenterParent;
-            var result = groupForm.ShowDialog();
-
-            if (result == DialogResult.OK)
+            if (tabControl1.TabPages.Count > 0)
             {
-                List<TabFile> tabFiles = new List<TabFile>();
+                var groupForm = new CreateGroupForm {StartPosition = FormStartPosition.CenterParent};
+                var result = groupForm.ShowDialog();
 
-                foreach (TabPage tabPage in tabControl1.TabPages)
-                {
-                    var tabfile = new TabFile
-                    {
-                        TabName = tabPage.Text,
-                        File = tabPage.ToolTipText,
-                        Name = tabPage.Name,
-                    };
-                    tabFiles.Add(tabfile);
-                }
+                if (result != DialogResult.OK) return;
+
+                var tabFiles = (
+                    from TabPage tabPage 
+                    in tabControl1.TabPages
+                    select new TabFile {TabName = tabPage.Text, File = tabPage.ToolTipText, Name = tabPage.Name})
+                    .ToList();
 
                 var group = new FileGroup
                 {
                     GroupName = groupForm.name,
                     Tabfiles = tabFiles
                 };
-                _groups.FileGroups.Add(group);
+                _groups.FileGroups.Add(@group);
 
                 FileGroupHandler.Save(_groups);
+            }
+            else
+            {
+                MessageBox.Show("No open files to group.");
             }
         }
 
@@ -802,15 +775,20 @@ namespace MainForm
             if (result != DialogResult.OK) return;
 
             var selectedGroups = lgf.SelectedGroups;
-            var cloaseDialog = MessageBox.Show("Close current open files?", "Close files ", MessageBoxButtons.YesNo,
+            var closeDialog = MessageBox.Show("Close current open files?", "Close files ", MessageBoxButtons.YesNo,
                 MessageBoxIcon.Question);
 
-            if (cloaseDialog == DialogResult.OK)
+            if (closeDialog == DialogResult.Yes)
             {
-                // TODO close all open files here.
+                closeAlToolStripMenuItem_Click(null, null);
             }
 
-            // TODO: iterate selected groups and open files
+            var groups = FileGroupHandler.Load();
+
+            foreach (var fileGroup in groups.FileGroups.Where(fileGroup => selectedGroups.Contains(fileGroup.GroupName)))
+            {
+                LoadTabFiles(fileGroup.Tabfiles);
+            }
         }
     }
 }

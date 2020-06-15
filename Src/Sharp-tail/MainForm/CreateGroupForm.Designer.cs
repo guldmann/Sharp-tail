@@ -38,28 +38,26 @@
             // 
             // textBoxGroupName
             // 
-            this.textBoxGroupName.Location = new System.Drawing.Point(157, 6);
-            this.textBoxGroupName.Margin = new System.Windows.Forms.Padding(6);
+            this.textBoxGroupName.Location = new System.Drawing.Point(79, 3);
             this.textBoxGroupName.Name = "textBoxGroupName";
-            this.textBoxGroupName.Size = new System.Drawing.Size(550, 31);
+            this.textBoxGroupName.Size = new System.Drawing.Size(277, 20);
             this.textBoxGroupName.TabIndex = 0;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 0);
-            this.label1.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.label1.Location = new System.Drawing.Point(3, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(139, 25);
+            this.label1.Size = new System.Drawing.Size(70, 13);
             this.label1.TabIndex = 1;
             this.label1.Text = "Group Name:";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // buttonSave
             // 
-            this.buttonSave.Location = new System.Drawing.Point(6, 49);
-            this.buttonSave.Margin = new System.Windows.Forms.Padding(6);
+            this.buttonSave.Location = new System.Drawing.Point(3, 29);
             this.buttonSave.Name = "buttonSave";
-            this.buttonSave.Size = new System.Drawing.Size(150, 38);
+            this.buttonSave.Size = new System.Drawing.Size(75, 20);
             this.buttonSave.TabIndex = 2;
             this.buttonSave.Text = "Save";
             this.buttonSave.UseVisualStyleBackColor = true;
@@ -68,10 +66,9 @@
             // buttonCancel
             // 
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(168, 49);
-            this.buttonCancel.Margin = new System.Windows.Forms.Padding(6);
+            this.buttonCancel.Location = new System.Drawing.Point(84, 29);
             this.buttonCancel.Name = "buttonCancel";
-            this.buttonCancel.Size = new System.Drawing.Size(150, 38);
+            this.buttonCancel.Size = new System.Drawing.Size(75, 20);
             this.buttonCancel.TabIndex = 3;
             this.buttonCancel.Text = "Cancel";
             this.buttonCancel.UseVisualStyleBackColor = true;
@@ -83,21 +80,20 @@
             this.flowLayoutPanel1.Controls.Add(this.textBoxGroupName);
             this.flowLayoutPanel1.Controls.Add(this.buttonSave);
             this.flowLayoutPanel1.Controls.Add(this.buttonCancel);
-            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(11, 11);
+            this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(5, 5, 2, 2);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(735, 119);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(368, 62);
             this.flowLayoutPanel1.TabIndex = 4;
             // 
             // CreateGroupForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(735, 119);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.ClientSize = new System.Drawing.Size(386, 84);
             this.Controls.Add(this.flowLayoutPanel1);
-            this.Margin = new System.Windows.Forms.Padding(6);
             this.Name = "CreateGroupForm";
-            this.Text = "CreateGroupForm";
+            this.Text = "Create Group";
             this.flowLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);

@@ -35,16 +35,18 @@
             // checkedListBoxGroups
             // 
             this.checkedListBoxGroups.FormattingEnabled = true;
-            this.checkedListBoxGroups.Location = new System.Drawing.Point(12, 8);
+            this.checkedListBoxGroups.Location = new System.Drawing.Point(6, 4);
+            this.checkedListBoxGroups.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.checkedListBoxGroups.Name = "checkedListBoxGroups";
-            this.checkedListBoxGroups.Size = new System.Drawing.Size(690, 312);
+            this.checkedListBoxGroups.Size = new System.Drawing.Size(347, 154);
             this.checkedListBoxGroups.TabIndex = 0;
             // 
             // buttonLoad
             // 
-            this.buttonLoad.Location = new System.Drawing.Point(38, 344);
+            this.buttonLoad.Location = new System.Drawing.Point(19, 179);
+            this.buttonLoad.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.buttonLoad.Name = "buttonLoad";
-            this.buttonLoad.Size = new System.Drawing.Size(171, 58);
+            this.buttonLoad.Size = new System.Drawing.Size(86, 30);
             this.buttonLoad.TabIndex = 1;
             this.buttonLoad.Text = "Load groups";
             this.buttonLoad.UseVisualStyleBackColor = true;
@@ -52,11 +54,12 @@
             // 
             // LoadGroupForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.ClientSize = new System.Drawing.Size(400, 234);
             this.Controls.Add(this.buttonLoad);
             this.Controls.Add(this.checkedListBoxGroups);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "LoadGroupForm";
             this.Text = "LoadGroupForm";
             this.ResumeLayout(false);
