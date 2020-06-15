@@ -753,11 +753,7 @@ namespace MainForm
                     select new TabFile {TabName = tabPage.Text, File = tabPage.ToolTipText, Name = tabPage.Name})
                     .ToList();
 
-                var group = new FileGroup
-                {
-                    GroupName = groupForm.name,
-                    Tabfiles = tabFiles
-                };
+                var group = new FileGroup{GroupName = groupForm.name,Tabfiles = tabFiles};
                 _groups.FileGroups.Add(@group);
 
                 FileGroupHandler.Save(_groups);
@@ -775,12 +771,16 @@ namespace MainForm
             if (result != DialogResult.OK) return;
 
             var selectedGroups = lgf.SelectedGroups;
-            var closeDialog = MessageBox.Show("Close current open files?", "Close files ", MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question);
 
-            if (closeDialog == DialogResult.Yes)
+            if (tabControl1.TabCount > 0)
             {
-                closeAlToolStripMenuItem_Click(null, null);
+                var closeDialog = MessageBox.Show("Close current open files?", "Close files ", MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question);
+
+                if (closeDialog == DialogResult.Yes)
+                {
+                    closeAlToolStripMenuItem_Click(null, null);
+                }
             }
 
             var groups = FileGroupHandler.Load();
