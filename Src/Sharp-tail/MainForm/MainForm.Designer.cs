@@ -37,6 +37,8 @@
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.closeAllFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.loadGroupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveOpenFilesAsGroupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemColorRule = new System.Windows.Forms.ToolStripMenuItem();
             this.goToEndToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -52,8 +54,6 @@
             this.reloadFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.renameTabToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.saveOpenFilesAsGroupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.loadGroupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStripTabs.SuspendLayout();
@@ -134,6 +134,20 @@
             this.closeAllFilesToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
             this.closeAllFilesToolStripMenuItem.Text = "Close All Files";
             this.closeAllFilesToolStripMenuItem.Click += new System.EventHandler(this.closeAllFilesToolStripMenuItem_Click);
+            // 
+            // loadGroupToolStripMenuItem
+            // 
+            this.loadGroupToolStripMenuItem.Name = "loadGroupToolStripMenuItem";
+            this.loadGroupToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
+            this.loadGroupToolStripMenuItem.Text = "Load Group";
+            this.loadGroupToolStripMenuItem.Click += new System.EventHandler(this.loadGroupToolStripMenuItem_Click);
+            // 
+            // saveOpenFilesAsGroupToolStripMenuItem
+            // 
+            this.saveOpenFilesAsGroupToolStripMenuItem.Name = "saveOpenFilesAsGroupToolStripMenuItem";
+            this.saveOpenFilesAsGroupToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
+            this.saveOpenFilesAsGroupToolStripMenuItem.Text = "Save Open Files as Group";
+            this.saveOpenFilesAsGroupToolStripMenuItem.Click += new System.EventHandler(this.saveOpenFilesAsGroupToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
@@ -240,27 +254,14 @@
             // 
             // timer1
             // 
+            this.timer1.Interval = 1000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-            // 
-            // saveOpenFilesAsGroupToolStripMenuItem
-            // 
-            this.saveOpenFilesAsGroupToolStripMenuItem.Name = "saveOpenFilesAsGroupToolStripMenuItem";
-            this.saveOpenFilesAsGroupToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
-            this.saveOpenFilesAsGroupToolStripMenuItem.Text = "Save Open Files as Group";
-            this.saveOpenFilesAsGroupToolStripMenuItem.Click += new System.EventHandler(this.saveOpenFilesAsGroupToolStripMenuItem_Click);
-            // 
-            // loadGroupToolStripMenuItem
-            // 
-            this.loadGroupToolStripMenuItem.Name = "loadGroupToolStripMenuItem";
-            this.loadGroupToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
-            this.loadGroupToolStripMenuItem.Text = "Load Group";
-            this.loadGroupToolStripMenuItem.Click += new System.EventHandler(this.loadGroupToolStripMenuItem_Click);
             // 
             // MainForm
             // 
             this.AllowDrop = true;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(812, 552);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.statusStrip1);

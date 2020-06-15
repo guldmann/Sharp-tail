@@ -45,69 +45,73 @@
             this.flowLayoutPanel1.Controls.Add(this.buttonBackColor);
             this.flowLayoutPanel1.Controls.Add(this.buttonSave);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(10, 10);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(5, 5);
+            this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Padding = new System.Windows.Forms.Padding(10);
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(780, 120);
+            this.flowLayoutPanel1.Padding = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(390, 63);
             this.flowLayoutPanel1.TabIndex = 0;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(13, 10);
+            this.label1.Location = new System.Drawing.Point(7, 5);
+            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(54, 25);
+            this.label1.Size = new System.Drawing.Size(28, 13);
             this.label1.TabIndex = 0;
             this.label1.Text = "Text";
             // 
             // textBoxRuleText
             // 
-            this.textBoxRuleText.Location = new System.Drawing.Point(73, 13);
+            this.textBoxRuleText.Location = new System.Drawing.Point(39, 7);
+            this.textBoxRuleText.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.textBoxRuleText.Name = "textBoxRuleText";
-            this.textBoxRuleText.Size = new System.Drawing.Size(599, 31);
+            this.textBoxRuleText.Size = new System.Drawing.Size(302, 20);
             this.textBoxRuleText.TabIndex = 1;
             // 
             // buttonFrontColor
             // 
-            this.buttonFrontColor.AutoEllipsis = true;
             this.buttonFrontColor.AutoSize = true;
-            this.buttonFrontColor.Location = new System.Drawing.Point(13, 50);
+            this.buttonFrontColor.Location = new System.Drawing.Point(7, 31);
+            this.buttonFrontColor.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.buttonFrontColor.Name = "buttonFrontColor";
-            this.buttonFrontColor.Size = new System.Drawing.Size(130, 49);
+            this.buttonFrontColor.Size = new System.Drawing.Size(68, 25);
             this.buttonFrontColor.TabIndex = 2;
             this.buttonFrontColor.Text = "Front-Color";
             this.buttonFrontColor.UseVisualStyleBackColor = true;
             // 
             // buttonBackColor
             // 
-            this.buttonBackColor.AutoEllipsis = true;
             this.buttonBackColor.AutoSize = true;
-            this.buttonBackColor.Location = new System.Drawing.Point(149, 50);
+            this.buttonBackColor.Location = new System.Drawing.Point(79, 31);
+            this.buttonBackColor.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.buttonBackColor.Name = "buttonBackColor";
-            this.buttonBackColor.Size = new System.Drawing.Size(128, 49);
+            this.buttonBackColor.Size = new System.Drawing.Size(69, 25);
             this.buttonBackColor.TabIndex = 3;
             this.buttonBackColor.Text = "Back-Color";
             this.buttonBackColor.UseVisualStyleBackColor = true;
             // 
             // buttonSave
             // 
-            this.buttonSave.AutoEllipsis = true;
             this.buttonSave.AutoSize = true;
-            this.buttonSave.Location = new System.Drawing.Point(283, 50);
+            this.buttonSave.Location = new System.Drawing.Point(152, 31);
+            this.buttonSave.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.buttonSave.Name = "buttonSave";
-            this.buttonSave.Size = new System.Drawing.Size(94, 49);
+            this.buttonSave.Size = new System.Drawing.Size(47, 25);
             this.buttonSave.TabIndex = 4;
             this.buttonSave.Text = "Save";
             this.buttonSave.UseVisualStyleBackColor = true;
             // 
             // EditColorRuleForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 140);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.ClientSize = new System.Drawing.Size(400, 73);
             this.Controls.Add(this.flowLayoutPanel1);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "EditColorRuleForm";
-            this.Padding = new System.Windows.Forms.Padding(10);
+            this.Padding = new System.Windows.Forms.Padding(5, 5, 5, 5);
             this.Text = "Edit Color-Rule";
             this.flowLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel1.PerformLayout();
