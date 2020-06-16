@@ -353,18 +353,19 @@ namespace ListBoxControl.Controls
 
             if (disposing)
             {
+                _messageService.Unsubscribe<TaileFileInfo>(TailUpdateEvent);
                 _tokenSource.Cancel();
 
                 if (_task.IsCanceled || _task.IsCompleted)
                 {
                     _task.Dispose();
                 }
+
                 _colorRules.Clear();
                 _colorRules = null;
                 listBox.ItemsSource = new string[] { };
                 _rowItems.Clear();
                 _rowItems = null;
-                _messageService.Unsubscribe<TaileFileInfo>(TailUpdateEvent);
                 listBox.ItemsSource = null;
                 _messageService = null;
                 _tail.Dispose();
