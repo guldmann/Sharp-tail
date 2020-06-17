@@ -12,10 +12,12 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
 using System.Windows.Input;
 using MainForm.Properties;
+using Cursor = System.Windows.Forms.Cursor;
 using DataFormats = System.Windows.Forms.DataFormats;
 using DragDropEffects = System.Windows.Forms.DragDropEffects;
 using DragEventArgs = System.Windows.Forms.DragEventArgs;
@@ -34,6 +36,8 @@ namespace MainForm
         public static ILogger Logger;
         private bool _filter;
         private Groups _groups;
+        private string SearchWord = null;
+        private SearchForm searchForm = null;
 
         public MainForm(string[] args)
         {
@@ -55,7 +59,7 @@ namespace MainForm
             timer1.Enabled = true;
             if (args != null)
             {
-                var tabFiles = args.Select(file => new TabFile {File = file, Name = Guid.NewGuid().ToString(), TabName = file}).ToList();
+                var tabFiles = args.Select(file => new TabFile { File = file, Name = Guid.NewGuid().ToString(), TabName = file }).ToList();
                 SetFile(tabFiles);
             }
             LoadTabFiles();
@@ -90,12 +94,11 @@ namespace MainForm
                 sb.Append("* ").Append(file.File).Append("\n");
             }
 
-            var result = DialogResult.Yes; 
+            var result = DialogResult.Yes;
             if (loadTabFiles == null)
             {
                 result = MessageBox.Show(sb.ToString(), "Open previous files?", MessageBoxButtons.YesNo);
             }
-
 
             if (result != DialogResult.Yes) return;
             var tabFiles = files.Where(file => File.Exists(file.File)).ToList();
@@ -199,7 +202,7 @@ namespace MainForm
 
             var tabPage = new TabPage(tabFile.TabName) { Width = 100 };
 
-            var textBox = new MainTextBox {Name = "TextBox"};
+            var textBox = new MainTextBox { Name = "TextBox" };
 
             var host = new ElementHost
             {
@@ -297,8 +300,7 @@ namespace MainForm
                 }
             }
 
-
-            var tabFiles = files.Select(file => new TabFile {File = file, Name = Guid.NewGuid().ToString(), TabName = file}).ToList();
+            var tabFiles = files.Select(file => new TabFile { File = file, Name = Guid.NewGuid().ToString(), TabName = file }).ToList();
             SetFile(tabFiles);
         }
 
@@ -428,46 +430,58 @@ namespace MainForm
                 switch (e.Key)
                 {
                     case Key.OemPlus:
-                    {
-                        foreach (TabPage tabControl1TabPage in tabControl1.TabPages)
                         {
-                            var host = (ElementHost)tabControl1TabPage.Controls[0];
-                            var textBox = (MainTextBox)host.Child;
-                            textBox.FontSize++;
-                        }
+                            foreach (TabPage tabControl1TabPage in tabControl1.TabPages)
+                            {
+                                var host = (ElementHost)tabControl1TabPage.Controls[0];
+                                var textBox = (MainTextBox)host.Child;
+                                textBox.FontSize++;
+                            }
 
-                        break;
-                    }
+                            break;
+                        }
                     case Key.OemMinus:
-                    {
-                        foreach (TabPage tabControl1TabPage in tabControl1.TabPages)
                         {
-                            var host = (ElementHost)tabControl1TabPage.Controls[0];
-                            var textBox = (MainTextBox)host.Child;
-                            if (textBox.FontSize > 2)
-                                textBox.FontSize--;
-                        }
+                            foreach (TabPage tabControl1TabPage in tabControl1.TabPages)
+                            {
+                                var host = (ElementHost)tabControl1TabPage.Controls[0];
+                                var textBox = (MainTextBox)host.Child;
+                                if (textBox.FontSize > 2)
+                                    textBox.FontSize--;
+                            }
 
-                        break;
-                    }
+                            break;
+                        }
                     case Key.S:
-                    {
-                        if (_ctrlDown) Search();
-                        break;
-                    }
-                    case Key.F:
-                    {
-                        foreach (TabPage tabControl1TabPage in tabControl1.TabPages)
                         {
-                            var host = (ElementHost)tabControl1TabPage.Controls[0];
-                            var textBox = (MainTextBox)host.Child;
-                            textBox.ActivateFilter();
+                            if (_ctrlDown)
+                            {
+                                // Search();
+                                ShowSearchForm();
+                            }
+                            break;
                         }
+                    case Key.F3:
+                        {
+                            if (SearchWord != null)
+                            {
+                                Search();
+                            }
+                            break;
+                        }
+                    case Key.F:
+                        {
+                            foreach (TabPage tabControl1TabPage in tabControl1.TabPages)
+                            {
+                                var host = (ElementHost)tabControl1TabPage.Controls[0];
+                                var textBox = (MainTextBox)host.Child;
+                                textBox.ActivateFilter();
+                            }
 
-                        _filter = !_filter;
-                        ChangeFilterGui();
-                        break;
-                    }
+                            _filter = !_filter;
+                            ChangeFilterGui();
+                            break;
+                        }
                 }
             }
             if (e.Key == Key.LeftCtrl)
@@ -476,7 +490,7 @@ namespace MainForm
 
         private void Search()
         {
-            if (toolStripTextBoxSearch.TextBox == null || string.IsNullOrEmpty(toolStripTextBoxSearch.TextBox.Text)) return;
+            // if (toolStripTextBoxSearch.TextBox == null || string.IsNullOrEmpty(toolStripTextBoxSearch.TextBox.Text)) return;
 
             if (tabControl1.SelectedIndex <= -1) return;
 
@@ -485,7 +499,33 @@ namespace MainForm
 
             var host = (ElementHost)tabPage.Controls[0];
             var textBox = (MainTextBox)host.Child;
-            textBox.Search(toolStripTextBoxSearch.TextBox.Text);
+            // textBox.Search(toolStripTextBoxSearch.TextBox.Text);
+            textBox.Search(SearchWord);
+        }
+
+        private void ShowSearchForm()
+        {
+            if (searchForm == null)
+            {
+                searchForm = new SearchForm();
+                searchForm.WindowClosed += searchClosed;
+                searchForm.StartPosition = FormStartPosition.Manual;
+                searchForm.Location = new Point(Bounds.Right - 294, Bounds.Top + 82);
+                searchForm.Show();
+            }
+            else
+            {
+                searchForm.BringToFront();
+            }
+        }
+
+        private void searchClosed()
+        {
+            SearchWord = searchForm.SearchWord;
+            Search();
+            //  if (searchForm.WindowClosed != null) searchForm.WindowClosed -= searchClosed;
+            searchForm.Dispose();
+            searchForm = null;
         }
 
         /// <summary>
@@ -545,12 +585,11 @@ namespace MainForm
         /// <param name="e"></param>
         private void MainTextBox1_Drop(object sender, System.Windows.DragEventArgs e)
         {
-            
             var files = (string[])e.Data.GetData(DataFormats.FileDrop);
 
             if (files == null) return;
 
-            var tabFiles = files.Select(file => new TabFile {File = file, Name = Guid.NewGuid().ToString(), TabName = file}).ToList();
+            var tabFiles = files.Select(file => new TabFile { File = file, Name = Guid.NewGuid().ToString(), TabName = file }).ToList();
 
             SetFile(tabFiles);
         }
@@ -562,7 +601,7 @@ namespace MainForm
         /// <param name="e"></param>
         private void toolStripMenuItemColorRule_Click(object sender, EventArgs e)
         {
-            var cf = new ColorRulesForm(_colorRules){StartPosition = FormStartPosition.CenterParent};
+            var cf = new ColorRulesForm(_colorRules) { StartPosition = FormStartPosition.CenterParent };
             cf.ShowDialog();
             // cf.SetDesktopLocation(Cursor.Position.X, Cursor.Position.Y);
 
@@ -754,7 +793,7 @@ namespace MainForm
             {
                 if (page.TabIndex != tabControl1.SelectedTab.TabIndex) continue;
 
-                var rtf = new RenameTabForm(page) {StartPosition = FormStartPosition.CenterParent};
+                var rtf = new RenameTabForm(page) { StartPosition = FormStartPosition.CenterParent };
 
                 var result = rtf.ShowDialog();
                 if (result != DialogResult.OK) return;
@@ -774,18 +813,18 @@ namespace MainForm
         {
             if (tabControl1.TabPages.Count > 0)
             {
-                var groupForm = new CreateGroupForm {StartPosition = FormStartPosition.CenterParent};
+                var groupForm = new CreateGroupForm { StartPosition = FormStartPosition.CenterParent };
                 var result = groupForm.ShowDialog();
 
                 if (result != DialogResult.OK) return;
 
                 var tabFiles = (
-                    from TabPage tabPage 
+                    from TabPage tabPage
                     in tabControl1.TabPages
-                    select new TabFile {TabName = tabPage.Text, File = tabPage.ToolTipText, Name = tabPage.Name})
+                    select new TabFile { TabName = tabPage.Text, File = tabPage.ToolTipText, Name = tabPage.Name })
                     .ToList();
 
-                var group = new FileGroup{GroupName = groupForm.name,Tabfiles = tabFiles};
+                var group = new FileGroup { GroupName = groupForm.name, Tabfiles = tabFiles };
                 _groups.FileGroups.Add(@group);
 
                 FileGroupHandler.Save(_groups);
