@@ -161,7 +161,7 @@ namespace MainForm
             if (result != DialogResult.OK) return;
 
             var tabFiles = openFileDialog1.FileNames
-                .Select(fileName => new TabFile {File = fileName, Name = Guid.NewGuid().ToString(), TabName = fileName})
+                .Select(fileName => new TabFile { File = fileName, Name = Guid.NewGuid().ToString(), TabName = fileName })
                 .ToList();
 
             SetFile(tabFiles);
@@ -202,7 +202,7 @@ namespace MainForm
         {
             Log.Information("Creating tab for tabFile: " + tabFile);
 
-            var tabPage = new TabPage(tabFile.TabName) {Width = 100};
+            var tabPage = new TabPage(tabFile.TabName) { Width = 100 };
 
             var textBox = new MainTextBox { Name = "TextBox" };
 
@@ -247,15 +247,15 @@ namespace MainForm
             var selected = tabControl1.SelectedIndex;
             var tab = tabControl1.TabPages[selected];
 
-            var host = (ElementHost) tab.Controls[0];
-            var textBox = (MainTextBox) host.Child;
+            var host = (ElementHost)tab.Controls[0];
+            var textBox = (MainTextBox)host.Child;
             var with = textBox.ActualWidth;
             var height = textBox.ActualHeight;
 
             foreach (TabPage tabControl1TabPage in tabControl1.TabPages)
             {
-                host = (ElementHost) tabControl1TabPage.Controls[0];
-                textBox = (MainTextBox) host.Child;
+                host = (ElementHost)tabControl1TabPage.Controls[0];
+                textBox = (MainTextBox)host.Child;
                 textBox.SetSize(with, height);
             }
         }
@@ -277,7 +277,7 @@ namespace MainForm
         /// <param name="e"></param>
         private void MainForm_DragDrop(object sender, DragEventArgs e)
         {
-            var dataDrop = (string[]) e.Data.GetData(DataFormats.FileDrop);
+            var dataDrop = (string[])e.Data.GetData(DataFormats.FileDrop);
             var files = new List<string>();
             var folders = new List<string>();
             foreach (var dataItem in dataDrop)
@@ -332,8 +332,8 @@ namespace MainForm
 
             if (tab.Controls.Count <= 0) return;
 
-            var host = (ElementHost) tab.Controls[0];
-            var textBox = (MainTextBox) host.Child;
+            var host = (ElementHost)tab.Controls[0];
+            var textBox = (MainTextBox)host.Child;
 
             var paddedBounds = e.Bounds;
             paddedBounds.Height = 23;
@@ -384,8 +384,8 @@ namespace MainForm
             {
                 foreach (TabPage tabControl1TabPage in tabControl1.TabPages)
                 {
-                    var host = (ElementHost) tabControl1TabPage.Controls[0];
-                    var textBox = (MainTextBox) host.Child;
+                    var host = (ElementHost)tabControl1TabPage.Controls[0];
+                    var textBox = (MainTextBox)host.Child;
                     textBox.FontSize++;
                 }
             }
@@ -394,8 +394,8 @@ namespace MainForm
             {
                 foreach (TabPage tabControl1TabPage in tabControl1.TabPages)
                 {
-                    var host = (ElementHost) tabControl1TabPage.Controls[0];
-                    var textBox = (MainTextBox) host.Child;
+                    var host = (ElementHost)tabControl1TabPage.Controls[0];
+                    var textBox = (MainTextBox)host.Child;
                     if (textBox.FontSize > 2)
                         textBox.FontSize--;
                 }
@@ -456,11 +456,6 @@ namespace MainForm
                         }
                     case Key.S:
                         {
-                            if (_ctrlDown)
-                            {
-                                // Search();
-                                ShowSearchForm();
-                            }
                             break;
                         }
                     case Key.F3:
@@ -473,15 +468,27 @@ namespace MainForm
                         }
                     case Key.F:
                         {
-                            foreach (TabPage tabControl1TabPage in tabControl1.TabPages)
+                            if (_ctrlDown)
                             {
-                                var host = (ElementHost)tabControl1TabPage.Controls[0];
-                                var textBox = (MainTextBox)host.Child;
-                                textBox.ActivateFilter();
+                                // Search();
+                                ShowSearchForm();
                             }
+                            break;
+                        }
+                    case Key.T:
+                        {
+                            if (_ctrlDown)
+                            {
+                                foreach (TabPage tabControl1TabPage in tabControl1.TabPages)
+                                {
+                                    var host = (ElementHost)tabControl1TabPage.Controls[0];
+                                    var textBox = (MainTextBox)host.Child;
+                                    textBox.ActivateFilter();
+                                }
 
-                            _filter = !_filter;
-                            ChangeFilterGui();
+                                _filter = !_filter;
+                                ChangeFilterGui();
+                            }
                             break;
                         }
                 }
@@ -650,8 +657,8 @@ namespace MainForm
 
             if (tabPage.Controls.Count <= 0) return;
 
-            var host = (ElementHost) tabPage.Controls[0];
-            var textBox = (MainTextBox) host.Child;
+            var host = (ElementHost)tabPage.Controls[0];
+            var textBox = (MainTextBox)host.Child;
             textBox.Updated = false;
             SetFileAttributesToGui(textBox.File, textBox.FileSize);
         }
@@ -666,8 +673,8 @@ namespace MainForm
             if (tabControl1.SelectedIndex <= -1) return;
 
             var tabControl1TabPage = tabControl1.TabPages[tabControl1.SelectedIndex];
-            var host = (ElementHost) tabControl1TabPage.Controls[0];
-            var textBox = (MainTextBox) host.Child;
+            var host = (ElementHost)tabControl1TabPage.Controls[0];
+            var textBox = (MainTextBox)host.Child;
             textBox.ScrollToEnd();
         }
 
@@ -779,8 +786,8 @@ namespace MainForm
         {
             foreach (TabPage tabControl1TabPage in tabControl1.TabPages)
             {
-                var host = (ElementHost) tabControl1TabPage.Controls[0];
-                var textBox = (MainTextBox) host.Child;
+                var host = (ElementHost)tabControl1TabPage.Controls[0];
+                var textBox = (MainTextBox)host.Child;
                 textBox.ActivateFilter();
             }
 
@@ -890,7 +897,7 @@ namespace MainForm
                 files.AddRange(rfr.GetFiles(folderBrowserDialog1.SelectedPath, Settings.Default.FolderDepth));
             }
 
-            var tabFiles = files.Select(file => new TabFile{File = file, Name = Guid.NewGuid().ToString(), TabName = file}).ToList();
+            var tabFiles = files.Select(file => new TabFile { File = file, Name = Guid.NewGuid().ToString(), TabName = file }).ToList();
             SetFile(tabFiles);
         }
     }
