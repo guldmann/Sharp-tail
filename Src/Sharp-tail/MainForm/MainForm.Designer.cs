@@ -36,6 +36,7 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.closeAllFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadGroupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveOpenFilesAsGroupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -54,6 +55,7 @@
             this.reloadFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.renameTabToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStripTabs.SuspendLayout();
@@ -101,9 +103,9 @@
             this.toolStripMenuItem1,
             this.toolStripMenuItemColorRule,
             this.goToEndToolStripMenuItem,
-            this.toolStripMenuItemFilter,
             this.toolStripMenuItem2,
-            this.toolStripTextBoxSearch});
+            this.toolStripTextBoxSearch,
+            this.toolStripMenuItemFilter});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(6, 2, 0, 2);
@@ -115,6 +117,7 @@
             // 
             this.toolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openToolStripMenuItem,
+            this.openFolderToolStripMenuItem,
             this.closeAllFilesToolStripMenuItem,
             this.loadGroupToolStripMenuItem,
             this.saveOpenFilesAsGroupToolStripMenuItem,
@@ -129,6 +132,13 @@
             this.openToolStripMenuItem.Size = new System.Drawing.Size(614, 62);
             this.openToolStripMenuItem.Text = "Open File";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
+            // 
+            // openFolderToolStripMenuItem
+            // 
+            this.openFolderToolStripMenuItem.Name = "openFolderToolStripMenuItem";
+            this.openFolderToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
+            this.openFolderToolStripMenuItem.Text = "Open Folder";
+            this.openFolderToolStripMenuItem.Click += new System.EventHandler(this.openFolderToolStripMenuItem_Click);
             // 
             // closeAllFilesToolStripMenuItem
             // 
@@ -174,7 +184,10 @@
             // 
             // toolStripMenuItemFilter
             // 
+            this.toolStripMenuItemFilter.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.toolStripMenuItemFilter.BackColor = System.Drawing.Color.Red;
+            this.toolStripMenuItemFilter.Checked = true;
+            this.toolStripMenuItemFilter.CheckState = System.Windows.Forms.CheckState.Checked;
             this.toolStripMenuItemFilter.Name = "toolStripMenuItemFilter";
             this.toolStripMenuItemFilter.Size = new System.Drawing.Size(279, 58);
             this.toolStripMenuItemFilter.Text = "Filter Inactive";
@@ -318,6 +331,8 @@
         private System.Windows.Forms.ToolStripTextBox toolStripTextBoxSearch;
         private System.Windows.Forms.ToolStripMenuItem saveOpenFilesAsGroupToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem loadGroupToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openFolderToolStripMenuItem;
+        private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
     }
 }
 
