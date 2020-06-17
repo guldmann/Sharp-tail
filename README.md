@@ -12,9 +12,9 @@ Read user selected files and shows it in a "logView" sharp-tail will then monito
 *	Colure “rules” to find and highlight log rows matching rule with set colure.
 *	Filter out rows matching colure rules to only show rows of interest.
 *	 Follow log, will keep last log rows in focus.
-*	Remember last opened files and ask user to reopen files at start.
-* Search and focus on word
-* Right click on tab to rename it
+*  Remember last opened files and ask user to reopen files at start.
+*  Search and focus on word
+*  Right click on tab to rename it
 
 
 
@@ -24,6 +24,8 @@ Read user selected files and shows it in a "logView" sharp-tail will then monito
 * [ctrl] + mouse wheel zoom in and out 
 * [+] Zoom in on text
 * [-] Zoom out on text
-* [F] Toggle filter text
-* [CTRL]+[C] Copy marked text
-* [CTRL] + [S] Search
+* [CTRL] +[T] Toggle filter text
+* [CTRL]+ [C] Copy marked text
+* [CTRL] + [F]  Open Find
+* [F3]  Find next
+ 
