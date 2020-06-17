@@ -41,7 +41,6 @@ namespace MainForm.Extension
             textBox.Dispose();
             page.Dispose();
             host.Controls.Clear();
-            //page.Controls.RemoveAt(0);
         }
     }
 }

@@ -57,7 +57,7 @@ namespace MainForm
             tabControl1.MouseClick += tabControl1_MouseClick;
             tabControl1.ShowToolTips = true;
             timer1.Enabled = true;
-            if (args != null)
+            if (args != null && args.Length >= 1)
             {
                 var tabFiles = args.Select(file => new TabFile { File = file, Name = Guid.NewGuid().ToString(), TabName = file }).ToList();
                 SetFile(tabFiles);
@@ -174,6 +174,12 @@ namespace MainForm
         /// <param name="size">Size of tabFile for current selected tab</param>
         private void SetFileAttributesToGui(string name, long size)
         {
+            if (string.IsNullOrEmpty(name))
+            {
+                toolStripStatusLabelName.Text = "";
+                toolStripStatusLabelSize.Text = "";
+                return;
+            }
             toolStripStatusLabelName.Text = "Name: " + name;
             toolStripStatusLabelSize.Text = "Size: " + (size / 1000) + "Kb";
         }
@@ -189,7 +195,6 @@ namespace MainForm
             foreach (var file in files)
             {
                 _fInfo = new FileInfo(file.File);
-                SetFileAttributesToGui(_fInfo.Name, _fInfo.Length);
                 CreateTab(file);
             }
         }
@@ -214,7 +219,7 @@ namespace MainForm
             };
 
             tabPage.ToolTipText = tabFile.File;
-            tabPage.Name = tabFile.Name; // Guid.NewGuid().ToString();
+            tabPage.Name = tabFile.Name;
 
             textBox.PreviewKeyDown += MainTextBox1_PreviewKeyDown;
             textBox.PreviewKeyUp += MainTextBox1_PreviewKeyUp;
@@ -241,20 +246,15 @@ namespace MainForm
         /// <param name="e"></param>
         private void MainForm_Resize(object sender, EventArgs e)
         {
-            //BUG: When windows display is set to scale above 100%, scrollbars in text view get buggy
-            if (tabControl1.TabCount <= 0) return;
+            var textBox = GetSelectedMainTextBox();
+            if (textBox == null) return;
 
-            var selected = tabControl1.SelectedIndex;
-            var tab = tabControl1.TabPages[selected];
-
-            var host = (ElementHost)tab.Controls[0];
-            var textBox = (MainTextBox)host.Child;
             var with = textBox.ActualWidth;
             var height = textBox.ActualHeight;
 
             foreach (TabPage tabControl1TabPage in tabControl1.TabPages)
             {
-                host = (ElementHost)tabControl1TabPage.Controls[0];
+                var host = (ElementHost)tabControl1TabPage.Controls[0];
                 textBox = (MainTextBox)host.Child;
                 textBox.SetSize(with, height);
             }
@@ -280,6 +280,7 @@ namespace MainForm
             var dataDrop = (string[])e.Data.GetData(DataFormats.FileDrop);
             var files = new List<string>();
             var folders = new List<string>();
+
             foreach (var dataItem in dataDrop)
             {
                 FileAttributes fAttributes = File.GetAttributes(@dataItem);
@@ -458,6 +459,14 @@ namespace MainForm
                         {
                             break;
                         }
+                    case Key.E:
+                        {
+                            if (_ctrlDown)
+                            {
+                                goToEndToolStripMenuItem_Click(null, null);
+                            }
+                            break;
+                        }
                     case Key.F3:
                         {
                             if (SearchWord != null)
@@ -470,7 +479,6 @@ namespace MainForm
                         {
                             if (_ctrlDown)
                             {
-                                // Search();
                                 ShowSearchForm();
                             }
                             break;
@@ -495,22 +503,38 @@ namespace MainForm
             }
 
             if (e.Key == Key.LeftCtrl)
+            {
                 _ctrlDown = true;
+                //panel.HorizontalScroll.Maximum = 0;
+                //panel.AutoScroll = false;
+                //panel.VerticalScroll.Visible = false;
+                //panel.AutoScroll = true;
+            }
         }
+
+        /// <summary>
+        /// Get the selected mainTextBox
+        /// </summary>
+        /// <returns>MainTextBox or null if no mainTextBox selected</returns>
+        private MainTextBox GetSelectedMainTextBox()
+        {
+            if (tabControl1.SelectedIndex <= -1) return null;
+            if (tabControl1.TabPages.Count < 1) return null;
+
+            var tabPage = tabControl1.TabPages[tabControl1.SelectedIndex];
+            if (tabPage.Controls.Count <= 0) return null;
+
+            var host = (ElementHost)tabPage.Controls[0];
+            return (MainTextBox)host.Child;
+        }
+
+        //private MainTextBox GetMainTextBoxByIndex(int index)
+        //{
+        //}
 
         private void Search()
         {
-            // if (toolStripTextBoxSearch.TextBox == null || string.IsNullOrEmpty(toolStripTextBoxSearch.TextBox.Text)) return;
-
-            if (tabControl1.SelectedIndex <= -1) return;
-
-            var tabPage = tabControl1.TabPages[tabControl1.SelectedIndex];
-            if (tabPage.Controls.Count <= 0) return;
-
-            var host = (ElementHost)tabPage.Controls[0];
-            var textBox = (MainTextBox)host.Child;
-            // textBox.Search(toolStripTextBoxSearch.TextBox.Text);
-            textBox.Search(SearchWord);
+            GetSelectedMainTextBox()?.Search(SearchWord);
         }
 
         private void ShowSearchForm()
@@ -533,7 +557,6 @@ namespace MainForm
         {
             SearchWord = searchForm.SearchWord;
             Search();
-            //  if (searchForm.WindowClosed != null) searchForm.WindowClosed -= searchClosed;
             searchForm.Dispose();
             searchForm = null;
         }
@@ -651,16 +674,15 @@ namespace MainForm
 
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (tabControl1.SelectedIndex <= -1) return;
+            var textBox = GetSelectedMainTextBox();
 
-            var tabPage = tabControl1.TabPages[tabControl1.SelectedIndex];
-
-            if (tabPage.Controls.Count <= 0) return;
-
-            var host = (ElementHost)tabPage.Controls[0];
-            var textBox = (MainTextBox)host.Child;
-            textBox.Updated = false;
-            SetFileAttributesToGui(textBox.File, textBox.FileSize);
+            if (textBox != null)
+            {
+                textBox.Updated = false;
+                SetFileAttributesToGui(textBox.File, textBox.FileSize);
+                return;
+            }
+            SetFileAttributesToGui("", 0);
         }
 
         /// <summary>
@@ -670,12 +692,7 @@ namespace MainForm
         /// <param name="e"></param>
         private void goToEndToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (tabControl1.SelectedIndex <= -1) return;
-
-            var tabControl1TabPage = tabControl1.TabPages[tabControl1.SelectedIndex];
-            var host = (ElementHost)tabControl1TabPage.Controls[0];
-            var textBox = (MainTextBox)host.Child;
-            textBox.ScrollToEnd();
+            GetSelectedMainTextBox().ScrollToEnd();
         }
 
         /// <summary>
@@ -714,6 +731,13 @@ namespace MainForm
         private void CloseRemoveTab(string name)
         {
             var page = tabControl1.TabPages[name];
+            var textBox = GetSelectedMainTextBox();
+            textBox.PreviewKeyDown -= MainTextBox1_PreviewKeyDown;
+            textBox.PreviewKeyUp -= MainTextBox1_PreviewKeyUp;
+            textBox.PreviewMouseWheel -= MainTextBox1_MouseWheel;
+            textBox.Drop -= MainTextBox1_Drop;
+            textBox.DragEnter -= MainTextBox1_DragEnter;
+
             _files.Remove(_files.FirstOrDefault(x => x.Name == name));
             page.Clean();
             tabControl1.TabPages.Remove(page);
@@ -734,7 +758,7 @@ namespace MainForm
 
             GC.Collect();
             GC.WaitForPendingFinalizers();
-            //tabControl1.TabPages.Clear();
+            tabControl1.TabPages.Clear();
         }
 
         /// <summary>
