@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ListBoxControl", "ListBoxCo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{AEF683E8-B35F-4F28-9D1D-076904326555}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sharp-Tail-Wpf", "Sharp-Tail-Wpf\Sharp-Tail-Wpf.csproj", "{71FCCF49-285E-43FC-AD29-E3DA796D8AF6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +43,14 @@ Global
 		{AEF683E8-B35F-4F28-9D1D-076904326555}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AEF683E8-B35F-4F28-9D1D-076904326555}.Release|x64.ActiveCfg = Release|Any CPU
 		{AEF683E8-B35F-4F28-9D1D-076904326555}.Release|x64.Build.0 = Release|Any CPU
+		{71FCCF49-285E-43FC-AD29-E3DA796D8AF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71FCCF49-285E-43FC-AD29-E3DA796D8AF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71FCCF49-285E-43FC-AD29-E3DA796D8AF6}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{71FCCF49-285E-43FC-AD29-E3DA796D8AF6}.Debug|x64.Build.0 = Debug|Any CPU
+		{71FCCF49-285E-43FC-AD29-E3DA796D8AF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71FCCF49-285E-43FC-AD29-E3DA796D8AF6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{71FCCF49-285E-43FC-AD29-E3DA796D8AF6}.Release|x64.ActiveCfg = Release|Any CPU
+		{71FCCF49-285E-43FC-AD29-E3DA796D8AF6}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

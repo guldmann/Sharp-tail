@@ -37,8 +37,6 @@ namespace ListBoxControl.Controls
         private bool _filterActive;
         public long FileSize;
 
-        //temp solution for search
-
         public MainTextBox()
         {
             InitializeComponent();

@@ -9,33 +9,31 @@
         <StackPanel>
             <ListBox  x:Name="listBox" HorizontalAlignment="Left" Height="500"
             VerticalAlignment="Top" Width="800" Background="White"
-            VirtualizingStackPanel.VirtualizationMode="Recycling" ScrollViewer.ScrollChanged="listBox_ScrollChanged"  >
+            VirtualizingStackPanel.VirtualizationMode="Recycling" ScrollViewer.ScrollChanged="listBox_ScrollChanged">
                 <ListBox.CommandBindings>
                     <CommandBinding Command="ApplicationCommands.Copy"
-                                    CanExecute="CtrlCCopyCmdCanExecute" 
+                                    CanExecute="CtrlCCopyCmdCanExecute"
                                     Executed="CtrlCCopyCmdExecuted" />
                 </ListBox.CommandBindings>
-                
+
                 <ListBox.ItemTemplate>
-                    
                     <DataTemplate>
                         <Grid Margin="0,0">
-                           
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock Text="{Binding Text, Mode=OneTime}" >
+                            <TextBlock Text="{Binding Text, Mode=OneTime}">
                                 <TextBlock.Foreground>
-                                    <SolidColorBrush Color="{Binding FrontColor, Mode=OneTime}"/>
+                                    <SolidColorBrush Color="{Binding FrontColor, Mode=OneTime}" />
                                 </TextBlock.Foreground>
                                 <TextBlock.Background>
-                                    <SolidColorBrush Color="{Binding BackColor, Mode=OneTime}"/>
+                                    <SolidColorBrush Color="{Binding BackColor, Mode=OneTime}" />
                                 </TextBlock.Background>
                                 <TextBlock.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Command="Copy">
                                             <MenuItem.CommandBindings>
-                                                <CommandBinding Command="ApplicationCommands.Copy" 
+                                                <CommandBinding Command="ApplicationCommands.Copy"
                                                                 CanExecute="RightClickCopyCmdCanExecute"
                                                                 Executed="RightClickCopyCmdExecuted" />
                                             </MenuItem.CommandBindings>
@@ -51,7 +49,6 @@
     </Grid>
 </UserControl>
 
-
 <!--
 <ListBox.ContextMenu>
     <ContextMenu>
@@ -59,7 +56,7 @@
             <MenuItem.CommandBindings>
                 <CommandBinding Command="ApplicationCommands.Find"
                                 CanExecute="FindCanExecute"
-                                Executed="FindExecute"/>
+                                Executed="FindExecute" />
             </MenuItem.CommandBindings>
         </MenuItem>
     </ContextMenu>

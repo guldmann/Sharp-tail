@@ -104,7 +104,7 @@
             this.toolStripMenuItemFilter});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1624, 40);
+            this.menuStrip1.Size = new System.Drawing.Size(1624, 48);
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -118,7 +118,7 @@
             this.saveOpenFilesAsGroupToolStripMenuItem,
             this.exitToolStripMenuItem});
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(72, 36);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(72, 38);
             this.toolStripMenuItem1.Text = "File";
             // 
             // openToolStripMenuItem
@@ -166,14 +166,14 @@
             // toolStripMenuItemColorRule
             // 
             this.toolStripMenuItemColorRule.Name = "toolStripMenuItemColorRule";
-            this.toolStripMenuItemColorRule.Size = new System.Drawing.Size(150, 36);
+            this.toolStripMenuItemColorRule.Size = new System.Drawing.Size(150, 38);
             this.toolStripMenuItemColorRule.Text = "Color rules";
             this.toolStripMenuItemColorRule.Click += new System.EventHandler(this.toolStripMenuItemColorRule_Click);
             // 
             // goToEndToolStripMenuItem
             // 
             this.goToEndToolStripMenuItem.Name = "goToEndToolStripMenuItem";
-            this.goToEndToolStripMenuItem.Size = new System.Drawing.Size(141, 36);
+            this.goToEndToolStripMenuItem.Size = new System.Drawing.Size(141, 38);
             this.goToEndToolStripMenuItem.Text = "Go to End";
             this.goToEndToolStripMenuItem.Click += new System.EventHandler(this.goToEndToolStripMenuItem_Click);
             // 
@@ -184,7 +184,7 @@
             this.toolStripMenuItemFilter.Checked = true;
             this.toolStripMenuItemFilter.CheckState = System.Windows.Forms.CheckState.Checked;
             this.toolStripMenuItemFilter.Name = "toolStripMenuItemFilter";
-            this.toolStripMenuItemFilter.Size = new System.Drawing.Size(177, 36);
+            this.toolStripMenuItemFilter.Size = new System.Drawing.Size(177, 38);
             this.toolStripMenuItemFilter.Text = "Filter Inactive";
             this.toolStripMenuItemFilter.Click += new System.EventHandler(this.toolStripMenuItemFilter_Click);
             // 
@@ -196,11 +196,11 @@
             // 
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.ItemSize = new System.Drawing.Size(0, 22);
-            this.tabControl1.Location = new System.Drawing.Point(0, 40);
+            this.tabControl1.Location = new System.Drawing.Point(0, 48);
             this.tabControl1.Margin = new System.Windows.Forms.Padding(6);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1624, 1022);
+            this.tabControl1.Size = new System.Drawing.Size(1624, 1014);
             this.tabControl1.TabIndex = 3;
             this.tabControl1.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.TabControl1_DrawItem);
             this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
