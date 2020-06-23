@@ -43,7 +43,9 @@
                 <DataTemplate>
 
                     <!--<TextBlock Text="{Binding Content.TextString}"  Background="{Binding Content.BackColor}" Foreground="{Binding Content.FontColor}" />-->
-                    <controls:MainTextBox Content="{Binding DataBox}" Height="800" Width="800" Margin="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                    <!--<controls:MainTextBox Content="{Binding DataBox}" Height="800" Width="800" Margin="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />-->
+
+                    <local:LogView Content="{Binding DataBox}"></local:LogView>
                 </DataTemplate>
             </TabControl.ContentTemplate>
         </TabControl>

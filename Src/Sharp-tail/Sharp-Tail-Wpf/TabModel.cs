@@ -17,7 +17,8 @@ namespace Sharp_Tail_Wpf
 
         public TabContentModel Content { get; set; }
 
-        public MainTextBox DataBox { get; set; }
+        // public MainTextBox DataBox { get; set; }
+        public LogView DataBox { get; set; }
 
         private Brush _headerColor = Brushes.Black;
 
@@ -106,10 +107,12 @@ namespace Sharp_Tail_Wpf
             /////Temp test populating tabs
             //Tabs.Add(tabItem);
 
-            var data = new MainTextBox();
-            data.SetDataFile(@"C:\temp\next.json", new List<ColorRule>(), null, "test");
-            data.SetSize(1000, 1000);
-            data.ScrollToEnd();
+            //var data = new MainTextBox();
+            //data.SetDataFile(@"C:\temp\next.json", new List<ColorRule>(), null, "test");
+            //data.SetSize(1000, 1000);
+            //data.ScrollToEnd();
+
+            var data = new LogView();
 
             Tabs.Add(new TabItemModel() { HeaderText = "TabHEader 2", HeaderColor = Brushes.Red, Content = new TabContentModel { BackColor = Brushes.LightPink, FontColor = Brushes.Crimson, TextString = "This is a TabContetntModel" }, DataBox = data });
             var temp = "";
