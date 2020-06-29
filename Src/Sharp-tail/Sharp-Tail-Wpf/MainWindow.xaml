@@ -5,6 +5,7 @@
             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
             xmlns:local="clr-namespace:Sharp_Tail_Wpf"
             xmlns:controls="clr-namespace:ListBoxControl.Controls;assembly=ListBoxControl"
+            xmlns:jpjp="clr-namespace:ListBoxControl.Controls;assembly=ListBoxControl"
             mc:Ignorable="d"
             Title="MainWindow" Height="450" Width="800">
 
@@ -29,6 +30,8 @@
             https://stackoverflow.com/questions/43528152/how-to-close-tab-with-a-close-button-in-wpf
             https://stackoverflow.com/questions/5601489/how-can-i-bind-foreground-to-a-property-in-my-viewmodel
           https://stackoverflow.com/questions/5649178/autosizing-of-usercontrol
+            
+            https://stackoverflow.com/questions/8619095/listbox-in-tabcontrol-scrolling-issue?noredirect=1
             -->
             <TabControl.ItemTemplate>
                 <DataTemplate>
@@ -41,11 +44,16 @@
             </TabControl.ItemTemplate>
             <TabControl.ContentTemplate>
                 <DataTemplate>
-
+                        
                     <!--<TextBlock Text="{Binding Content.TextString}"  Background="{Binding Content.BackColor}" Foreground="{Binding Content.FontColor}" />-->
                     <!--<controls:MainTextBox Content="{Binding DataBox}" Height="800" Width="800" Margin="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />-->
 
-                    <local:LogView Content="{Binding DataBox}"></local:LogView>
+                    <!--<local:LogView Content="{Binding DataBox}"></local:LogView>-->
+                    <StackPanel>
+                        <TextBlock Text="{Binding Content.TextString}"  Background="{Binding Content.BackColor}" Foreground="{Binding Content.FontColor}" />
+                        <jpjp:MainTextBox Content="{Binding DataBox}"></jpjp:MainTextBox>
+                    </StackPanel>
+                    
                 </DataTemplate>
             </TabControl.ContentTemplate>
         </TabControl>

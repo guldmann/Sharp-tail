@@ -17,8 +17,8 @@ namespace Sharp_Tail_Wpf
 
         public TabContentModel Content { get; set; }
 
-        // public MainTextBox DataBox { get; set; }
-        public LogView DataBox { get; set; }
+        public MainTextBox _DataBox { get; set; }
+        //public LogView DataBox { get; set; }
 
         private Brush _headerColor = Brushes.Black;
 
@@ -38,6 +38,18 @@ namespace Sharp_Tail_Wpf
                 OnPropertyChanged("HeaderColor");
             }
         }
+
+        public MainTextBox DataBox
+        {
+            get => _DataBox;
+            set
+            {
+                //DataBox = value;
+                OnPropertyChanged("DataBox");
+            }
+        }
+
+
     }
 
     public class TabContentModel : INotifyPropertyChanged
@@ -107,15 +119,16 @@ namespace Sharp_Tail_Wpf
             /////Temp test populating tabs
             //Tabs.Add(tabItem);
 
-            //var data = new MainTextBox();
-            //data.SetDataFile(@"C:\temp\next.json", new List<ColorRule>(), null, "test");
-            //data.SetSize(1000, 1000);
-            //data.ScrollToEnd();
+            var data = new MainTextBox();
+            data.SetDataFile(@"C:\temp\rlog.log", new List<ColorRule>(), null, "test");
+            data.SetSize(1000, 1000);
+            data.ScrollToEnd();
 
-            var data = new LogView();
+            //var data = new LogView();
 
-            Tabs.Add(new TabItemModel() { HeaderText = "TabHEader 2", HeaderColor = Brushes.Red, Content = new TabContentModel { BackColor = Brushes.LightPink, FontColor = Brushes.Crimson, TextString = "This is a TabContetntModel" }, DataBox = data });
+            Tabs.Add(new TabItemModel() { HeaderText = "TabHEader 2", HeaderColor = Brushes.Red, Content = new TabContentModel { BackColor = Brushes.LightPink, FontColor = Brushes.Crimson, TextString = "This is a TabContetntModel" }, _DataBox = data });
             var temp = "";
+            Tabs.Add(new TabItemModel() { HeaderText = "TabHEader 3", HeaderColor = Brushes.Red, Content = new TabContentModel { BackColor = Brushes.LightPink, FontColor = Brushes.Crimson, TextString = "This is a TabContetntModel number 2" }, _DataBox = data });
             //Tabs.Add(new TabItemModel() { HeaderText = "TabHEader 3", HeaderColor = Brushes.GreenYellow, Content = "This is ConTent nr 3" });
         }
 

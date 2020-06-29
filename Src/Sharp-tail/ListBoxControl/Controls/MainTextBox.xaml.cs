@@ -6,8 +6,10 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,11 +18,12 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using ListBoxControl.Annotations;
 using Microsoft.AppCenter.Crashes;
 
 namespace ListBoxControl.Controls
 {
-    public partial class MainTextBox : IDisposable
+    public partial class MainTextBox : IDisposable, INotifyPropertyChanged
     {
         private ObservableCollection<RowItem> _rowItems;
         private MessageService _messageService = MessageService.Instance;
@@ -104,6 +107,8 @@ namespace ListBoxControl.Controls
             if (!textWriten)
             {
                 _rowItems.Add(new RowItem { BackColor = Colors.White, FrontColor = Colors.Black, Text = text });
+                
+                OnPropertyChanged("_rowItems");
             }
 
             if (_goToEnd)
@@ -440,6 +445,14 @@ namespace ListBoxControl.Controls
                 if (rowCounter >= listBox.Items.Count)
                     listBox.SelectedIndex = 0;
             }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

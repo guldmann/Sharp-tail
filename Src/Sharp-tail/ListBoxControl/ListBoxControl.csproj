@@ -182,6 +182,7 @@
       <DependentUpon>MainTextBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Models\RowItem.cs" />
+    <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
